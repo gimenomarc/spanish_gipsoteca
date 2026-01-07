@@ -31,15 +31,70 @@ const ArrowRightIcon = () => (
 );
 
 // Función para obtener todas las imágenes de un producto
-function getProductImages(categoryId, productFolder) {
-  // Por ahora retornamos imágenes placeholder
-  // Cuando tengas las imágenes reales, esto se actualizará
+function getProductImages(categoryId, productFolder, productCode) {
   const basePath = `/images/categorias/${categoryId}/${productFolder}/`;
-  return [
-    `${basePath}DSC04562 (1).jpg`,
-    `${basePath}DSC04563.jpg`,
-    `${basePath}DSC04564.jpg`,
+  
+  // Lista extendida de posibles nombres de imágenes
+  const possibleNames = [
+    `${productCode}.jpg`,
+    `${productCode}.png`,
+    `DSC04562 (1).jpg`,
+    `DSC04563.jpg`,
+    `DSC04564.jpg`,
+    `DSC04584.jpg`,
+    `DSC04551.jpg`,
+    `DSC04571.jpg`,
+    `DSC04378 (1).jpg`,
+    `DSC04622 (1).jpg`,
+    `DSC04503.jpg`,
+    `M004.jpg`,
+    `DSC03549.jpg`,
+    `DSC03561.jpg`,
+    `DSC03892.jpg`,
+    `M007.jpg`,
+    `DSC03506.jpg`,
+    `DSC03517.jpg`,
+    `DSC03524.jpg`,
+    `DSC03619.jpg`,
+    `DSC04408.jpg`,
+    `la buena.jpg`,
+    `DSC03985.jpg`,
+    `DSC04013.jpg`,
+    `DSC04005.jpg`,
+    `DSC03590.jpg`,
+    `DSC04427.jpg`,
+    `DSC04342.jpg`,
+    `DSC03675.jpg`,
+    `DSC03693.jpg`,
+    `DSC04332.jpg`,
+    `DSC04350.jpg`,
+    `DSC03778 (1).jpg`,
+    `DSC03702.jpg`,
+    `DSC04114.jpg`,
+    `M023.jpg`,
+    `DSC04634 (1).jpg`,
+    `DSC04701.jpg`,
+    `DSC04206.jpg`,
+    `DSC04220.jpg`,
+    `DSC03824.jpg`,
+    `DSC04234 (1).jpg`,
+    `DSC04240.jpg`,
+    `DSC02490.jpg`,
+    `DSC04277.jpg`,
+    `DSC04289.jpg`,
+    `DSC04041.jpg`,
+    `DSC03870.jpg`,
+    `DSC03907.jpg`,
+    `DSC03949.jpg`,
+    `DSC03939 (1).jpg`,
+    `DSC03839 (1) (1).jpg`,
+    `DSC03969.jpg`,
+    `DSC02686.jpg`,
+    `DSC04587.jpg`,
+    `DSC04849.jpg`,
   ];
+  
+  return possibleNames.map(name => `${basePath}${name}`).slice(0, 4);
 }
 
 export default function ProductDetail() {
@@ -65,7 +120,7 @@ export default function ProductDetail() {
   }
 
   // Obtener imágenes del producto
-  const productImages = getProductImages(categoryId, product.folder);
+  const productImages = getProductImages(categoryId, product.folder, product.code);
   const mainImage = productImages[selectedImage] || productImages[0];
   const thumbnails = productImages.slice(1);
 
