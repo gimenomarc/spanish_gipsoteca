@@ -6,4 +6,3 @@ const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'sb_publishab
 
 // Crear cliente de Supabase (usando la clave pública/anónima para el cliente)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-

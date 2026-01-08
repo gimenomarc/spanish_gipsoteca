@@ -1,0 +1,5 @@
+﻿# ImÃ¡genes - se cargan desde Supabase
+images/
+**/images/
+*.zip
+*.ZIP

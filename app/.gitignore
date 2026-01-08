@@ -136,6 +136,20 @@ public/images/thumbnails/**/*
 # Mantener hero si tiene imágenes necesarias para el sitio
 # public/images/hero/**/*
 
+# Archivos ZIP y comprimidos grandes (no deben subirse a git)
+*.zip
+*.ZIP
+*.rar
+*.RAR
+*.7z
+*.7Z
+*.tar.gz
+*.tar.bz2
+images/**/*.zip
+images/**/*.ZIP
+images/**/*.rar
+images/**/*.RAR
+
 # Lock files (opcional - algunos prefieren incluirlos)
 # package-lock.json
 # yarn.lock

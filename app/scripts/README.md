@@ -99,4 +99,3 @@ Si una carpeta no sigue este formato, el script intentará extraer el código de
 
 ### Error: "table does not exist"
 - Ejecuta primero el script SQL `supabase-schema.sql` en Supabase
-

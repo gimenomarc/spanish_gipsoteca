@@ -124,4 +124,3 @@ export function useProduct(categoryId, productCode) {
 
   return { product, loading, error };
 }
-

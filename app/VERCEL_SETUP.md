@@ -106,4 +106,3 @@ REACT_APP_SUPABASE_ANON_KEY=tu_publishable_key_aqui
 ```
 
 El archivo `.env` ya está en `.gitignore`, así que no se subirá a git.
-

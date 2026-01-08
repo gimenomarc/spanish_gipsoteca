@@ -156,4 +156,3 @@ Una vez que el script haya cargado todos los datos:
    - Consulta los productos desde Supabase en lugar de `products.js`
 
 3. Actualiza tu aplicación para cargar imágenes desde Supabase Storage en lugar de archivos locales.
-

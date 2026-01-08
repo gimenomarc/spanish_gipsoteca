@@ -42,4 +42,3 @@ export function useCategories() {
 
   return { categories, loading, error };
 }
-
