@@ -16,8 +16,9 @@ export default function ProductCard({ product, categoryId, index = 0 }) {
     return null;
   }
 
-  // Las primeras 8 imágenes se cargan con prioridad (above the fold)
-  const isPriority = index < 8;
+  // Solo las primeras 4 imágenes se cargan con prioridad (above the fold)
+  // Reducido de 8 a 4 para mejorar el rendimiento inicial
+  const isPriority = index < 4;
 
   const handleImageError = () => {
     // Intentar con la siguiente imagen si hay más disponibles

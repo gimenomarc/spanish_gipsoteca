@@ -65,48 +65,20 @@ export default function ProductDetail() {
   const productImages = product ? getProductImages(product) : [];
   const mainImage = productImages[selectedImage] || productImages[0] || '';
 
-  // Preload agresivo de la imagen principal y siguientes imágenes cuando cambia
+  // Preload optimizado: solo la imagen principal y la siguiente
+  // OptimizedImage ya maneja el preload con priority, así que solo preloadamos la siguiente
   useEffect(() => {
     if (!productImages || productImages.length === 0) return;
 
-    const preloadLinks = [];
-    
-    // Preload de la imagen principal con alta prioridad
-    if (mainImage) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = mainImage;
-      link.fetchPriority = 'high';
-      document.head.appendChild(link);
-      preloadLinks.push(link);
-
-      // También preloadar usando Image() para mejor compatibilidad
+    // Preload de la siguiente imagen con prioridad baja (para navegación rápida)
+    // Reducido a solo 1 imagen siguiente para evitar sobrecarga
+    const nextImage = productImages[selectedImage + 1];
+    if (nextImage) {
       const img = new Image();
-      img.src = mainImage;
-      img.fetchPriority = 'high';
+      img.src = nextImage;
+      img.fetchPriority = 'low';
     }
-
-    // Preload de las siguientes 2-3 imágenes con prioridad baja (para navegación rápida)
-    const nextImages = productImages.slice(selectedImage + 1, selectedImage + 4);
-    nextImages.forEach((imageUrl) => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = imageUrl;
-      link.fetchPriority = 'low';
-      document.head.appendChild(link);
-      preloadLinks.push(link);
-    });
-
-    return () => {
-      preloadLinks.forEach(link => {
-        if (document.head.contains(link)) {
-          document.head.removeChild(link);
-        }
-      });
-    };
-  }, [mainImage, productImages, selectedImage]);
+  }, [productImages, selectedImage]);
 
   if (loading) {
     return (

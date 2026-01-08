@@ -10,6 +10,9 @@ class ImageCache {
     this.cache = new Map();
     this.maxSize = maxSize;
     this.loadingPromises = new Map();
+    this.maxConcurrent = 6; // Límite de imágenes cargando simultáneamente
+    this.currentLoading = 0;
+    this.loadingQueue = [];
   }
 
   /**
@@ -40,6 +43,7 @@ class ImageCache {
 
   /**
    * Precarga una imagen y la guarda en caché
+   * Con límite de carga concurrente para mejorar el rendimiento
    */
   async preload(url) {
     // Si ya está en caché, retornar inmediatamente
@@ -52,19 +56,34 @@ class ImageCache {
       return this.loadingPromises.get(url);
     }
 
-    // Crear nueva promesa de carga
+    // Crear nueva promesa de carga con control de concurrencia
     const promise = new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        this.set(url, img);
-        this.loadingPromises.delete(url);
-        resolve(img);
+      const loadImage = () => {
+        this.currentLoading++;
+        const img = new Image();
+        img.onload = () => {
+          this.set(url, img);
+          this.loadingPromises.delete(url);
+          this.currentLoading--;
+          this.processQueue(); // Procesar siguiente en la cola
+          resolve(img);
+        };
+        img.onerror = () => {
+          this.loadingPromises.delete(url);
+          this.currentLoading--;
+          this.processQueue(); // Procesar siguiente en la cola
+          reject(new Error(`Failed to load image: ${url}`));
+        };
+        img.src = url;
       };
-      img.onerror = () => {
-        this.loadingPromises.delete(url);
-        reject(new Error(`Failed to load image: ${url}`));
-      };
-      img.src = url;
+
+      // Si hay espacio, cargar inmediatamente
+      if (this.currentLoading < this.maxConcurrent) {
+        loadImage();
+      } else {
+        // Agregar a la cola
+        this.loadingQueue.push(loadImage);
+      }
     });
 
     this.loadingPromises.set(url, promise);
@@ -72,10 +91,22 @@ class ImageCache {
   }
 
   /**
-   * Precarga múltiples imágenes
+   * Procesa la cola de carga cuando hay espacio disponible
    */
-  async preloadBatch(urls) {
-    return Promise.allSettled(urls.map(url => this.preload(url)));
+  processQueue() {
+    while (this.loadingQueue.length > 0 && this.currentLoading < this.maxConcurrent) {
+      const loadImage = this.loadingQueue.shift();
+      loadImage();
+    }
+  }
+
+  /**
+   * Precarga múltiples imágenes con límite de concurrencia
+   */
+  async preloadBatch(urls, maxConcurrent = 6) {
+    // Limitar el número de imágenes a preloadar simultáneamente
+    const limitedUrls = urls.slice(0, 20); // Máximo 20 imágenes por batch
+    return Promise.allSettled(limitedUrls.map(url => this.preload(url)));
   }
 
   /**
@@ -84,6 +115,8 @@ class ImageCache {
   clear() {
     this.cache.clear();
     this.loadingPromises.clear();
+    this.loadingQueue = [];
+    this.currentLoading = 0;
   }
 
   /**

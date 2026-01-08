@@ -44,48 +44,23 @@ export default function OptimizedImage({
     ? sizesPresets[size]
     : undefined;
 
-  // Preloading agresivo para imágenes con prioridad
+  // Preloading solo para imágenes con prioridad alta (eliminado preload duplicado)
   useEffect(() => {
     if (priority && optimizedSrc && !preloadLinkRef.current) {
-      // Usar caché de imágenes para precargar
-      imageCache.preload(optimizedSrc).catch(() => {
-        // Silenciar errores de precarga
-      });
-
-      // Crear link de preload para la imagen principal
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = optimizedSrc;
-      link.fetchPriority = 'high';
-      
-      // Si hay srcset, también preloadar la imagen principal
-      if (srcSet) {
-        // Extraer la URL más grande del srcset para preload
-        const srcSetUrls = srcSet.split(', ');
-        if (srcSetUrls.length > 0) {
-          const largestUrl = srcSetUrls[srcSetUrls.length - 1].split(' ')[0];
-          link.href = largestUrl;
-          imageCache.preload(largestUrl).catch(() => {});
-        }
-      }
-      
-      document.head.appendChild(link);
-      preloadLinkRef.current = link;
-
-      // También preloadar usando Image() para mejor compatibilidad
+      // Solo usar Image() para preload, más eficiente que link + Image
+      // El navegador maneja mejor la prioridad con fetchPriority
       const preloadImg = new Image();
       preloadImg.src = optimizedSrc;
       preloadImg.fetchPriority = 'high';
+      
+      // Guardar referencia para limpieza si es necesario
+      preloadLinkRef.current = preloadImg;
     }
 
     return () => {
-      if (preloadLinkRef.current && document.head.contains(preloadLinkRef.current)) {
-        document.head.removeChild(preloadLinkRef.current);
-        preloadLinkRef.current = null;
-      }
+      preloadLinkRef.current = null;
     };
-  }, [priority, optimizedSrc, srcSet]);
+  }, [priority, optimizedSrc]);
 
   // Intersection Observer para lazy loading inteligente
   useEffect(() => {
@@ -105,10 +80,10 @@ export default function OptimizedImage({
       // Verificar si el elemento ya está en el viewport (para elementos que ya son visibles)
       const rect = imgRef.current.getBoundingClientRect();
       const isInViewport = 
-        rect.top < window.innerHeight + 400 && // Aumentado a 400px para cargar antes
-        rect.bottom > -400 &&
-        rect.left < window.innerWidth + 400 &&
-        rect.right > -400;
+        rect.top < window.innerHeight + 200 && // Reducido a 200px
+        rect.bottom > -200 &&
+        rect.left < window.innerWidth + 200 &&
+        rect.right > -200;
 
       if (isInViewport) {
         setShouldLoad(true);
@@ -129,8 +104,9 @@ export default function OptimizedImage({
           });
         },
         {
-          // Cargar cuando esté a 400px del viewport (aumentado para mejor UX)
-          rootMargin: '400px',
+          // Reducido a 200px para cargar solo imágenes cercanas al viewport
+          // Esto reduce la carga simultánea y mejora el rendimiento
+          rootMargin: '200px',
           threshold: 0.01,
         }
       );

@@ -69,41 +69,30 @@ export default function Shop() {
     return matchesSearch && matchesArtist;
   });
 
-  // Preload agresivo de las primeras 8 imágenes críticas (above the fold)
+  // Preload optimizado: solo las primeras 4 imágenes críticas (above the fold)
+  // Eliminado preload duplicado - OptimizedImage ya maneja el preload con priority
+  // Este efecto solo precarga las primeras 4 para mejorar el tiempo inicial de carga
   useEffect(() => {
     if (filteredProducts.length === 0) return;
 
-    const criticalProducts = filteredProducts.slice(0, 8);
-    const preloadLinks = [];
+    // Reducido a 4 imágenes para evitar sobrecarga
+    const criticalProducts = filteredProducts.slice(0, 4);
+    const preloadImgs = [];
 
     criticalProducts.forEach((product) => {
       if (product.images && product.images.length > 0) {
         const mainImage = product.images[0];
         const optimizedUrl = imagePresets.card(mainImage);
         
-        // Preload con link
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = optimizedUrl;
-        link.fetchPriority = 'high';
-        document.head.appendChild(link);
-        preloadLinks.push(link);
-
-        // Preload con Image() para mejor compatibilidad
+        // Solo usar Image() para preload, más eficiente
         const img = new Image();
         img.src = optimizedUrl;
         img.fetchPriority = 'high';
+        preloadImgs.push(img);
       }
     });
 
-    return () => {
-      preloadLinks.forEach(link => {
-        if (document.head.contains(link)) {
-          document.head.removeChild(link);
-        }
-      });
-    };
+    // No necesitamos cleanup para Image objects, el navegador los maneja
   }, [filteredProducts]);
 
   if (productsLoading) {
