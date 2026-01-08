@@ -25,6 +25,7 @@ export default function MenuPanel({ open, onClose }) {
     },
     { label: "SHOP", path: "/shop" },
     { label: "ABOUT US", path: "/about" },
+    { label: "FAQs", path: "/faqs" },
     { label: "THE SG GALLERY", path: "/gallery" },
     { label: "CONTACT", path: "/contact" },
   ];

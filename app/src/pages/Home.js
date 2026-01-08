@@ -47,6 +47,56 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Introducción Section - Rediseñada con fondo y más grande */}
+      <section 
+        className="relative bg-black py-24 sm:py-32 md:py-40 overflow-hidden"
+        style={{
+          backgroundImage: images.hero ? `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.75)), url(${images.hero})` : "linear-gradient(rgba(0,0,0,0.95), rgba(0,0,0,0.85))",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
+      >
+        {/* Overlay decorativo */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
+        
+        <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 md:px-10">
+          <div className="text-center mb-12 sm:mb-16">
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent sm:mb-4 sm:text-sm">The Spanish Gipsoteca</p>
+            <h2 className="font-display text-4xl uppercase tracking-[0.15em] text-white sm:text-5xl sm:tracking-[0.2em] md:text-6xl lg:text-7xl mb-6 sm:mb-8">
+              Artesanía Clásica
+            </h2>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <p className="text-base leading-relaxed text-white/95 sm:text-lg md:text-xl lg:text-2xl text-center mb-8 sm:mb-12">
+              The Spanish Gipsoteca es una empresa artesanal de fabricación y venta de vaciados clásicos. Nuestra colección dispone de más de 100 reproducciones en escayola de las esculturas clásicas más extraordinarias de la historia del arte.
+            </p>
+            <p className="text-sm leading-relaxed text-white/90 sm:text-base md:text-lg lg:text-xl text-center">
+              Cada pieza es trabajada mediante un proceso artesanal que busca la máxima calidad técnica y fidelidad al original.
+            </p>
+          </div>
+
+          {/* Elementos decorativos */}
+          <div className="mt-12 sm:mt-16 flex justify-center gap-8 sm:gap-12">
+            <div className="flex flex-col items-center">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-display text-white/20 mb-2">100+</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-white/60 sm:text-sm">Reproducciones</div>
+            </div>
+            <div className="w-px bg-white/20"></div>
+            <div className="flex flex-col items-center">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-display text-white/20 mb-2">100%</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-white/60 sm:text-sm">Artesanal</div>
+            </div>
+            <div className="w-px bg-white/20"></div>
+            <div className="flex flex-col items-center">
+              <div className="text-3xl sm:text-4xl md:text-5xl font-display text-white/20 mb-2">∞</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-white/60 sm:text-sm">Calidad</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products Section */}
       <section className="bg-black py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">

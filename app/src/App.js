@@ -10,6 +10,8 @@ import Checkout from "./pages/Checkout";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
+import About from "./pages/About";
+import FAQs from "./pages/FAQs";
 import "./App.css";
 
 function App() {
@@ -26,6 +28,8 @@ function App() {
                 <Route path="/shop/:categoryId" element={<Shop />} />
                 <Route path="/product/:categoryId/:productCode" element={<ProductDetail />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/faqs" element={<FAQs />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
