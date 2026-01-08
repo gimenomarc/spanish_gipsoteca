@@ -1,15 +1,16 @@
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
 
-// Imágenes para About Us - Pon tus fotos en public/images/about/
-// Nombres de archivo esperados:
-// - taller.jpg (foto del taller de vaciados)
-// - espacios.jpg (foto de transformación de espacios)
-// - javier.jpg (foto de Javier / About Me)
+// Imágenes de About Us desde Supabase Storage
+// Para subir/actualizar fotos: 
+// 1. Pon las fotos en public/images/about/ (taller.jpg, espacios.jpg, javier.jpg)
+// 2. Ejecuta: node scripts/upload-about-images.js
+const SUPABASE_STORAGE_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images";
+
 const aboutImages = {
-  taller: "/images/about/taller.jpg",
-  espacios: "/images/about/espacios.jpg",
-  javier: "/images/about/javier.jpg",
+  taller: `${SUPABASE_STORAGE_URL}/about/taller.jpg`,
+  espacios: `${SUPABASE_STORAGE_URL}/about/espacios.jpg`,
+  javier: `${SUPABASE_STORAGE_URL}/about/javier.jpg`,
 };
 
 export default function About() {
