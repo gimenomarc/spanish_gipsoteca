@@ -2,12 +2,15 @@ import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
-// Imagen hero - puede ser local (public/) o desde Supabase Storage
-// Para usar Supabase, reemplaza con la URL de Supabase Storage
+// Imagen hero desde Supabase Storage (optimizada)
+// Usando Supabase para evitar problemas con git y mejorar rendimiento
 const images = {
-  hero: "/images/hero/hero-bg.jpg", // Imagen local en public/images/hero/hero-bg.jpg
-  // hero: "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg", // URL de Supabase
+  hero: optimizeImageUrl(
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg",
+    { width: 1920, quality: 85, format: 'webp' }
+  ),
 };
 
 export default function Home() {
