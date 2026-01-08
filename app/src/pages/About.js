@@ -1,12 +1,18 @@
-import { useProducts } from "../hooks/useProducts";
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
 
+// Imágenes para About Us - Pon tus fotos en public/images/about/
+// Nombres de archivo esperados:
+// - taller.jpg (foto del taller de vaciados)
+// - espacios.jpg (foto de transformación de espacios)
+// - javier.jpg (foto de Javier / About Me)
+const aboutImages = {
+  taller: "/images/about/taller.jpg",
+  espacios: "/images/about/espacios.jpg",
+  javier: "/images/about/javier.jpg",
+};
+
 export default function About() {
-  // Obtener algunos productos para mostrar imágenes
-  const { products } = useProducts();
-  const sampleProducts = products.slice(0, 3);
-  
   return (
     <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
       <div className="flex-1">
@@ -43,17 +49,20 @@ export default function About() {
                   </p>
                 </div>
               </div>
-              {/* Imagen de producto */}
-              {sampleProducts[0] && sampleProducts[0].images && sampleProducts[0].images[0] && (
-                <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
-                  <img 
-                    src={sampleProducts[0].images[0]} 
-                    alt="Taller de vaciados"
-                    className="w-full h-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-                </div>
-              )}
+              {/* Imagen: TALLER */}
+              <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
+                <img 
+                  src={aboutImages.taller}
+                  alt="Taller de vaciados"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                    e.target.parentElement.innerHTML = '<p class="text-white/30 text-sm text-center px-4">Pon tu foto en:<br/>public/images/about/taller.jpg</p>';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -62,17 +71,20 @@ export default function About() {
         <section className="bg-black/60 py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-6xl px-6 sm:px-8 md:px-10">
             <div className="grid md:grid-cols-2 gap-10 sm:gap-14 items-center">
-              {/* Imagen de producto */}
-              {sampleProducts[1] && sampleProducts[1].images && sampleProducts[1].images[0] && (
-                <div className="relative aspect-[3/4] overflow-hidden bg-black/50 order-2 md:order-1">
-                  <img 
-                    src={sampleProducts[1].images[0]} 
-                    alt="Transformación de espacios"
-                    className="w-full h-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black via-black/50 to-transparent"></div>
-                </div>
-              )}
+              {/* Imagen: ESPACIOS */}
+              <div className="relative aspect-[3/4] overflow-hidden bg-black/50 order-2 md:order-1">
+                <img 
+                  src={aboutImages.espacios}
+                  alt="Transformación de espacios"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                    e.target.parentElement.innerHTML = '<p class="text-white/30 text-sm text-center px-4">Pon tu foto en:<br/>public/images/about/espacios.jpg</p>';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent pointer-events-none"></div>
+              </div>
               {/* Contenido texto */}
               <div className="order-1 md:order-2">
                 <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl mb-8">
@@ -194,23 +206,26 @@ export default function About() {
                 </div>
               </div>
 
-              {/* Columna derecha - Imagen de producto */}
-              {sampleProducts[2] && sampleProducts[2].images && sampleProducts[2].images[0] && (
-                <div className="relative">
-                  <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
-                    <img 
-                      src={sampleProducts[2].images[0]} 
-                      alt="Javier De Mendoza"
-                      className="w-full h-full object-cover opacity-70"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
-                    <div className="absolute bottom-6 left-6 right-6">
-                      <p className="text-xs uppercase tracking-[0.2em] text-white/80">+10 años</p>
-                      <p className="text-sm text-white/60">de experiencia</p>
-                    </div>
+              {/* Columna derecha - Imagen: JAVIER */}
+              <div className="relative">
+                <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
+                  <img 
+                    src={aboutImages.javier}
+                    alt="Javier De Mendoza"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                      e.target.parentElement.innerHTML = '<p class="text-white/30 text-sm text-center px-4">Pon tu foto en:<br/>public/images/about/javier.jpg</p>';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none"></div>
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/80">+10 años</p>
+                    <p className="text-sm text-white/60">de experiencia</p>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
