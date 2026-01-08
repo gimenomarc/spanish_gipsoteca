@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useProduct } from "../hooks/useProducts";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useProduct, useRelatedProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
@@ -48,6 +48,7 @@ export default function ProductDetail() {
   const { categoryId, productCode } = useParams();
   const navigate = useNavigate();
   const { product, loading, error } = useProduct(categoryId, productCode);
+  const { relatedProducts, loading: loadingRelated } = useRelatedProducts(categoryId, productCode, 4);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -469,6 +470,53 @@ export default function ProductDetail() {
       )}
       </div>
       
+      {/* Sección de Productos Relacionados */}
+      {relatedProducts.length > 0 && (
+        <section className="border-t border-white/10 bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+            <div className="mb-8 sm:mb-10 flex items-center justify-between">
+              <h3 className="font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl sm:tracking-[0.2em] md:text-2xl">
+                También te puede interesar
+              </h3>
+              <Link 
+                to="/shop" 
+                className="text-xs uppercase tracking-[0.15em] text-white/50 transition-colors hover:text-white sm:text-sm"
+              >
+                Ver todo →
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 lg:gap-8">
+              {relatedProducts.map((relatedProduct, index) => (
+                <Link
+                  key={relatedProduct.code}
+                  to={`/shop/${relatedProduct.categoryId}/${relatedProduct.code}`}
+                  className="group block"
+                >
+                  <div className="relative aspect-[3/4] overflow-hidden bg-black/50 mb-3 sm:mb-4">
+                    <OptimizedImage
+                      src={relatedProduct.images[0] || ''}
+                      alt={relatedProduct.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      priority={index < 2}
+                      aspectRatio="3/4"
+                      size="card"
+                    />
+                    <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
+                  </div>
+                  <h4 className="text-xs uppercase tracking-[0.1em] text-white/80 transition-colors group-hover:text-white sm:text-sm sm:tracking-[0.15em]">
+                    {relatedProduct.name}
+                  </h4>
+                  <p className="mt-1 text-xs text-white/50 sm:text-sm">
+                    {relatedProduct.price}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Notificación de producto añadido */}
       {showAddedNotification && (
         <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transform animate-in fade-in slide-in-from-bottom-4">

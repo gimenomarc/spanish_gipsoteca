@@ -127,3 +127,87 @@ export function useProduct(categoryId, productCode) {
 
   return { product, loading, error };
 }
+
+// Hook para obtener productos relacionados (misma categoría, excluyendo el actual)
+export function useRelatedProducts(categoryId, currentProductCode, limit = 4) {
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRelatedProducts() {
+      if (!categoryId || !currentProductCode) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        
+        // Primero intentamos obtener productos de la misma categoría
+        let { data, error } = await supabase
+          .from('products')
+          .select(`
+            *,
+            categories (
+              id,
+              name,
+              name_en
+            )
+          `)
+          .eq('category_id', categoryId)
+          .neq('code', currentProductCode)
+          .limit(limit);
+
+        if (error) throw error;
+
+        // Si no hay suficientes productos en la misma categoría, obtener de otras
+        if (data.length < limit) {
+          const remaining = limit - data.length;
+          const existingCodes = [currentProductCode, ...data.map(p => p.code)];
+          
+          const { data: moreProducts, error: moreError } = await supabase
+            .from('products')
+            .select(`
+              *,
+              categories (
+                id,
+                name,
+                name_en
+              )
+            `)
+            .not('code', 'in', `(${existingCodes.join(',')})`)
+            .limit(remaining);
+
+          if (!moreError && moreProducts) {
+            data = [...data, ...moreProducts];
+          }
+        }
+
+        // Transformar datos
+        const transformedProducts = data.map(product => ({
+          code: product.code,
+          name: product.name,
+          folder: product.folder_name || '',
+          price: product.price || '',
+          artist: product.artist || 'Unknown artist',
+          dimensions: product.dimensions || '',
+          description: product.description || '',
+          images: optimizeImageUrls(product.images || [], imagePresets.card),
+          categoryId: product.category_id,
+          categoryName: product.categories?.name || '',
+        }));
+
+        setRelatedProducts(transformedProducts);
+      } catch (err) {
+        console.error('Error cargando productos relacionados:', err);
+        setRelatedProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRelatedProducts();
+  }, [categoryId, currentProductCode, limit]);
+
+  return { relatedProducts, loading };
+}
