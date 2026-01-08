@@ -17,6 +17,7 @@ export default function Shop() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const [artistFilter, setArtistFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(categoryId || null);
   const { products, loading: productsLoading } = useProducts(selectedCategory || null);
   const { categories, loading: categoriesLoading } = useCategories();
@@ -52,12 +53,20 @@ export default function Shop() {
     categoryName = "Todos los Productos";
   }
 
-  // Filtrar por búsqueda
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.artist && product.artist.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  // Obtener lista única de artistas
+  const artists = [...new Set(products.map(p => p.artist).filter(Boolean))].sort();
+
+  // Filtrar por búsqueda y artista
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = 
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.code.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesArtist = !artistFilter || 
+      (product.artist && product.artist.toLowerCase().includes(artistFilter.toLowerCase()));
+    
+    return matchesSearch && matchesArtist;
+  });
 
   if (productsLoading) {
     return (
@@ -112,7 +121,7 @@ export default function Shop() {
             </div>
           )}
 
-          <div className="mb-8 flex flex-col gap-4 sm:mb-12 md:flex-row md:items-center md:justify-between">
+          <div className="mb-8 flex flex-col gap-6 sm:mb-12 md:flex-row md:items-start md:justify-between">
             <div className="flex-1 min-w-0">
               <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                 {categoryName}
@@ -121,17 +130,45 @@ export default function Shop() {
                 {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
               </p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="relative flex-1 sm:flex-none sm:w-64">
+            
+            {/* Búsqueda y filtros */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+              {/* Búsqueda general */}
+              <div className="relative w-full sm:w-64">
                 <input
                   type="text"
-                  placeholder="Buscar..."
+                  placeholder="Buscar por nombre o código..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-sm border border-white/20 bg-black/50 px-3 py-2 pr-9 text-sm text-white placeholder-white/50 focus:border-accent focus:outline-none sm:px-4 sm:pr-10 sm:text-base"
+                  className="w-full rounded-sm border border-white/20 bg-black/50 px-10 py-2.5 text-sm text-white placeholder-white/50 focus:border-white focus:outline-none sm:px-12 sm:py-2.5 sm:text-sm"
                 />
-                <SearchIcon className="absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50 sm:right-3 sm:h-5 sm:w-5" />
+                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+                  <SearchIcon className="h-4 w-4 text-white/50 sm:h-4 sm:w-4" />
+                </div>
               </div>
+              
+              {/* Filtro por artista */}
+              {artists.length > 0 && (
+                <div className="relative w-full sm:w-56">
+                  <select
+                    value={artistFilter}
+                    onChange={(e) => setArtistFilter(e.target.value)}
+                    className="w-full appearance-none rounded-sm border border-white/20 bg-black/50 px-4 py-2.5 pr-10 text-sm text-white focus:border-white focus:outline-none sm:px-4 sm:py-2.5 sm:pr-10 sm:text-sm"
+                  >
+                    <option value="">Todos los artistas</option>
+                    {artists.map((artist) => (
+                      <option key={artist} value={artist} className="bg-black">
+                        {artist}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                    <svg className="h-4 w-4 text-white/50 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
