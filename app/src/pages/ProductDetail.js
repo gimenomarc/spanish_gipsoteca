@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useProduct } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
+import OptimizedImage from "../components/OptimizedImage";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,6 +61,53 @@ export default function ProductDetail() {
     }
   }, [product, loading, navigate]);
 
+  // Obtener imágenes del producto desde Supabase (antes de los returns)
+  const productImages = product ? getProductImages(product) : [];
+  const mainImage = productImages[selectedImage] || productImages[0] || '';
+
+  // Preload agresivo de la imagen principal y siguientes imágenes cuando cambia
+  useEffect(() => {
+    if (!productImages || productImages.length === 0) return;
+
+    const preloadLinks = [];
+    
+    // Preload de la imagen principal con alta prioridad
+    if (mainImage) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = mainImage;
+      link.fetchPriority = 'high';
+      document.head.appendChild(link);
+      preloadLinks.push(link);
+
+      // También preloadar usando Image() para mejor compatibilidad
+      const img = new Image();
+      img.src = mainImage;
+      img.fetchPriority = 'high';
+    }
+
+    // Preload de las siguientes 2-3 imágenes con prioridad baja (para navegación rápida)
+    const nextImages = productImages.slice(selectedImage + 1, selectedImage + 4);
+    nextImages.forEach((imageUrl) => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = imageUrl;
+      link.fetchPriority = 'low';
+      document.head.appendChild(link);
+      preloadLinks.push(link);
+    });
+
+    return () => {
+      preloadLinks.forEach(link => {
+        if (document.head.contains(link)) {
+          document.head.removeChild(link);
+        }
+      });
+    };
+  }, [mainImage, productImages, selectedImage]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white pt-20 flex items-center justify-center">
@@ -72,9 +120,6 @@ export default function ProductDetail() {
     return null;
   }
 
-  // Obtener imágenes del producto desde Supabase
-  const productImages = getProductImages(product);
-  const mainImage = productImages[selectedImage] || productImages[0] || '';
   // Thumbnails: todas las imágenes excepto la seleccionada, con su índice original
   const thumbnails = productImages
     .map((img, idx) => ({ img, originalIdx: idx }))
@@ -122,15 +167,13 @@ export default function ProductDetail() {
                     className="aspect-[3/4] overflow-hidden bg-black cursor-pointer group"
                     onClick={() => setSelectedImage(originalIdx)}
                   >
-                    <img
+                    <OptimizedImage
                       src={img}
                       alt={`${product.name} ${originalIdx + 1}`}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
+                      className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                      priority={false}
+                      aspectRatio="3/4"
+                      size="galleryThumb"
                     />
                   </div>
                 ))}
@@ -138,16 +181,14 @@ export default function ProductDetail() {
 
               {/* Imagen principal centro */}
               <div className="lg:col-span-1 order-1 lg:order-2">
-                <div className="aspect-[3/4] overflow-hidden bg-black">
-                  <img
+                <div className="aspect-[3/4]">
+                  <OptimizedImage
                     src={mainImage}
                     alt={product.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
+                    className="h-full w-full"
+                    priority={true}
+                    aspectRatio="3/4"
+                    size="detail"
                   />
                 </div>
                 {/* Thumbnails móvil - Debajo de la imagen principal en móvil */}
@@ -159,15 +200,13 @@ export default function ProductDetail() {
                         className="flex-shrink-0 aspect-[3/4] w-20 cursor-pointer overflow-hidden bg-black"
                         onClick={() => setSelectedImage(originalIdx)}
                       >
-                        <img
+                        <OptimizedImage
                           src={img}
                           alt={`${product.name} ${originalIdx + 1}`}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          decoding="async"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                          }}
+                          className="h-full w-full"
+                          priority={false}
+                          aspectRatio="3/4"
+                          size="galleryThumb"
                         />
                       </div>
                     ))}
@@ -287,16 +326,14 @@ export default function ProductDetail() {
 
               {/* Imagen principal centro */}
               <div className="lg:col-span-1">
-                <div className="aspect-[3/4] overflow-hidden bg-black">
-                  <img
+                <div className="aspect-[3/4]">
+                  <OptimizedImage
                     src={mainImage}
                     alt={product.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
+                    className="h-full w-full"
+                    priority={true}
+                    aspectRatio="3/4"
+                    size="detail"
                   />
                 </div>
               </div>
@@ -309,17 +346,14 @@ export default function ProductDetail() {
                     className="relative aspect-[3/4] cursor-pointer overflow-hidden bg-black group"
                     onClick={() => setSelectedImage(originalIdx)}
                   >
-                    <img
+                    <OptimizedImage
                       src={img}
                       alt={`${product.name} ${originalIdx + 1}`}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
+                      className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                      priority={false}
+                      aspectRatio="3/4"
                     />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
                       <SearchIcon className="text-white" />
                     </div>
                   </div>
@@ -394,15 +428,13 @@ export default function ProductDetail() {
               {/* Galería derecha */}
               <div className="relative">
                 <div className="relative aspect-[3/4] overflow-hidden bg-black">
-                  <img
+                  <OptimizedImage
                     src={mainImage}
                     alt={product.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
+                    className="h-full w-full"
+                    priority={true}
+                    aspectRatio="3/4"
+                    size="detail"
                   />
                   {/* Flechas de navegación */}
                   <div className="absolute bottom-4 left-4 right-4 flex justify-between">
@@ -428,14 +460,13 @@ export default function ProductDetail() {
                       className="aspect-[3/4] w-24 cursor-pointer overflow-hidden bg-black"
                       onClick={() => setSelectedImage(originalIdx)}
                     >
-                      <img
+                      <OptimizedImage
                         src={img}
                         alt={`${product.name} ${originalIdx + 1}`}
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-8 w-8 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div></div>';
-                        }}
+                        className="h-full w-full"
+                        priority={false}
+                        aspectRatio="3/4"
+                        size="galleryThumb"
                       />
                     </div>
                   ))}

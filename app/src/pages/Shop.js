@@ -4,6 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
+import { imagePresets, srcSetPresets } from "../utils/imageOptimizer";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -67,6 +68,43 @@ export default function Shop() {
     
     return matchesSearch && matchesArtist;
   });
+
+  // Preload agresivo de las primeras 8 imágenes críticas (above the fold)
+  useEffect(() => {
+    if (filteredProducts.length === 0) return;
+
+    const criticalProducts = filteredProducts.slice(0, 8);
+    const preloadLinks = [];
+
+    criticalProducts.forEach((product) => {
+      if (product.images && product.images.length > 0) {
+        const mainImage = product.images[0];
+        const optimizedUrl = imagePresets.card(mainImage);
+        
+        // Preload con link
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = optimizedUrl;
+        link.fetchPriority = 'high';
+        document.head.appendChild(link);
+        preloadLinks.push(link);
+
+        // Preload con Image() para mejor compatibilidad
+        const img = new Image();
+        img.src = optimizedUrl;
+        img.fetchPriority = 'high';
+      }
+    });
+
+    return () => {
+      preloadLinks.forEach(link => {
+        if (document.head.contains(link)) {
+          document.head.removeChild(link);
+        }
+      });
+    };
+  }, [filteredProducts]);
 
   if (productsLoading) {
     return (
@@ -178,11 +216,12 @@ export default function Shop() {
             </div>
           ) : (
             <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredProducts.map((product) => (
+              {filteredProducts.map((product, index) => (
                 <ProductCard
                   key={`${product.categoryId || categoryId || "all"}-${product.code}`}
                   product={product}
                   categoryId={product.categoryId || categoryId || ""}
+                  index={index}
                 />
               ))}
             </div>

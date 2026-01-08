@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { optimizeImageUrls, imagePresets } from '../utils/imageOptimizer';
 
 export function useProducts(categoryId = null) {
   const [products, setProducts] = useState([]);
@@ -41,7 +42,8 @@ export function useProducts(categoryId = null) {
           artist: product.artist || 'Unknown artist',
           dimensions: product.dimensions || '',
           description: product.description || '',
-          images: product.images || [], // Array de URLs de Supabase Storage
+          // Optimizar URLs de imágenes para tarjetas de producto (600x800, webp, quality 75)
+          images: optimizeImageUrls(product.images || [], imagePresets.card),
           categoryId: product.category_id,
           categoryName: product.categories?.name || '',
         }));
@@ -101,7 +103,8 @@ export function useProduct(categoryId, productCode) {
             artist: data.artist || 'Unknown artist',
             dimensions: data.dimensions || '',
             description: data.description || '',
-            images: data.images || [],
+            // Optimizar URLs de imágenes para página de detalle (1200x1600, webp, quality 85)
+            images: optimizeImageUrls(data.images || [], imagePresets.detail),
             categoryId: data.category_id,
             categoryName: data.categories?.name || '',
           };

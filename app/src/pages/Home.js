@@ -18,13 +18,13 @@ export default function Home() {
   const moreProducts = allProducts.slice(6, 12);
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+    <div className="flex min-h-screen flex-col bg-black text-white">
       <div className="flex-1">
-      {/* Hero Section */}
+      {/* Hero Section - Ocupa toda la pantalla */}
       <section
-        className="relative min-h-[70vh] flex items-center justify-center bg-cover bg-center bg-no-repeat sm:bg-fixed"
+        className="relative h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat bg-fixed"
         style={{
-          backgroundImage: images.hero ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(${images.hero})` : "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.95))",
+          backgroundImage: images.hero ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url(${images.hero})` : "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.95))",
           backgroundColor: "#000000",
         }}
       >

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import OptimizedImage from './OptimizedImage';
 
 const CloseIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,13 +96,15 @@ export default function CartSidebar({ isOpen, onClose }) {
                   >
                     {/* Imagen del producto */}
                     <div className="flex-shrink-0">
-                      <div className="aspect-[3/4] w-20 overflow-hidden bg-black">
+                      <div className="aspect-[3/4] w-20">
                         {item.images && item.images.length > 0 ? (
-                          <img
+                          <OptimizedImage
                             src={item.images[0]}
                             alt={item.name}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
+                            className="h-full w-full"
+                            priority={false}
+                            aspectRatio="3/4"
+                            size="thumbnail"
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-black/50">

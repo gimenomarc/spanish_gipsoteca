@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Footer from '../components/Footer';
 import emailjs from '@emailjs/browser';
+import OptimizedImage from '../components/OptimizedImage';
 
 const ArrowLeftIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -252,13 +253,15 @@ export default function Checkout() {
               {cart.map((item) => (
                 <div key={`${item.categoryId}-${item.code}`} className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="aspect-[3/4] w-16 overflow-hidden bg-black">
+                    <div className="aspect-[3/4] w-16">
                       {item.images && item.images.length > 0 ? (
-                        <img
+                        <OptimizedImage
                           src={item.images[0]}
                           alt={item.name}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
+                          className="h-full w-full"
+                          priority={false}
+                          aspectRatio="3/4"
+                          size="thumbnail"
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-black/50">
@@ -428,10 +431,28 @@ export default function Checkout() {
                 />
               </div>
 
-              {/* Mensajes de estado */}
+              {/* Mensaje de éxito */}
               {submitStatus === 'success' && (
-                <div className="rounded-sm border border-white/20 bg-white/10 px-4 py-3.5 text-sm text-white">
-                  ✓ Solicitud enviada correctamente. Javier se pondrá en contacto contigo pronto. Redirigiendo...
+                <div className="rounded-sm border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-8 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
+                      <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="mb-3 font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl">
+                    ¡Gracias por tu Pedido!
+                  </h3>
+                  <p className="mb-2 text-sm leading-relaxed text-white/90 sm:text-base">
+                    Hemos recibido tu solicitud correctamente.
+                  </p>
+                  <p className="mb-4 text-sm leading-relaxed text-white/80 sm:text-base">
+                    Nos pondremos en contacto contigo en un plazo de <strong className="text-white">24-48 horas</strong> para coordinar el pago y la entrega de tu pedido.
+                  </p>
+                  <p className="text-xs text-white/60 sm:text-sm">
+                    Te redirigiremos a la tienda en unos segundos...
+                  </p>
                 </div>
               )}
 

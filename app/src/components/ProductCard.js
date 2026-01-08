@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import OptimizedImage from "./OptimizedImage";
 
-export default function ProductCard({ product, categoryId }) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+export default function ProductCard({ product, categoryId, index = 0 }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [hasError, setHasError] = useState(false);
 
   // Obtener la imagen actual
   const currentImage = product.images && product.images.length > 0 
@@ -16,19 +16,15 @@ export default function ProductCard({ product, categoryId }) {
     return null;
   }
 
-  const handleImageLoad = () => {
-    setIsLoading(false);
-    setHasError(false);
-  };
+  // Las primeras 8 imágenes se cargan con prioridad (above the fold)
+  const isPriority = index < 8;
 
   const handleImageError = () => {
     // Intentar con la siguiente imagen si hay más disponibles
     if (currentImageIndex < product.images.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
-      setIsLoading(true);
     } else {
       // Si no hay más imágenes, marcar como error
-      setIsLoading(false);
       setHasError(true);
     }
   };
@@ -45,27 +41,13 @@ export default function ProductCard({ product, categoryId }) {
     >
       <article className="group">
         <div className="mb-4 aspect-[3/4] overflow-hidden bg-black relative">
-          {/* Placeholder mientras carga */}
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50 animate-pulse">
-              <div className="text-center">
-                <svg className="mx-auto h-8 w-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-          )}
-          {/* Imagen */}
-          <img
+          <OptimizedImage
             src={currentImage}
             alt={product.name}
-            className={`h-full w-full object-cover transition-all duration-300 group-hover:scale-105 ${
-              isLoading ? 'opacity-0' : 'opacity-100'
-            }`}
-            onLoad={handleImageLoad}
+            className="transition-transform duration-300 group-hover:scale-105"
+            priority={isPriority}
+            aspectRatio="3/4"
             onError={handleImageError}
-            loading="lazy"
-            decoding="async"
           />
         </div>
         <div className="text-center">
