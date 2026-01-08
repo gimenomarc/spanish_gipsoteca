@@ -163,6 +163,9 @@ export default function Contact() {
                   <p className="text-lg sm:text-xl text-white/80">
                     Barcelona
                   </p>
+                  <p className="mt-2 text-xs text-white/30">
+                    Visitas con cita previa
+                  </p>
                 </div>
 
                 {/* Instagram - Sección simplificada */}
