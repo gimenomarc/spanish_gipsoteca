@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MenuPanel from "./MenuPanel";
+import SearchModal from "./SearchModal";
+import CartSidebar from "./CartSidebar";
+import { useSearch } from "../context/SearchContext";
+import { useCart } from "../context/CartContext";
 
 const MenuIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,11 +46,26 @@ const InstagramIcon = () => (
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { openSearch } = useSearch();
+  const { getTotalItems } = useCart();
+
+  const INSTAGRAM_URL = "https://www.instagram.com/thespanishgipsoteca/";
+
+  // Debug: ver cuando cambia cartOpen
+  useEffect(() => {
+    console.log('Header - cartOpen cambió a:', cartOpen);
+  }, [cartOpen]);
 
   return (
     <>
       <MenuPanel open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
+      <SearchModal />
+      <CartSidebar isOpen={cartOpen} onClose={() => {
+        console.log('Cerrando carrito');
+        setCartOpen(false);
+      }} />
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
         <button
           onClick={() => setMenuOpen(true)}
           className="text-white transition-colors hover:text-accent flex-shrink-0"
@@ -62,14 +81,41 @@ export default function Header() {
           <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="User">
             <UserIcon />
           </button>
-          <button className="text-white transition-colors hover:text-accent" aria-label="Instagram">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white transition-colors hover:text-accent"
+            aria-label="Instagram"
+          >
             <InstagramIcon />
-          </button>
-          <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="Search">
+          </a>
+          <button
+            onClick={openSearch}
+            className="text-white transition-colors hover:text-accent hidden sm:block relative"
+            aria-label="Search"
+          >
             <SearchIcon />
           </button>
-          <button className="text-white transition-colors hover:text-accent" aria-label="Cart">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('CLICK EN CARRITO - Abriendo carrito, total items:', getTotalItems());
+              console.log('CLICK EN CARRITO - cartOpen antes:', cartOpen);
+              setCartOpen(true);
+              console.log('CLICK EN CARRITO - cartOpen después de setCartOpen(true)');
+            }}
+            className="text-white transition-colors hover:text-accent relative cursor-pointer"
+            aria-label="Cart"
+          >
             <BagIcon />
+            {getTotalItems() > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black z-50">
+                {getTotalItems() > 9 ? '9+' : getTotalItems()}
+              </span>
+            )}
           </button>
         </div>
       </header>

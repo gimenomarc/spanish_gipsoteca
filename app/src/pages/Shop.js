@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
@@ -15,10 +15,19 @@ const SearchIcon = () => (
 export default function Shop() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(categoryId || null);
   const { products, loading: productsLoading } = useProducts(selectedCategory || null);
   const { categories, loading: categoriesLoading } = useCategories();
+
+  // Leer parámetro de búsqueda de la URL
+  useEffect(() => {
+    const searchParam = searchParams.get('search');
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+  }, [searchParams]);
 
   // Sincronizar selectedCategory con categoryId de la URL
   useEffect(() => {
@@ -52,21 +61,24 @@ export default function Shop() {
 
   if (productsLoading) {
     return (
-      <div className="min-h-screen bg-black text-white pt-20">
-        <section className="bg-black py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-10">
-            <div className="text-center">
-              <p className="text-white/70">Cargando productos...</p>
+      <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+        <div className="flex-1">
+          <section className="bg-black py-20">
+            <div className="mx-auto max-w-7xl px-6 md:px-10">
+              <div className="text-center">
+                <p className="text-white/70">Cargando productos...</p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
         <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white pt-16 sm:pt-20">
+    <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+      <div className="flex-1">
       <section className="bg-black py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
           {/* Filtros de categorías */}
@@ -140,7 +152,7 @@ export default function Shop() {
           )}
         </div>
       </section>
-
+      </div>
       <Footer />
     </div>
   );

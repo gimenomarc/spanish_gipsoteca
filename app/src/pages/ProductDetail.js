@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProduct } from "../hooks/useProducts";
+import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 
 const SearchIcon = () => (
@@ -44,13 +45,12 @@ function getProductImages(product) {
 export default function ProductDetail() {
   const { categoryId, productCode } = useParams();
   const navigate = useNavigate();
+  const { product, loading, error } = useProduct(categoryId, productCode);
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   // Layout por defecto: option-iii (thumbnails izquierda, imagen centro, info derecha)
   const [layout, setLayout] = useState("option-iii"); // option-ii, option-iii, option-iv
-
-  // Cargar producto desde Supabase
-  const { product, loading, error } = useProduct(categoryId, productCode);
 
   useEffect(() => {
     if (!loading && !product) {
@@ -80,7 +80,7 @@ export default function ProductDetail() {
     "This piece is probably one of the most iconic sculptures of all times. Sign of beauty and perfection, this sculpture was made by an unknown artist around 130-100 a.e.c. in Greece. After centuries of disappearance, it was found by a french archeologist, who later sold the sculpture to the french monarchy under the power of Luis XIV. This sculpture has been one of the most used casts in classic academies and it's still an essential figure for nowadays art academies.";
 
   return (
-    <div className="min-h-screen bg-black text-white pt-16 sm:pt-20">
+    <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
       {/* Header simplificado para la página de producto */}
       <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
         <button
@@ -103,6 +103,7 @@ export default function ProductDetail() {
         </div>
       </div>
 
+      <div className="flex-1">
       {/* Layout Option III - Thumbnails izquierda, imagen centro, info derecha */}
       {layout === "option-iii" && (
         <section className="bg-black py-12 sm:py-16 md:py-20">
@@ -120,9 +121,10 @@ export default function ProductDetail() {
                       src={thumb}
                       alt={`${product.name} ${idx + 1}`}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.target.style.display = "none";
-                        e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="mt-2 text-xs text-white/50">Imagen no disponible</p></div></div>';
                       }}
                     />
                   </div>
@@ -136,9 +138,10 @@ export default function ProductDetail() {
                     src={mainImage}
                     alt={product.name}
                     className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.target.style.display = "none";
-                      e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="mt-2 text-xs text-white/50">Imagen no disponible</p></div></div>';
                     }}
                   />
                 </div>
@@ -155,6 +158,8 @@ export default function ProductDetail() {
                           src={thumb}
                           alt={`${product.name} ${idx + 1}`}
                           className="h-full w-full object-cover"
+                          loading="lazy"
+                          decoding="async"
                           onError={(e) => {
                             e.target.style.display = "none";
                           }}
@@ -197,7 +202,22 @@ export default function ProductDetail() {
                       +
                     </button>
                   </div>
-                  <button className="w-full rounded-sm bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.1em] text-black transition hover:bg-white/90 sm:w-auto sm:flex-1 sm:px-6 sm:py-2 sm:text-sm sm:tracking-[0.15em]">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (product) {
+                        console.log('Añadiendo al carrito:', product, 'Cantidad:', quantity);
+                        console.log('Product categoryId:', product.categoryId);
+                        console.log('Product code:', product.code);
+                        addToCart(product, quantity);
+                        console.log('Producto añadido al carrito');
+                      } else {
+                        console.error('Producto no disponible');
+                      }
+                    }}
+                    className="w-full rounded-sm bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.1em] text-black transition hover:bg-white/90 sm:w-auto sm:flex-1 sm:px-6 sm:py-2 sm:text-sm sm:tracking-[0.15em]"
+                  >
                     Add to cart
                   </button>
                 </div>
@@ -228,7 +248,17 @@ export default function ProductDetail() {
                   <p>Code: {product.code}</p>
                   <p className="text-xl font-medium text-white">{product.price}</p>
                 </div>
-                <button className="rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (product) {
+                      console.log('Añadiendo al carrito (layout option-ii):', product, 'Cantidad:', quantity);
+                      addToCart(product, quantity);
+                    }
+                  }}
+                  className="rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90"
+                >
                   Add to cart
                 </button>
               </div>
@@ -240,9 +270,10 @@ export default function ProductDetail() {
                     src={mainImage}
                     alt={product.name}
                     className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.target.style.display = "none";
-                      e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="mt-2 text-xs text-white/50">Imagen no disponible</p></div></div>';
                     }}
                   />
                 </div>
@@ -260,9 +291,10 @@ export default function ProductDetail() {
                       src={thumb}
                       alt={`${product.name} ${idx + 1}`}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.target.style.display = "none";
-                        e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="mt-2 text-xs text-white/50">Imagen no disponible</p></div></div>';
                       }}
                     />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
@@ -315,7 +347,17 @@ export default function ProductDetail() {
                       +
                     </button>
                   </div>
-                  <button className="flex-1 rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (product) {
+                        console.log('Añadiendo al carrito (layout option-iv):', product, 'Cantidad:', quantity);
+                        addToCart(product, quantity);
+                      }
+                    }}
+                    className="flex-1 rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90"
+                  >
                     Add to cart
                   </button>
                 </div>
@@ -328,9 +370,10 @@ export default function ProductDetail() {
                     src={mainImage}
                     alt={product.name}
                     className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.target.style.display = "none";
-                      e.target.parentElement.innerHTML = '<div class="flex h-full w-full items-center justify-center bg-black/80"><div class="text-center"><svg class="mx-auto h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><p class="mt-2 text-xs text-white/50">Imagen no disponible</p></div></div>';
                     }}
                   />
                   {/* Flechas de navegación */}
@@ -398,7 +441,7 @@ export default function ProductDetail() {
           </button>
         </div>
       )}
-
+      </div>
       <Footer />
     </div>
   );

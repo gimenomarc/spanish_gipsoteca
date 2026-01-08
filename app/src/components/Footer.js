@@ -8,6 +8,8 @@ const InstagramIcon = () => (
   </svg>
 );
 
+const INSTAGRAM_URL = "https://www.instagram.com/thespanishgipsoteca/";
+
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
@@ -33,15 +35,15 @@ export default function Footer() {
             <span className="sm:hidden">TSG</span>
           </Link>
           <div className="flex items-center gap-3 sm:gap-4">
-            <button className="text-white/70 transition hover:text-white">
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/70 transition hover:text-white"
+              aria-label="Instagram"
+            >
               <InstagramIcon />
-            </button>
-            <button className="text-white/70 transition hover:text-white hidden sm:block">
-              <SearchIcon />
-            </button>
-            <button className="text-white/70 transition hover:text-white">
-              <BagIcon />
-            </button>
+            </a>
           </div>
         </div>
         <p className="mt-4 text-center text-[10px] uppercase tracking-[0.15em] text-white/50 sm:text-xs sm:tracking-[0.2em]">
