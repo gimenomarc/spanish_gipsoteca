@@ -1,31 +1,6 @@
 import { useProducts } from "../hooks/useProducts";
 import Footer from "../components/Footer";
 
-// Iconos SVG para las secciones
-const SculptureIcon = () => (
-  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-  </svg>
-);
-
-const ArchitectureIcon = () => (
-  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-  </svg>
-);
-
-const ToolsIcon = () => (
-  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655-5.653a2.548 2.548 0 010-3.586L11.42 15.17z" />
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-  </svg>
-);
-
 export default function About() {
   // Obtener algunos productos para mostrar imágenes
   const { products } = useProducts();
@@ -55,10 +30,7 @@ export default function About() {
             <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
               {/* Contenido texto */}
               <div>
-                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
-                  <div className="flex-shrink-0 text-accent">
-                    <SculptureIcon />
-                  </div>
+                <div className="mb-6 sm:mb-8">
                   <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                     Taller de vaciados
                   </h2>
@@ -107,10 +79,7 @@ export default function About() {
               )}
               {/* Contenido texto */}
               <div className="order-1 md:order-2">
-                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
-                  <div className="flex-shrink-0 text-accent">
-                    <ArchitectureIcon />
-                  </div>
+                <div className="mb-6 sm:mb-8">
                   <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                     Transformación de espacios
                   </h2>
@@ -135,10 +104,7 @@ export default function About() {
         <section className="bg-black py-8 sm:py-12 md:py-16">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-10">
             <div className="mb-8 sm:mb-12">
-              <div className="flex items-start gap-6 sm:gap-8 mb-6 sm:mb-8">
-                <div className="flex-shrink-0 text-accent">
-                  <ToolsIcon />
-                </div>
+              <div className="mb-6 sm:mb-8">
                 <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                   Servicios especializados en proyectos escultóricos
                 </h2>
@@ -187,10 +153,7 @@ export default function About() {
             <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
               {/* Columna izquierda - Texto e info */}
               <div>
-                <div className="flex items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
-                  <div className="flex-shrink-0 text-accent">
-                    <UserIcon />
-                  </div>
+                <div className="mb-6 sm:mb-8">
                   <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                     About Me
                   </h2>

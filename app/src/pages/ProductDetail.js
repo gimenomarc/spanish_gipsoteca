@@ -4,6 +4,7 @@ import { useProduct } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
+import ImageZoom from "../components/ImageZoom";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,10 +93,13 @@ export default function ProductDetail() {
     return null;
   }
 
-  // Thumbnails: todas las imágenes excepto la seleccionada, con su índice original
-  const thumbnails = productImages
-    .map((img, idx) => ({ img, originalIdx: idx }))
-    .filter(({ originalIdx }) => originalIdx !== selectedImage);
+  // Todas las imágenes para mostrar como thumbnails
+  const allImages = productImages;
+  
+  // Función para intercambiar imagen al hacer clic en thumbnail
+  const handleThumbnailClick = (index) => {
+    setSelectedImage(index);
+  };
 
   // Descripción extendida
   const extendedDescription = product.description || 
@@ -126,68 +130,54 @@ export default function ProductDetail() {
       </div>
 
       <div className="flex-1">
-      {/* Layout Option III - Thumbnails izquierda, imagen centro, info derecha */}
-      {layout === "option-iii" && (
-        <section className="bg-black py-12 sm:py-16 md:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
-              {/* Thumbnails izquierda - Oculto en móvil, visible en desktop */}
-              <div className="hidden lg:flex lg:col-span-1 flex-col gap-4">
-                {thumbnails.map(({ img, originalIdx }) => (
-                  <div
-                    key={originalIdx}
-                    className="aspect-[3/4] overflow-hidden bg-black cursor-pointer group"
-                    onClick={() => setSelectedImage(originalIdx)}
-                  >
-                    <OptimizedImage
-                      src={img}
-                      alt={`${product.name} ${originalIdx + 1}`}
-                      className="h-full w-full transition-transform duration-300 group-hover:scale-105"
-                      priority={false}
-                      aspectRatio="3/4"
-                      size="galleryThumb"
-                    />
-                  </div>
-                ))}
-              </div>
+      {/* Layout Principal - Imagen grande + thumbnails pequeñas al lado */}
+      <section className="bg-black py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
+            {/* Columna izquierda - Imágenes */}
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+              {/* Thumbnails pequeñas - Vertical en desktop, horizontal en móvil */}
+              {allImages.length > 1 && (
+                <div className="flex lg:flex-col gap-2 lg:gap-3 order-2 lg:order-1">
+                  {allImages.map((img, index) => (
+                    <div
+                      key={index}
+                      className={`flex-shrink-0 aspect-[3/4] w-16 h-20 lg:w-20 lg:h-28 cursor-pointer overflow-hidden bg-black border-2 transition-all ${
+                        selectedImage === index
+                          ? 'border-white scale-105'
+                          : 'border-white/20 hover:border-white/50'
+                      }`}
+                      onClick={() => handleThumbnailClick(index)}
+                    >
+                      <OptimizedImage
+                        src={img}
+                        alt={`${product.name} ${index + 1}`}
+                        className="h-full w-full object-cover"
+                        priority={false}
+                        aspectRatio="3/4"
+                        size="galleryThumb"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
-              {/* Imagen principal centro */}
-              <div className="lg:col-span-1 order-1 lg:order-2">
-                <div className="aspect-[3/4]">
-                  <OptimizedImage
+              {/* Imagen principal grande con zoom */}
+              <div className="flex-1 order-1 lg:order-2">
+                <div className="aspect-[3/4] bg-black">
+                  <ImageZoom
                     src={mainImage}
                     alt={product.name}
                     className="h-full w-full"
-                    priority={true}
-                    aspectRatio="3/4"
-                    size="detail"
+                    zoomScale={2.5}
+                    zoomSize={350}
                   />
                 </div>
-                {/* Thumbnails móvil - Debajo de la imagen principal en móvil */}
-                {thumbnails.length > 0 && (
-                  <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
-                    {thumbnails.map(({ img, originalIdx }) => (
-                      <div
-                        key={originalIdx}
-                        className="flex-shrink-0 aspect-[3/4] w-20 cursor-pointer overflow-hidden bg-black"
-                        onClick={() => setSelectedImage(originalIdx)}
-                      >
-                        <OptimizedImage
-                          src={img}
-                          alt={`${product.name} ${originalIdx + 1}`}
-                          className="h-full w-full"
-                          priority={false}
-                          aspectRatio="3/4"
-                          size="galleryThumb"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
+            </div>
 
-              {/* Info derecha */}
-              <div className="lg:col-span-1 order-2 lg:order-3">
+            {/* Columna derecha - Información del producto */}
+            <div className="lg:col-span-1">
                 <h2 className="mb-2 font-display text-xl uppercase tracking-[0.1em] text-white sm:text-2xl sm:tracking-[0.15em] md:text-3xl lg:text-4xl">
                   {product.name.toUpperCase()}
                 </h2>
@@ -252,10 +242,9 @@ export default function ProductDetail() {
             </div>
           </div>
         </section>
-      )}
 
-      {/* Layout Option II - Info izquierda, imagen centro, thumbnails derecha */}
-      {layout === "option-ii" && (
+      {/* Layouts antiguos (ocultos por defecto) */}
+      {false && layout === "option-ii" && (
         <section className="bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
             <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
@@ -312,7 +301,9 @@ export default function ProductDetail() {
 
               {/* Thumbnails derecha */}
               <div className="lg:col-span-1 flex flex-col gap-4">
-                {thumbnails.map(({ img, originalIdx }) => (
+                {allImages.filter((_, idx) => idx !== selectedImage).map((img, idx) => {
+                  const originalIdx = allImages.findIndex((_, i) => i !== selectedImage && i === idx + (idx >= selectedImage ? 1 : 0));
+                  return originalIdx >= 0 ? (
                   <div
                     key={originalIdx}
                     className="relative aspect-[3/4] cursor-pointer overflow-hidden bg-black group"
@@ -329,7 +320,8 @@ export default function ProductDetail() {
                       <SearchIcon className="text-white" />
                     </div>
                   </div>
-                ))}
+                  ) : null;
+                })}
               </div>
             </div>
           </div>
@@ -337,7 +329,7 @@ export default function ProductDetail() {
       )}
 
       {/* Layout Option IV - Info izquierda, galería derecha con navegación */}
-      {layout === "option-iv" && (
+      {false && layout === "option-iv" && (
         <section className="bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
@@ -426,7 +418,9 @@ export default function ProductDetail() {
                 </div>
                 {/* Thumbnails debajo */}
                 <div className="mt-4 flex gap-4">
-                  {thumbnails.map(({ img, originalIdx }) => (
+                  {allImages.filter((_, idx) => idx !== selectedImage).map((img, idx) => {
+                    const originalIdx = allImages.findIndex((_, i) => i !== selectedImage && i === idx + (idx >= selectedImage ? 1 : 0));
+                    return originalIdx >= 0 ? (
                     <div
                       key={originalIdx}
                       className="aspect-[3/4] w-24 cursor-pointer overflow-hidden bg-black"
@@ -441,7 +435,8 @@ export default function ProductDetail() {
                         size="galleryThumb"
                       />
                     </div>
-                  ))}
+                    ) : null;
+                  })}
                 </div>
               </div>
             </div>
