@@ -120,10 +120,11 @@ temp/
 # Imágenes locales - ahora se cargan desde Supabase Storage
 # Excluir TODO dentro de cualquier carpeta /images (se carga todo con script a Supabase)
 images/
-**/images/
-public/images/categorias/
-public/images/sculptures/
-public/images/thumbnails/
+app/public/images/categorias/
+app/public/images/sculptures/
+app/public/images/thumbnails/
+# Mantener hero - imágenes necesarias para el sitio (excepción)
+!app/public/images/hero/
 # Mantener hero si tiene imágenes necesarias para el sitio
 # public/images/hero/
 
