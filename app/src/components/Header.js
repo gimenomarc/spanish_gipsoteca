@@ -47,8 +47,22 @@ const InstagramIcon = () => (
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const [cartAnimation, setCartAnimation] = useState(false);
   const { openSearch } = useSearch();
-  const { getTotalItems } = useCart();
+  const { getTotalItems, cart } = useCart();
+
+  // Detectar cambios en el carrito para animar
+  useEffect(() => {
+    const currentCount = getTotalItems();
+    if (currentCount > cartItemCount && cartItemCount >= 0) {
+      // Animar cuando el carrito aumenta
+      setCartAnimation(true);
+      setTimeout(() => setCartAnimation(false), 600);
+    }
+    setCartItemCount(currentCount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart]);
 
   const INSTAGRAM_URL = "https://www.instagram.com/thespanishgipsoteca/";
 
@@ -65,58 +79,83 @@ export default function Header() {
         console.log('Cerrando carrito');
         setCartOpen(false);
       }} />
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="text-white transition-colors hover:text-accent flex-shrink-0"
-          aria-label="Menu"
-        >
-          <MenuIcon />
-        </button>
-        <Link to="/" className="font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm sm:tracking-[0.3em] md:text-base md:tracking-[0.35em] lg:text-lg flex-shrink min-w-0 px-2 text-center">
-          <span className="hidden sm:inline">THE SPANISH GIPSOTECA</span>
-          <span className="sm:hidden">TSG</span>
-        </Link>
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-shrink-0">
-          <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="User">
-            <UserIcon />
-          </button>
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white transition-colors hover:text-accent"
-            aria-label="Instagram"
-          >
-            <InstagramIcon />
-          </a>
-          <button
-            onClick={openSearch}
-            className="text-white transition-colors hover:text-accent hidden sm:block relative"
-            aria-label="Search"
-          >
-            <SearchIcon />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log('CLICK EN CARRITO - Abriendo carrito, total items:', getTotalItems());
-              console.log('CLICK EN CARRITO - cartOpen antes:', cartOpen);
-              setCartOpen(true);
-              console.log('CLICK EN CARRITO - cartOpen después de setCartOpen(true)');
-            }}
-            className="text-white transition-colors hover:text-accent relative cursor-pointer"
-            aria-label="Cart"
-          >
-            <BagIcon />
-            {getTotalItems() > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black z-50">
-                {getTotalItems() > 9 ? '9+' : getTotalItems()}
-              </span>
-            )}
-          </button>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+          <div className="grid grid-cols-3 items-center py-3 sm:py-4">
+            {/* Botón menú izquierda */}
+            <div className="flex justify-start">
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="text-white transition-colors hover:text-accent"
+                aria-label="Menu"
+              >
+                <MenuIcon />
+              </button>
+            </div>
+            
+            {/* Título centrado */}
+            <div className="flex justify-center">
+              <Link 
+                to="/" 
+                className="font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm sm:tracking-[0.3em] md:text-base md:tracking-[0.35em] lg:text-lg flex-shrink-0 px-5 py-2.5 text-center relative group transition-all"
+              >
+                <span className="hidden sm:inline relative z-10 block px-2">THE SPANISH GIPSOTECA</span>
+                <span className="sm:hidden relative z-10 block px-2">TSG</span>
+                {/* Borde decorativo sutil */}
+                <span className="absolute inset-0 border border-white/10 transition-all duration-300 group-hover:border-white/30 hidden sm:block"></span>
+                {/* Líneas decorativas en las esquinas */}
+                <span className="absolute left-0 top-0 h-3 w-3 border-l border-t border-white/20 transition-all duration-300 group-hover:border-white/40 hidden sm:block"></span>
+                <span className="absolute right-0 top-0 h-3 w-3 border-r border-t border-white/20 transition-all duration-300 group-hover:border-white/40 hidden sm:block"></span>
+                <span className="absolute left-0 bottom-0 h-3 w-3 border-l border-b border-white/20 transition-all duration-300 group-hover:border-white/40 hidden sm:block"></span>
+                <span className="absolute right-0 bottom-0 h-3 w-3 border-r border-b border-white/20 transition-all duration-300 group-hover:border-white/40 hidden sm:block"></span>
+              </Link>
+            </div>
+            
+            {/* Botones derecha */}
+            <div className="flex items-center justify-end gap-2 sm:gap-3 md:gap-4">
+              <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="User">
+                <UserIcon />
+              </button>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white transition-colors hover:text-accent"
+                aria-label="Instagram"
+              >
+                <InstagramIcon />
+              </a>
+              <button
+                onClick={openSearch}
+                className="text-white transition-colors hover:text-accent hidden sm:block relative"
+                aria-label="Search"
+              >
+                <SearchIcon />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('CLICK EN CARRITO - Abriendo carrito, total items:', getTotalItems());
+                  console.log('CLICK EN CARRITO - cartOpen antes:', cartOpen);
+                  setCartOpen(true);
+                  console.log('CLICK EN CARRITO - cartOpen después de setCartOpen(true)');
+                }}
+                className="text-white transition-colors hover:text-accent relative cursor-pointer"
+                aria-label="Cart"
+              >
+                <BagIcon />
+                {getTotalItems() > 0 && (
+                  <span className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-medium text-black z-50 transition-transform ${
+                    cartAnimation ? 'animate-bounce scale-125' : ''
+                  }`}>
+                    {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </header>
     </>

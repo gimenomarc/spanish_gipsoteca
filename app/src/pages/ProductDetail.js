@@ -49,6 +49,8 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [showAddedNotification, setShowAddedNotification] = useState(false);
   // Layout por defecto: option-iii (thumbnails izquierda, imagen centro, info derecha)
   const [layout, setLayout] = useState("option-iii"); // option-ii, option-iii, option-iv
 
@@ -213,15 +215,26 @@ export default function ProductDetail() {
                         console.log('Añadiendo al carrito:', product, 'Cantidad:', quantity);
                         console.log('Product categoryId:', product.categoryId);
                         console.log('Product code:', product.code);
+                        
+                        // Animación del botón
+                        setIsAddingToCart(true);
+                        setTimeout(() => setIsAddingToCart(false), 600);
+                        
+                        // Notificación
+                        setShowAddedNotification(true);
+                        setTimeout(() => setShowAddedNotification(false), 3000);
+                        
                         addToCart(product, quantity);
                         console.log('Producto añadido al carrito');
                       } else {
                         console.error('Producto no disponible');
                       }
                     }}
-                    className="w-full rounded-sm bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.1em] text-black transition hover:bg-white/90 sm:w-auto sm:flex-1 sm:px-6 sm:py-2 sm:text-sm sm:tracking-[0.15em]"
+                    className={`w-full rounded-sm bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.1em] text-black transition-all hover:bg-white/90 sm:w-auto sm:flex-1 sm:px-6 sm:py-2 sm:text-sm sm:tracking-[0.15em] ${
+                      isAddingToCart ? 'animate-pulse scale-95' : ''
+                    }`}
                   >
-                    Add to cart
+                    {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
                   </button>
                 </div>
               </div>
@@ -257,12 +270,18 @@ export default function ProductDetail() {
                     e.stopPropagation();
                     if (product) {
                       console.log('Añadiendo al carrito (layout option-ii):', product, 'Cantidad:', quantity);
+                      setIsAddingToCart(true);
+                      setTimeout(() => setIsAddingToCart(false), 600);
+                      setShowAddedNotification(true);
+                      setTimeout(() => setShowAddedNotification(false), 3000);
                       addToCart(product, quantity);
                     }
                   }}
-                  className="rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90"
+                  className={`rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90 ${
+                    isAddingToCart ? 'animate-pulse scale-95' : ''
+                  }`}
                 >
-                  Add to cart
+                  {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
                 </button>
               </div>
 
@@ -356,12 +375,18 @@ export default function ProductDetail() {
                       e.stopPropagation();
                       if (product) {
                         console.log('Añadiendo al carrito (layout option-iv):', product, 'Cantidad:', quantity);
+                        setIsAddingToCart(true);
+                        setTimeout(() => setIsAddingToCart(false), 600);
+                        setShowAddedNotification(true);
+                        setTimeout(() => setShowAddedNotification(false), 3000);
                         addToCart(product, quantity);
                       }
                     }}
-                    className="flex-1 rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90"
+                    className={`flex-1 rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90 ${
+                      isAddingToCart ? 'animate-pulse scale-95' : ''
+                    }`}
                   >
-                    Add to cart
+                    {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
                   </button>
                 </div>
               </div>
@@ -445,6 +470,25 @@ export default function ProductDetail() {
         </div>
       )}
       </div>
+      
+      {/* Notificación de producto añadido */}
+      {showAddedNotification && (
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transform animate-in fade-in slide-in-from-bottom-4">
+          <div className="rounded-sm border border-white/20 bg-black/95 px-6 py-4 shadow-xl backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-white">
+                Producto añadido al carrito
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );

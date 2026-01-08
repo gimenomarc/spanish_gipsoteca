@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
+import emailjs from '@emailjs/browser';
 
 const MailIcon = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,16 +59,47 @@ export default function Contact() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Simular envío (aquí puedes integrar con un servicio de email como EmailJS, Formspree, etc.)
-    setTimeout(() => {
+    try {
+      // Preparar datos del email
+      const emailData = {
+        to_email: 'thespanishgipsoteca@gmail.com',
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        date: new Date().toLocaleString('es-ES', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
+      };
+
+      // Enviar email usando EmailJS
+      const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+      const templateId = process.env.REACT_APP_EMAILJS_CONTACT_TEMPLATE_ID || process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+
+      if (serviceId && templateId && publicKey) {
+        await emailjs.send(serviceId, templateId, emailData, publicKey);
+        setSubmitStatus("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        
+        setTimeout(() => {
+          setSubmitStatus(null);
+        }, 5000);
+      } else {
+        // Si EmailJS no está configurado, mostrar los datos en consola
+        console.log('EmailJS no configurado. Datos del contacto:', emailData);
+        throw new Error('EmailJS no está configurado. Por favor, configura las variables de entorno.');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setSubmitStatus("error");
+    } finally {
       setIsSubmitting(false);
-      setSubmitStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
-    }, 1000);
+    }
   };
 
   return (
@@ -306,6 +338,11 @@ export default function Contact() {
                 {submitStatus === "success" && (
                   <div className="rounded-sm border border-white/20 bg-white/10 px-4 py-3.5 text-sm text-white">
                     ✓ Mensaje enviado correctamente. Te responderemos pronto.
+                  </div>
+                )}
+                {submitStatus === "error" && (
+                  <div className="rounded-sm border border-red-500/50 bg-red-500/10 px-4 py-3.5 text-sm text-red-400">
+                    ✗ Error al enviar el mensaje. Por favor, intenta de nuevo o contacta directamente a thespanishgipsoteca@gmail.com
                   </div>
                 )}
 

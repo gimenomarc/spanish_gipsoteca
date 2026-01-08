@@ -39,19 +39,98 @@ export default function Checkout() {
     setSubmitStatus(null);
 
     try {
-      // Preparar datos del email
+      // Obtener información del dispositivo y navegador
+      const userAgent = navigator.userAgent;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+      const deviceType = isMobile ? 'Móvil' : 'Escritorio';
+      const screenSize = `${window.screen.width}x${window.screen.height}`;
+      const viewportSize = `${window.innerWidth}x${window.innerHeight}`;
+      
+      // Obtener zona horaria
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
+      // Intentar obtener ubicación (si el usuario lo permite)
+      let locationInfo = 'No disponible';
+      try {
+        if (navigator.geolocation) {
+          // Solo intentamos obtener si está disponible, pero no bloqueamos el envío
+          locationInfo = 'Disponible (no obtenida para no bloquear el envío)';
+        }
+      } catch (e) {
+        locationInfo = 'No disponible';
+      }
+
+      // Formatear productos con toda la información
+      const productsList = cart.map((item, index) => {
+        // Manejar precio vacío o undefined
+        let priceStr = item.price || '';
+        if (!priceStr || priceStr.trim() === '') {
+          priceStr = 'Precio no disponible';
+        }
+        // Extraer valor numérico del precio
+        const priceValue = parseFloat(priceStr.toString().replace(/[€,\s]/g, '').replace(',', '.')) || 0;
+        const subtotal = priceValue * item.quantity;
+        return `${index + 1}. ${item.name || 'Sin nombre'}
+   - Código: ${item.code || 'N/A'}
+   - Categoría: ${item.categoryId || 'N/A'}
+   - Artista: ${item.artist || 'N/A'}
+   - Cantidad: ${item.quantity}
+   - Precio unitario: ${priceStr}
+   - Subtotal: ${subtotal > 0 ? subtotal.toFixed(2) + '€' : 'Precio no disponible'}`;
+      }).join('\n\n');
+
+      // Preparar datos del email con estructura completa
+      const now = new Date();
       const emailData = {
-        to_name: 'Javier',
+        to_email: 'thespanishgipsoteca@gmail.com',
+        to_name: 'The Spanish Gipsoteca',
         from_name: formData.name,
         from_email: formData.email,
-        phone: formData.phone,
-        address: `${formData.address}, ${formData.city}, ${formData.postalCode}, ${formData.country}`,
+        phone: formData.phone || 'No proporcionado',
+        address: formData.address || 'No proporcionado',
+        city: formData.city || 'No proporcionado',
+        postal_code: formData.postalCode || 'No proporcionado',
+        country: formData.country || 'No proporcionado',
+        full_address: `${formData.address || ''}, ${formData.city || ''}, ${formData.postalCode || ''}, ${formData.country || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'No proporcionado',
         message: formData.message || 'Sin mensaje adicional',
-        products: cart.map(item => 
-          `${item.name} (${item.code}) - Cantidad: ${item.quantity} - ${item.price}`
-        ).join('\n'),
+        // Productos detallados
+        products_list: productsList || 'No hay productos',
+        products_summary: cart.map(item => 
+          `${item.name || 'Sin nombre'} (${item.code || 'N/A'}) x${item.quantity} - ${item.price || '0.00€'}`
+        ).join('\n') || 'No hay productos',
         total: `${getTotalPrice().toFixed(2)}€`,
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+        // Fecha y hora completa
+        date: now.toLocaleString('es-ES', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit'
+        }),
+        date_full: now.toLocaleDateString('es-ES', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        time: now.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }),
+        // Información del dispositivo
+        device_type: deviceType,
+        user_agent: userAgent,
+        screen_size: screenSize,
+        viewport_size: viewportSize,
+        timezone: timezone,
+        language: navigator.language || 'No disponible',
+        platform: navigator.platform || 'No disponible',
+        // URL de origen
+        origin_url: window.location.origin,
+        referrer: document.referrer || 'Directo (sin referrer)',
       };
 
       // Enviar email usando EmailJS
@@ -59,14 +138,24 @@ export default function Checkout() {
       const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
       const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
+      // Debug: verificar variables de entorno
+      console.log('EmailJS Config:', {
+        serviceId: serviceId ? '✓ Configurado' : '✗ Faltante',
+        templateId: templateId ? '✓ Configurado' : '✗ Faltante',
+        publicKey: publicKey ? '✓ Configurado' : '✗ Faltante'
+      });
+
       if (serviceId && templateId && publicKey) {
         await emailjs.send(serviceId, templateId, emailData, publicKey);
       } else {
         // Si EmailJS no está configurado, mostrar los datos en consola
-        // En producción, esto debería estar configurado
-        console.log('EmailJS no configurado. Datos del pedido:', emailData);
-        // Simular éxito para desarrollo
-        throw new Error('EmailJS no está configurado. Por favor, configura las variables de entorno. Ver EMAILJS_SETUP.md');
+        console.error('EmailJS no configurado. Variables faltantes:', {
+          serviceId: !serviceId,
+          templateId: !templateId,
+          publicKey: !publicKey
+        });
+        console.log('Datos del pedido:', emailData);
+        throw new Error('EmailJS no está configurado. Por favor, configura las variables de entorno y reinicia el servidor. Ver EMAILJS_SETUP.md');
       }
 
       setSubmitStatus('success');
