@@ -73,7 +73,10 @@ export default function ProductDetail() {
   // Obtener imágenes del producto desde Supabase
   const productImages = getProductImages(product);
   const mainImage = productImages[selectedImage] || productImages[0] || '';
-  const thumbnails = productImages.slice(1);
+  // Thumbnails: todas las imágenes excepto la seleccionada, con su índice original
+  const thumbnails = productImages
+    .map((img, idx) => ({ img, originalIdx: idx }))
+    .filter(({ originalIdx }) => originalIdx !== selectedImage);
 
   // Descripción extendida
   const extendedDescription = product.description || 
@@ -111,15 +114,15 @@ export default function ProductDetail() {
             <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
               {/* Thumbnails izquierda - Oculto en móvil, visible en desktop */}
               <div className="hidden lg:flex lg:col-span-1 flex-col gap-4">
-                {thumbnails.map((thumb, idx) => (
+                {thumbnails.map(({ img, originalIdx }) => (
                   <div
-                    key={idx}
+                    key={originalIdx}
                     className="aspect-[3/4] overflow-hidden bg-black cursor-pointer group"
-                    onClick={() => setSelectedImage(idx + 1)}
+                    onClick={() => setSelectedImage(originalIdx)}
                   >
                     <img
-                      src={thumb}
-                      alt={`${product.name} ${idx + 1}`}
+                      src={img}
+                      alt={`${product.name} ${originalIdx + 1}`}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                       decoding="async"
@@ -148,15 +151,15 @@ export default function ProductDetail() {
                 {/* Thumbnails móvil - Debajo de la imagen principal en móvil */}
                 {thumbnails.length > 0 && (
                   <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
-                    {thumbnails.map((thumb, idx) => (
+                    {thumbnails.map(({ img, originalIdx }) => (
                       <div
-                        key={idx}
+                        key={originalIdx}
                         className="flex-shrink-0 aspect-[3/4] w-20 cursor-pointer overflow-hidden bg-black"
-                        onClick={() => setSelectedImage(idx + 1)}
+                        onClick={() => setSelectedImage(originalIdx)}
                       >
                         <img
-                          src={thumb}
-                          alt={`${product.name} ${idx + 1}`}
+                          src={img}
+                          alt={`${product.name} ${originalIdx + 1}`}
                           className="h-full w-full object-cover"
                           loading="lazy"
                           decoding="async"
@@ -281,15 +284,15 @@ export default function ProductDetail() {
 
               {/* Thumbnails derecha */}
               <div className="lg:col-span-1 flex flex-col gap-4">
-                {thumbnails.map((thumb, idx) => (
+                {thumbnails.map(({ img, originalIdx }) => (
                   <div
-                    key={idx}
+                    key={originalIdx}
                     className="relative aspect-[3/4] cursor-pointer overflow-hidden bg-black group"
-                    onClick={() => setSelectedImage(idx + 1)}
+                    onClick={() => setSelectedImage(originalIdx)}
                   >
                     <img
-                      src={thumb}
-                      alt={`${product.name} ${idx + 1}`}
+                      src={img}
+                      alt={`${product.name} ${originalIdx + 1}`}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       loading="lazy"
                       decoding="async"
@@ -394,15 +397,15 @@ export default function ProductDetail() {
                 </div>
                 {/* Thumbnails debajo */}
                 <div className="mt-4 flex gap-4">
-                  {thumbnails.map((thumb, idx) => (
+                  {thumbnails.map(({ img, originalIdx }) => (
                     <div
-                      key={idx}
+                      key={originalIdx}
                       className="aspect-[3/4] w-24 cursor-pointer overflow-hidden bg-black"
-                      onClick={() => setSelectedImage(idx + 1)}
+                      onClick={() => setSelectedImage(originalIdx)}
                     >
                       <img
-                        src={thumb}
-                        alt={`${product.name} ${idx + 1}`}
+                        src={img}
+                        alt={`${product.name} ${originalIdx + 1}`}
                         className="h-full w-full object-cover"
                         onError={(e) => {
                           e.target.style.display = "none";
