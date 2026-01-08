@@ -79,11 +79,11 @@ export default function ProductCard({ product, categoryId }) {
           />
         </div>
         <div className="text-center">
-          <p className="mb-1 font-body italic text-white">
+          <p className="mb-1 text-sm font-body italic text-white sm:text-base">
             {product.name}, {product.artist}
           </p>
-          <p className="text-sm text-white/70">Code {product.code}</p>
-          <p className="mt-1 text-lg font-medium text-white">{product.price}</p>
+          <p className="text-xs text-white/70 sm:text-sm">Code {product.code}</p>
+          <p className="mt-1 text-base font-medium text-white sm:text-lg">{product.price}</p>
         </div>
       </article>
     </Link>

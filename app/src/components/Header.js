@@ -46,25 +46,26 @@ export default function Header() {
   return (
     <>
       <MenuPanel open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-6 py-4 backdrop-blur-md md:px-10">
+      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
         <button
           onClick={() => setMenuOpen(true)}
-          className="text-white transition-colors hover:text-accent"
+          className="text-white transition-colors hover:text-accent flex-shrink-0"
           aria-label="Menu"
         >
           <MenuIcon />
         </button>
-        <Link to="/" className="font-display text-base uppercase tracking-[0.35em] text-white md:text-lg">
-          THE SPANISH GIPSOTECA
+        <Link to="/" className="font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm sm:tracking-[0.3em] md:text-base md:tracking-[0.35em] lg:text-lg flex-shrink min-w-0 px-2 text-center">
+          <span className="hidden sm:inline">THE SPANISH GIPSOTECA</span>
+          <span className="sm:hidden">TSG</span>
         </Link>
-        <div className="flex items-center gap-3 md:gap-4">
-          <button className="text-white transition-colors hover:text-accent" aria-label="User">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-shrink-0">
+          <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="User">
             <UserIcon />
           </button>
           <button className="text-white transition-colors hover:text-accent" aria-label="Instagram">
             <InstagramIcon />
           </button>
-          <button className="text-white transition-colors hover:text-accent" aria-label="Search">
+          <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="Search">
             <SearchIcon />
           </button>
           <button className="text-white transition-colors hover:text-accent" aria-label="Cart">

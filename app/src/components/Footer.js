@@ -25,17 +25,18 @@ const BagIcon = () => (
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-black/80 py-10">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Link to="/" className="font-display text-sm uppercase tracking-[0.3em] text-white">
-            THE SPANISH GIPSOTECA
+    <footer className="border-t border-white/10 bg-black/80 py-8 sm:py-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <Link to="/" className="font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm sm:tracking-[0.3em]">
+            <span className="hidden sm:inline">THE SPANISH GIPSOTECA</span>
+            <span className="sm:hidden">TSG</span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button className="text-white/70 transition hover:text-white">
               <InstagramIcon />
             </button>
-            <button className="text-white/70 transition hover:text-white">
+            <button className="text-white/70 transition hover:text-white hidden sm:block">
               <SearchIcon />
             </button>
             <button className="text-white/70 transition hover:text-white">
@@ -43,7 +44,7 @@ export default function Footer() {
             </button>
           </div>
         </div>
-        <p className="mt-4 text-center text-xs uppercase tracking-[0.2em] text-white/50">
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.15em] text-white/50 sm:text-xs sm:tracking-[0.2em]">
           Crafted with React + Tailwind · Inspirado en la obra del escultor
         </p>
       </div>

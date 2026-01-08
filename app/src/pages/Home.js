@@ -21,23 +21,23 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
       <section
-        className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed bg-no-repeat"
+        className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat sm:bg-fixed"
         style={{
           backgroundImage: images.hero ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(${images.hero})` : "linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.95))",
           backgroundColor: "#000000",
         }}
       >
-        <div className="relative z-10 max-w-4xl px-6 text-center md:px-10">
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-accent">Home</p>
-          <h2 className="mb-6 font-display text-5xl uppercase tracking-[0.2em] text-white md:text-6xl">
+        <div className="relative z-10 max-w-4xl px-4 text-center sm:px-6 md:px-10">
+          <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent sm:mb-4 sm:text-sm">Home</p>
+          <h2 className="mb-4 font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:tracking-[0.2em] sm:mb-6 md:text-5xl lg:text-6xl">
             The Cast Collection
           </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-white/90">
+          <p className="mx-auto mb-6 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base sm:mb-8 md:text-lg">
             Una selección de moldes clásicos y contemporáneos. Piezas icónicas reinterpretadas con una presencia escénica, listas para galerías, museos y colecciones privadas.
           </p>
           <Link
             to="/shop"
-            className="inline-block rounded-sm bg-white px-10 py-3 text-sm font-medium uppercase tracking-[0.2em] text-black transition-all hover:bg-white/90 hover:shadow-lg"
+            className="inline-block rounded-sm bg-white px-6 py-2.5 text-xs font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90 hover:shadow-lg sm:px-8 sm:py-3 sm:text-sm sm:tracking-[0.2em] md:px-10"
           >
             Explorar colección
           </Link>
@@ -45,14 +45,14 @@ export default function Home() {
       </section>
 
       {/* Featured Products Section */}
-      <section className="bg-black py-20">
-        <div className="mx-auto max-w-7xl px-6 md:px-10">
-          <div className="mb-12 text-center">
-            <p className="mb-2 text-sm uppercase tracking-[0.3em] text-accent">Destacados</p>
-            <h2 className="font-display text-4xl uppercase tracking-[0.2em] text-white md:text-5xl">
+      <section className="bg-black py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+          <div className="mb-8 text-center sm:mb-12">
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Destacados</p>
+            <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl lg:text-5xl">
               Piezas Seleccionadas
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-white/70">
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-white/70 sm:mt-4 sm:text-base">
               Una cuidadosa selección de nuestras esculturas más icónicas
             </p>
           </div>
@@ -62,7 +62,7 @@ export default function Home() {
               <p className="text-white/70">Cargando productos destacados...</p>
             </div>
           ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {featuredProducts.map((product) => (
                 <ProductCard
                   key={product.code}
@@ -73,10 +73,10 @@ export default function Home() {
             </div>
           )}
 
-          <div className="mt-12 text-center">
+          <div className="mt-8 text-center sm:mt-12">
             <Link
               to="/shop"
-              className="inline-block border border-white/20 px-8 py-3 text-sm uppercase tracking-[0.2em] text-white transition-all hover:border-accent hover:text-accent"
+              className="inline-block border border-white/20 px-6 py-2.5 text-xs uppercase tracking-[0.15em] text-white transition-all hover:border-accent hover:text-accent sm:px-8 sm:py-3 sm:text-sm sm:tracking-[0.2em]"
             >
               Ver todos los productos
             </Link>

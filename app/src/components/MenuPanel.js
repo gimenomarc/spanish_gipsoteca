@@ -36,7 +36,7 @@ export default function MenuPanel({ open, onClose }) {
         />
       )}
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-80 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-50 h-full w-full sm:w-80 transform transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
@@ -47,15 +47,15 @@ export default function MenuPanel({ open, onClose }) {
           backdropFilter: "blur(20px)",
         }}
       >
-        <div className="relative h-full overflow-y-auto p-8">
-          <nav className="space-y-2">
+        <div className="relative h-full overflow-y-auto p-6 sm:p-8">
+          <nav className="space-y-1 sm:space-y-2">
             {mainMenuItems.map((item, idx) => (
               <div key={idx}>
                 {item.path ? (
                   <Link
                     to={item.path}
                     onClick={onClose}
-                    className="flex w-full items-center justify-between py-3 text-left text-sm uppercase tracking-[0.2em] text-white transition-colors hover:text-accent"
+                    className="flex w-full items-center justify-between py-2.5 text-left text-xs uppercase tracking-[0.15em] text-white transition-colors hover:text-accent sm:py-3 sm:text-sm sm:tracking-[0.2em]"
                   >
                     <span>{item.label}</span>
                     {item.hasSubmenu && (
@@ -73,7 +73,7 @@ export default function MenuPanel({ open, onClose }) {
                 ) : (
                   <button
                     onClick={() => item.hasSubmenu && setCastCollectionOpen(!castCollectionOpen)}
-                    className="flex w-full items-center justify-between py-3 text-left text-sm uppercase tracking-[0.2em] text-white transition-colors hover:text-accent"
+                    className="flex w-full items-center justify-between py-2.5 text-left text-xs uppercase tracking-[0.15em] text-white transition-colors hover:text-accent sm:py-3 sm:text-sm sm:tracking-[0.2em]"
                   >
                     <span>{item.label}</span>
                     {item.hasSubmenu && (
@@ -84,13 +84,13 @@ export default function MenuPanel({ open, onClose }) {
                   </button>
                 )}
                 {item.hasSubmenu && castCollectionOpen && (
-                  <div className="ml-4 space-y-1 border-l-2 border-white/10 pl-4">
+                  <div className="ml-3 space-y-0.5 border-l-2 border-white/10 pl-3 sm:ml-4 sm:space-y-1 sm:pl-4">
                     {item.submenu.map((subItem, subIdx) => (
                       <Link
                         key={subIdx}
                         to={subItem.path}
                         onClick={onClose}
-                        className="block py-2 text-xs uppercase tracking-[0.15em] text-white/75 transition-colors hover:text-accent"
+                        className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
                       >
                         {subItem.label}
                       </Link>

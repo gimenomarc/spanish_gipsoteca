@@ -80,19 +80,20 @@ export default function ProductDetail() {
     "This piece is probably one of the most iconic sculptures of all times. Sign of beauty and perfection, this sculpture was made by an unknown artist around 130-100 a.e.c. in Greece. After centuries of disappearance, it was found by a french archeologist, who later sold the sculpture to the french monarchy under the power of Luis XIV. This sculpture has been one of the most used casts in classic academies and it's still an essential figure for nowadays art academies.";
 
   return (
-    <div className="min-h-screen bg-black text-white pt-20">
+    <div className="min-h-screen bg-black text-white pt-16 sm:pt-20">
       {/* Header simplificado para la página de producto */}
-      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-6 py-4 backdrop-blur-md md:px-10">
+      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between bg-black/50 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4 md:px-10">
         <button
           onClick={() => navigate(-1)}
-          className="text-white transition-colors hover:text-accent"
+          className="text-sm text-white transition-colors hover:text-accent sm:text-base flex-shrink-0"
         >
           ← Volver
         </button>
-        <h1 className="font-display text-base uppercase tracking-[0.35em] text-white md:text-lg">
-          THE SPANISH GIPSOTECA
+        <h1 className="font-display text-xs uppercase tracking-[0.2em] text-white sm:text-sm sm:tracking-[0.3em] md:text-base md:tracking-[0.35em] lg:text-lg flex-shrink min-w-0 px-2 text-center">
+          <span className="hidden sm:inline">THE SPANISH GIPSOTECA</span>
+          <span className="sm:hidden">TSG</span>
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button className="text-white transition-colors hover:text-accent">
             <SearchIcon />
           </button>
@@ -104,11 +105,11 @@ export default function ProductDetail() {
 
       {/* Layout Option III - Thumbnails izquierda, imagen centro, info derecha */}
       {layout === "option-iii" && (
-        <section className="bg-black py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-10">
-            <div className="grid gap-8 lg:grid-cols-3">
-              {/* Thumbnails izquierda */}
-              <div className="lg:col-span-1 flex flex-col gap-4">
+        <section className="bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+            <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
+              {/* Thumbnails izquierda - Oculto en móvil, visible en desktop */}
+              <div className="hidden lg:flex lg:col-span-1 flex-col gap-4">
                 {thumbnails.map((thumb, idx) => (
                   <div
                     key={idx}
@@ -129,7 +130,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Imagen principal centro */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 order-1 lg:order-2">
                 <div className="aspect-[3/4] overflow-hidden bg-black">
                   <img
                     src={mainImage}
@@ -141,41 +142,62 @@ export default function ProductDetail() {
                     }}
                   />
                 </div>
+                {/* Thumbnails móvil - Debajo de la imagen principal en móvil */}
+                {thumbnails.length > 0 && (
+                  <div className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
+                    {thumbnails.map((thumb, idx) => (
+                      <div
+                        key={idx}
+                        className="flex-shrink-0 aspect-[3/4] w-20 cursor-pointer overflow-hidden bg-black"
+                        onClick={() => setSelectedImage(idx + 1)}
+                      >
+                        <img
+                          src={thumb}
+                          alt={`${product.name} ${idx + 1}`}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Info derecha */}
-              <div className="lg:col-span-1">
-                <h2 className="mb-2 font-display text-3xl uppercase tracking-[0.15em] text-white md:text-4xl">
+              <div className="lg:col-span-1 order-2 lg:order-3">
+                <h2 className="mb-2 font-display text-xl uppercase tracking-[0.1em] text-white sm:text-2xl sm:tracking-[0.15em] md:text-3xl lg:text-4xl">
                   {product.name.toUpperCase()}
                 </h2>
-                <p className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
+                <p className="mb-3 text-xs uppercase tracking-[0.15em] text-white/70 sm:mb-4 sm:text-sm sm:tracking-[0.2em]">
                   {product.artist}, ca.130-100 a.e.c.
                 </p>
-                <p className="mb-6 text-2xl font-medium text-white">{product.price}</p>
-                <p className="mb-6 text-sm leading-relaxed text-white/80">
+                <p className="mb-4 text-xl font-medium text-white sm:mb-6 sm:text-2xl">{product.price}</p>
+                <p className="mb-4 text-xs leading-relaxed text-white/80 sm:mb-6 sm:text-sm">
                   {extendedDescription}
                 </p>
-                <div className="mb-6 space-y-2 text-sm text-white/70">
+                <div className="mb-4 space-y-1.5 text-xs text-white/70 sm:mb-6 sm:space-y-2 sm:text-sm">
                   <p>{product.dimensions}</p>
                   <p>Code: {product.code}</p>
                 </div>
-                <div className="mb-4 flex items-center gap-4">
-                  <div className="flex items-center border border-white/20">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                  <div className="flex items-center border border-white/20 w-full sm:w-auto">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3 py-2 text-white transition hover:bg-white/10"
+                      className="px-3 py-2 text-white transition hover:bg-white/10 sm:px-3"
                     >
                       −
                     </button>
-                    <span className="px-4 py-2 text-white">{quantity}</span>
+                    <span className="flex-1 px-4 py-2 text-center text-white sm:flex-none">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="px-3 py-2 text-white transition hover:bg-white/10"
+                      className="px-3 py-2 text-white transition hover:bg-white/10 sm:px-3"
                     >
                       +
                     </button>
                   </div>
-                  <button className="flex-1 rounded-sm bg-white px-6 py-2 text-sm font-medium uppercase tracking-[0.15em] text-black transition hover:bg-white/90">
+                  <button className="w-full rounded-sm bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.1em] text-black transition hover:bg-white/90 sm:w-auto sm:flex-1 sm:px-6 sm:py-2 sm:text-sm sm:tracking-[0.15em]">
                     Add to cart
                   </button>
                 </div>
@@ -187,9 +209,9 @@ export default function ProductDetail() {
 
       {/* Layout Option II - Info izquierda, imagen centro, thumbnails derecha */}
       {layout === "option-ii" && (
-        <section className="bg-black py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-10">
-            <div className="grid gap-8 lg:grid-cols-3">
+        <section className="bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+            <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
               {/* Info izquierda */}
               <div className="lg:col-span-1">
                 <h2 className="mb-2 font-display text-3xl uppercase tracking-[0.15em] text-white">
@@ -256,9 +278,9 @@ export default function ProductDetail() {
 
       {/* Layout Option IV - Info izquierda, galería derecha con navegación */}
       {layout === "option-iv" && (
-        <section className="bg-black py-20">
-          <div className="mx-auto max-w-7xl px-6 md:px-10">
-            <div className="grid gap-8 lg:grid-cols-2">
+        <section className="bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
               {/* Info izquierda */}
               <div>
                 <h2 className="mb-2 font-display text-3xl uppercase tracking-[0.15em] text-white">
