@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
@@ -14,15 +14,32 @@ const SearchIcon = () => (
 
 export default function Shop() {
   const { categoryId } = useParams();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { products, loading: productsLoading } = useProducts(categoryId || null);
-  const { categories } = useCategories();
+  const [selectedCategory, setSelectedCategory] = useState(categoryId || null);
+  const { products, loading: productsLoading } = useProducts(selectedCategory || null);
+  const { categories, loading: categoriesLoading } = useCategories();
+
+  // Sincronizar selectedCategory con categoryId de la URL
+  useEffect(() => {
+    setSelectedCategory(categoryId || null);
+  }, [categoryId]);
+
+  // Manejar cambio de categoría
+  const handleCategoryChange = (catId) => {
+    setSelectedCategory(catId);
+    if (catId) {
+      navigate(`/shop/${catId}`);
+    } else {
+      navigate("/shop");
+    }
+  };
 
   // Obtener nombre de categoría
   let categoryName = "Tienda";
-  if (categoryId && categories[categoryId]) {
-    categoryName = categories[categoryId].name;
-  } else if (!categoryId) {
+  if (selectedCategory && categories[selectedCategory]) {
+    categoryName = categories[selectedCategory].name;
+  } else if (!selectedCategory) {
     categoryName = "Todos los Productos";
   }
 
@@ -52,6 +69,37 @@ export default function Shop() {
     <div className="min-h-screen bg-black text-white pt-16 sm:pt-20">
       <section className="bg-black py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+          {/* Filtros de categorías */}
+          {!categoriesLoading && Object.keys(categories).length > 0 && (
+            <div className="mb-8 sm:mb-12">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <button
+                  onClick={() => handleCategoryChange(null)}
+                  className={`px-4 py-2 text-xs uppercase tracking-[0.15em] transition-all sm:px-6 sm:py-2.5 sm:text-sm sm:tracking-[0.2em] ${
+                    !selectedCategory
+                      ? "border border-white bg-white text-black"
+                      : "border border-white/20 bg-black/50 text-white hover:border-white/40"
+                  }`}
+                >
+                  Todos
+                </button>
+                {Object.values(categories).map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategoryChange(category.id)}
+                    className={`px-4 py-2 text-xs uppercase tracking-[0.15em] transition-all sm:px-6 sm:py-2.5 sm:text-sm sm:tracking-[0.2em] ${
+                      selectedCategory === category.id
+                        ? "border border-white bg-white text-black"
+                        : "border border-white/20 bg-black/50 text-white hover:border-white/40"
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mb-8 flex flex-col gap-4 sm:mb-12 md:flex-row md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
               <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
