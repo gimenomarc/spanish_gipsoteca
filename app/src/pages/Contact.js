@@ -145,10 +145,10 @@ export default function Contact() {
                     Teléfono
                   </p>
                   <a
-                    href="tel:+34123456789"
+                    href="tel:+34654371774"
                     className="text-lg sm:text-xl text-white/80 transition-colors duration-300 hover:text-white"
                   >
-                    +34 123 456 789
+                    +34 654 371 774
                   </a>
                   <p className="mt-2 text-xs text-white/30">
                     Lun - Vie, 9:00 - 18:00
@@ -162,9 +162,6 @@ export default function Contact() {
                   </p>
                   <p className="text-lg sm:text-xl text-white/80">
                     Barcelona
-                  </p>
-                  <p className="mt-2 text-xs text-white/30">
-                    Visitas con cita previa
                   </p>
                 </div>
 
@@ -357,7 +354,7 @@ export default function Contact() {
         {/* Features Section - Más sutil */}
         <section className="py-16 sm:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="grid gap-10 sm:grid-cols-3 sm:gap-8">
+            <div className="grid gap-10 sm:grid-cols-2 sm:gap-8 max-w-3xl mx-auto">
               
               <div className="text-center sm:text-left">
                 <div className="mb-4 text-3xl">✦</div>
@@ -376,16 +373,6 @@ export default function Contact() {
                 </h3>
                 <p className="text-sm leading-relaxed text-white/40">
                   Realizamos moldes personalizados según tus especificaciones.
-                </p>
-              </div>
-
-              <div className="text-center sm:text-left">
-                <div className="mb-4 text-3xl">✦</div>
-                <h3 className="mb-2 text-sm uppercase tracking-[0.2em] text-white/80">
-                  Visitas al Taller
-                </h3>
-                <p className="text-sm leading-relaxed text-white/40">
-                  Organizamos visitas guiadas con cita previa.
                 </p>
               </div>
 
