@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { categories } from "../data/products";
+import { useCategories } from "../hooks/useCategories";
 
 // Imagen de fondo del menú - reemplaza con tu propia imagen cuando la tengas
 const images = {
@@ -9,13 +9,14 @@ const images = {
 
 export default function MenuPanel({ open, onClose }) {
   const [castCollectionOpen, setCastCollectionOpen] = useState(false);
+  const { categories, loading } = useCategories();
 
   const mainMenuItems = [
     { label: "HOME", path: "/" },
     {
       label: "THE CAST COLLECTION",
       hasSubmenu: true,
-      submenu: Object.values(categories).map((cat) => ({
+      submenu: loading ? [] : Object.values(categories).map((cat) => ({
         label: cat.nameEn,
         path: `/shop/${cat.id}`,
       })),

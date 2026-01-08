@@ -96,3 +96,4 @@ Para agregar productos de otras categorías, edita `src/data/products.js`:
 
 Si tienes problemas al descargar o organizar las imágenes, avísame y te ayudo paso a paso.
 
+

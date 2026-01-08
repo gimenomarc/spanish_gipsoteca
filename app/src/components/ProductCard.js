@@ -6,95 +6,36 @@ export default function ProductCard({ product, categoryId }) {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    // Intentar cargar la imagen con diferentes nombres comunes
-    const productCode = product.code;
-    const basePath = `/images/categorias/${categoryId}/${product.folder}/`;
-    
-    // Lista de posibles nombres de archivos
-    const possibleImages = [
-      `${productCode}.jpg`,
-      `${productCode}.png`,
-      `DSC04562 (1).jpg`,
-      `DSC04584.jpg`,
-      `DSC04551.jpg`,
-      `DSC04571.jpg`,
-      `DSC04378 (1).jpg`,
-      `DSC04503.jpg`,
-      `DSC03549.jpg`,
-      `DSC03561.jpg`,
-      `DSC03892.jpg`,
-      `DSC03506.jpg`,
-      `DSC03619.jpg`,
-      `DSC04408.jpg`,
-      `la buena.jpg`,
-      `DSC03985.jpg`,
-      `DSC04013.jpg`,
-      `DSC04005.jpg`,
-      `DSC03590.jpg`,
-      `DSC04427.jpg`,
-      `DSC04342.jpg`,
-      `DSC03675.jpg`,
-      `DSC04332.jpg`,
-      `DSC04350.jpg`,
-      `DSC03778 (1).jpg`,
-      `DSC03702.jpg`,
-      `DSC04114.jpg`,
-      `DSC04634 (1).jpg`,
-      `DSC04206.jpg`,
-      `DSC03824.jpg`,
-      `DSC04234 (1).jpg`,
-      `DSC02490.jpg`,
-      `DSC04277.jpg`,
-      `DSC04289.jpg`,
-      `DSC04041.jpg`,
-      `DSC03870.jpg`,
-      `DSC03907.jpg`,
-      `DSC03949.jpg`,
-      `DSC03939 (1).jpg`,
-      `DSC03839 (1) (1).jpg`,
-      `DSC03969.jpg`,
-      `DSC02686.jpg`,
-      `DSC04849.jpg`,
-      `DSC02537 (1) (1).jpg`,
-      `DSC02541 (1).jpg`,
-      `DSC04166 (1).jpg`,
-      `DSC04181.jpg`,
-      `DSC04188.jpg`,
-      `DSC04604 (1).jpg`,
-      `DSC04596.jpg`,
-      `DSC04186.jpg`,
-      `DSC02722.jpg`,
-      `DSC04061 (1).jpg`,
-      `DSC04055.jpg`,
-      `DSC04611.jpg`,
-      `DSC04196 (1).jpg`,
-    ];
-
-    // Función para probar cada imagen
-    const tryLoadImage = async (imageNames, index = 0) => {
-      if (index >= imageNames.length) {
-        setHasError(true);
-        return;
-      }
-
+    // Usar imágenes de Supabase Storage si están disponibles
+    if (product.images && product.images.length > 0) {
+      // Usar la primera imagen disponible
       const img = new Image();
-      const imagePath = `${basePath}${imageNames[index]}`;
-      
       img.onload = () => {
-        setImgSrc(imagePath);
+        setImgSrc(product.images[0]);
         setHasError(false);
       };
-      
       img.onerror = () => {
-        // Intentar con la siguiente imagen
-        tryLoadImage(imageNames, index + 1);
+        // Si la primera imagen falla, intentar con otras
+        if (product.images.length > 1) {
+          const nextImg = new Image();
+          nextImg.onload = () => {
+            setImgSrc(product.images[1]);
+            setHasError(false);
+          };
+          nextImg.onerror = () => {
+            setHasError(true);
+          };
+          nextImg.src = product.images[1];
+        } else {
+          setHasError(true);
+        }
       };
-      
-      img.src = imagePath;
-    };
-
-    tryLoadImage(possibleImages);
-  }, [product, categoryId]);
+      img.src = product.images[0];
+    } else {
+      // Fallback: si no hay imágenes en Supabase, marcar como error
+      setHasError(true);
+    }
+  }, [product]);
 
   if (hasError) {
     // No mostrar el producto si no tiene imagen

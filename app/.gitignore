@@ -119,6 +119,23 @@ temp/
 # Local Netlify folder
 .netlify
 
+# Imágenes locales - ahora se cargan desde Supabase Storage
+# Excluir todas las imágenes de las carpetas de categorías
+public/images/categorias/**/*.jpg
+public/images/categorias/**/*.jpeg
+public/images/categorias/**/*.png
+public/images/categorias/**/*.gif
+public/images/categorias/**/*.webp
+public/images/categorias/**/*.JPG
+public/images/categorias/**/*.JPEG
+public/images/categorias/**/*.PNG
+
+# También excluir otras carpetas de imágenes si tienen contenido local
+public/images/sculptures/**/*
+public/images/thumbnails/**/*
+# Mantener hero si tiene imágenes necesarias para el sitio
+# public/images/hero/**/*
+
 # Lock files (opcional - algunos prefieren incluirlos)
 # package-lock.json
 # yarn.lock

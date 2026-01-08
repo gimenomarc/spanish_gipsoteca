@@ -18,3 +18,4 @@
 - Resolución: 1200x1600px o superior para imágenes principales
 - Resolución: 400x600px para thumbnails
 
+

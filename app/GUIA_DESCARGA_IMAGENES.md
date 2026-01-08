@@ -85,3 +85,4 @@ Una vez que tengas las imágenes:
 
 Una vez descargadas y organizadas las imágenes, el código las usará automáticamente. Si necesitas ayuda con algún paso, avísame.
 
+

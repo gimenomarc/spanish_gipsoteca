@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { categories } from "../data/products";
+import { useProduct } from "../hooks/useProducts";
 import Footer from "../components/Footer";
 
 const SearchIcon = () => (
@@ -30,71 +30,15 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-// Función para obtener todas las imágenes de un producto
-function getProductImages(categoryId, productFolder, productCode) {
-  const basePath = `/images/categorias/${categoryId}/${productFolder}/`;
+// Función para obtener todas las imágenes de un producto desde Supabase
+function getProductImages(product) {
+  // Si el producto tiene imágenes de Supabase Storage, usarlas
+  if (product && product.images && product.images.length > 0) {
+    return product.images;
+  }
   
-  // Lista extendida de posibles nombres de imágenes
-  const possibleNames = [
-    `${productCode}.jpg`,
-    `${productCode}.png`,
-    `DSC04562 (1).jpg`,
-    `DSC04563.jpg`,
-    `DSC04564.jpg`,
-    `DSC04584.jpg`,
-    `DSC04551.jpg`,
-    `DSC04571.jpg`,
-    `DSC04378 (1).jpg`,
-    `DSC04622 (1).jpg`,
-    `DSC04503.jpg`,
-    `M004.jpg`,
-    `DSC03549.jpg`,
-    `DSC03561.jpg`,
-    `DSC03892.jpg`,
-    `M007.jpg`,
-    `DSC03506.jpg`,
-    `DSC03517.jpg`,
-    `DSC03524.jpg`,
-    `DSC03619.jpg`,
-    `DSC04408.jpg`,
-    `la buena.jpg`,
-    `DSC03985.jpg`,
-    `DSC04013.jpg`,
-    `DSC04005.jpg`,
-    `DSC03590.jpg`,
-    `DSC04427.jpg`,
-    `DSC04342.jpg`,
-    `DSC03675.jpg`,
-    `DSC03693.jpg`,
-    `DSC04332.jpg`,
-    `DSC04350.jpg`,
-    `DSC03778 (1).jpg`,
-    `DSC03702.jpg`,
-    `DSC04114.jpg`,
-    `M023.jpg`,
-    `DSC04634 (1).jpg`,
-    `DSC04701.jpg`,
-    `DSC04206.jpg`,
-    `DSC04220.jpg`,
-    `DSC03824.jpg`,
-    `DSC04234 (1).jpg`,
-    `DSC04240.jpg`,
-    `DSC02490.jpg`,
-    `DSC04277.jpg`,
-    `DSC04289.jpg`,
-    `DSC04041.jpg`,
-    `DSC03870.jpg`,
-    `DSC03907.jpg`,
-    `DSC03949.jpg`,
-    `DSC03939 (1).jpg`,
-    `DSC03839 (1) (1).jpg`,
-    `DSC03969.jpg`,
-    `DSC02686.jpg`,
-    `DSC04587.jpg`,
-    `DSC04849.jpg`,
-  ];
-  
-  return possibleNames.map(name => `${basePath}${name}`).slice(0, 4);
+  // Fallback: si no hay imágenes en Supabase, retornar array vacío
+  return [];
 }
 
 export default function ProductDetail() {
@@ -105,23 +49,30 @@ export default function ProductDetail() {
   // Layout por defecto: option-iii (thumbnails izquierda, imagen centro, info derecha)
   const [layout, setLayout] = useState("option-iii"); // option-ii, option-iii, option-iv
 
-  // Buscar el producto
-  const category = categories[categoryId];
-  const product = category?.products.find((p) => p.code === productCode);
+  // Cargar producto desde Supabase
+  const { product, loading, error } = useProduct(categoryId, productCode);
 
   useEffect(() => {
-    if (!product) {
+    if (!loading && !product) {
       navigate("/shop");
     }
-  }, [product, navigate]);
+  }, [product, loading, navigate]);
 
-  if (!product) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white pt-20 flex items-center justify-center">
+        <p className="text-white/70">Cargando producto...</p>
+      </div>
+    );
+  }
+
+  if (!product || error) {
     return null;
   }
 
-  // Obtener imágenes del producto
-  const productImages = getProductImages(categoryId, product.folder, product.code);
-  const mainImage = productImages[selectedImage] || productImages[0];
+  // Obtener imágenes del producto desde Supabase
+  const productImages = getProductImages(product);
+  const mainImage = productImages[selectedImage] || productImages[0] || '';
   const thumbnails = productImages.slice(1);
 
   // Descripción extendida

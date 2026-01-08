@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { categories, getAllProducts } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
+import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 
@@ -14,26 +15,38 @@ const SearchIcon = () => (
 export default function Shop() {
   const { categoryId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
+  const { products, loading: productsLoading } = useProducts(categoryId || null);
+  const { categories } = useCategories();
 
-  // Si hay una categoría específica, mostrar solo esos productos
-  // Si no, mostrar todos
-  let productsToShow = [];
+  // Obtener nombre de categoría
   let categoryName = "Tienda";
-
   if (categoryId && categories[categoryId]) {
-    productsToShow = categories[categoryId].products;
     categoryName = categories[categoryId].name;
-  } else {
-    productsToShow = getAllProducts();
+  } else if (!categoryId) {
     categoryName = "Todos los Productos";
   }
 
   // Filtrar por búsqueda
-  const filteredProducts = productsToShow.filter((product) =>
+  const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.artist.toLowerCase().includes(searchTerm.toLowerCase())
+    (product.artist && product.artist.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  if (productsLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white pt-20">
+        <section className="bg-black py-20">
+          <div className="mx-auto max-w-7xl px-6 md:px-10">
+            <div className="text-center">
+              <p className="text-white/70">Cargando productos...</p>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white pt-20">
@@ -72,7 +85,7 @@ export default function Shop() {
                 <ProductCard
                   key={`${product.categoryId || categoryId || "all"}-${product.code}`}
                   product={product}
-                  categoryId={product.categoryId || categoryId || "mascaras-y-bustos"}
+                  categoryId={product.categoryId || categoryId || ""}
                 />
               ))}
             </div>

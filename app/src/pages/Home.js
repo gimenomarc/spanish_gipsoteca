@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { categories, getAllProducts } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 
@@ -10,9 +10,11 @@ const images = {
 
 export default function Home() {
   // Obtener productos destacados (los primeros 6 de Máscaras y Bustos)
-  const featuredProducts = categories["mascaras-y-bustos"].products.slice(0, 6);
+  const { products: mascarasProducts, loading: loadingMascaras } = useProducts("mascaras-y-bustos");
+  const featuredProducts = mascarasProducts.slice(0, 6);
+  
   // Obtener algunos productos de otras categorías para mostrar variedad
-  const allProducts = getAllProducts();
+  const { products: allProducts, loading: loadingAll } = useProducts();
   const moreProducts = allProducts.slice(6, 12);
 
   return (
@@ -55,15 +57,21 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {featuredProducts.map((product) => (
-              <ProductCard
-                key={product.code}
-                product={product}
-                categoryId="mascaras-y-bustos"
-              />
-            ))}
-          </div>
+          {loadingMascaras ? (
+            <div className="text-center py-10">
+              <p className="text-white/70">Cargando productos destacados...</p>
+            </div>
+          ) : (
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  key={product.code}
+                  product={product}
+                  categoryId="mascaras-y-bustos"
+                />
+              ))}
+            </div>
+          )}
 
           <div className="mt-12 text-center">
             <Link
@@ -77,7 +85,7 @@ export default function Home() {
       </section>
 
       {/* More Products Section */}
-      {moreProducts.length > 0 && (
+      {!loadingAll && moreProducts.length > 0 && (
         <section className="border-t border-white/10 bg-black/60 py-20">
           <div className="mx-auto max-w-7xl px-6 md:px-10">
             <div className="mb-12 text-center">
