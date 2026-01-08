@@ -129,13 +129,13 @@ export default function About() {
                 </p>
               </div>
               <div className="border border-white/10 bg-black/50 p-6 sm:p-8 hover:border-white/20 transition-all">
-                <h3 className="font-display text-lg uppercase tracking-[0.1em] text-white mb-5">Estructuras y Soporte</h3>
+                <h3 className="font-display text-lg uppercase tracking-[0.1em] text-white mb-5">Estructuras y Soportes</h3>
                 <p className="text-sm leading-relaxed text-white/80 sm:text-base text-left">
                   Diseñamos y construimos estructuras internas adaptadas a las necesidades de cada obra, asegurando estabilidad y seguridad.
                 </p>
               </div>
               <div className="border border-white/10 bg-black/50 p-6 sm:p-8 hover:border-white/20 transition-all">
-                <h3 className="font-display text-lg uppercase tracking-[0.1em] text-white mb-5">Restauración y Conservación</h3>
+                <h3 className="font-display text-lg uppercase tracking-[0.1em] text-white mb-5">Restauración Escultórica</h3>
                 <p className="text-sm leading-relaxed text-white/80 sm:text-base text-left">
                   Aplicamos criterios profesionales para recuperar el aspecto original de esculturas dañadas o deterioradas.
                 </p>
