@@ -3,9 +3,11 @@ import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 
-// Imagen hero - reemplaza con tu propia imagen cuando la tengas
+// Imagen hero - puede ser local (public/) o desde Supabase Storage
+// Para usar Supabase, reemplaza con la URL de Supabase Storage
 const images = {
-  hero: "/images/hero/hero-bg.jpg", // Coloca tu imagen en public/images/hero/hero-bg.jpg
+  hero: "/images/hero/hero-bg.jpg", // Imagen local en public/images/hero/hero-bg.jpg
+  // hero: "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg", // URL de Supabase
 };
 
 export default function Home() {
