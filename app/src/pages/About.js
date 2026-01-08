@@ -174,28 +174,26 @@ export default function About() {
                     title="Formación y Trayectoria"
                     items={[
                       {
-                        date: '2010 — 2014',
+                        date: '2016 — 2021',
+                        title: 'Facultad de Bellas Artes',
+                        location: 'Barcelona, España',
+                        icon: 'education',
+                      },
+                      {
+                        date: '2018 — 2024',
                         title: 'Barcelona Academy of Art',
                         location: 'Barcelona, España',
                         description: 'Formación en escultura clásica y técnicas de modelado tradicional.',
                         icon: 'education',
                       },
                       {
-                        date: '2014 — 2016',
+                        date: '2019 — 2020',
                         title: 'Rome University of Fine Arts',
                         location: 'Roma, Italia',
-                        description: 'Especialización en restauración y reproducción de esculturas clásicas.',
                         icon: 'education',
                       },
                       {
-                        date: '2016 — 2018',
-                        title: 'Universidad de Barcelona',
-                        location: 'Facultad de Bellas Artes',
-                        description: 'Estudios avanzados en técnicas de vaciado y moldes.',
-                        icon: 'education',
-                      },
-                      {
-                        date: '2018 — Presente',
+                        date: '2024 — Presente',
                         title: 'The Spanish Gipsoteca',
                         location: 'Barcelona, España',
                         description: 'Fundador y Director. Creación y venta de reproducciones escultóricas de alta calidad.',

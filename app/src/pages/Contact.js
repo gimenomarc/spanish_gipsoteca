@@ -2,38 +2,31 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import emailjs from '@emailjs/browser';
 
-const MailIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+// Icono de Instagram moderno y minimalista
+const InstagramIcon = ({ size = 24 }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z" 
+      fill="currentColor"
+    />
+    <path 
+      d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z" 
+      fill="currentColor"
+    />
+    <circle cx="18.406" cy="5.594" r="1.44" fill="currentColor" />
   </svg>
 );
 
-const PhoneIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4742 21.8325 20.7292C21.7209 20.9842 21.5573 21.2131 21.3518 21.4014C21.1462 21.5897 20.9031 21.7334 20.6371 21.8232C20.3711 21.913 20.088 21.9468 19.807 21.922C16.7432 21.5856 13.7842 20.5341 11.19 18.852C8.77382 17.3147 6.72533 15.2662 5.188 12.85C3.49997 10.2412 2.44824 7.27099 2.118 4.202C2.09318 3.92089 2.12698 3.63776 2.2168 3.37178C2.30661 3.1058 2.45026 2.86272 2.63857 2.65716C2.82688 2.4516 3.05581 2.28805 3.31078 2.17643C3.56575 2.06481 3.84152 2.00782 4.12 2.009H7.12C7.68147 1.99522 8.22806 2.16708 8.68189 2.49965C9.13572 2.83222 9.47129 3.30933 9.64 3.862C9.88979 4.72057 10.2362 5.54697 10.67 6.322C10.9058 6.75073 11.0064 7.23876 10.96 7.722C10.9136 8.20524 10.7218 8.66526 10.41 9.042L9.09 10.362C10.5144 12.9528 12.5272 14.9656 15.118 16.39L16.438 15.07C16.8147 14.7582 17.2748 14.5664 17.758 14.52C18.2412 14.4736 18.7293 14.5742 19.158 14.81C19.933 15.2438 20.7594 15.5902 21.618 15.84C22.1707 16.0087 22.6478 16.3443 22.9803 16.7981C23.3129 17.2519 23.4848 17.7985 23.471 18.36L22.471 18.36Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const LocationIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ClockIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="2" />
-    <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
-    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
+// Icono de flecha para el botón
+const ArrowIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -46,6 +39,7 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -60,7 +54,6 @@ export default function Contact() {
     setSubmitStatus(null);
 
     try {
-      // Preparar datos del email
       const emailData = {
         to_email: 'thespanishgipsoteca@gmail.com',
         from_name: formData.name,
@@ -76,7 +69,6 @@ export default function Contact() {
         }),
       };
 
-      // Enviar email usando EmailJS
       const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
       const templateId = process.env.REACT_APP_EMAILJS_CONTACT_TEMPLATE_ID || process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
       const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
@@ -90,9 +82,8 @@ export default function Contact() {
           setSubmitStatus(null);
         }, 5000);
       } else {
-        // Si EmailJS no está configurado, mostrar los datos en consola
         console.log('EmailJS no configurado. Datos del contacto:', emailData);
-        throw new Error('EmailJS no está configurado. Por favor, configura las variables de entorno.');
+        throw new Error('EmailJS no está configurado.');
       }
     } catch (error) {
       console.error('Error sending email:', error);
@@ -103,294 +94,305 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white pt-16 sm:pt-20">
       <div className="flex-1">
-      {/* Hero Section */}
-      <section className="border-b border-white/10 bg-black py-16 sm:py-20 md:py-24">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 md:px-10">
-          <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent sm:mb-4 sm:text-sm">Contacto</p>
-          <h1 className="mb-4 font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:tracking-[0.2em] sm:mb-6 md:text-5xl lg:text-6xl">
-            Ponte en Contacto
-          </h1>
-          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base md:text-lg">
-            Estamos aquí para ayudarte. Envíanos un mensaje y te responderemos lo antes posible.
-          </p>
-        </div>
-      </section>
+        {/* Hero Section - Minimalista */}
+        <section className="relative py-20 sm:py-28 md:py-32 overflow-hidden">
+          {/* Gradiente sutil de fondo */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111] to-[#0a0a0a]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-radial from-white/[0.02] to-transparent rounded-full blur-3xl" />
+          
+          <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+            <p className="mb-4 text-[11px] uppercase tracking-[0.4em] text-white/40 sm:text-xs">
+              Contacto
+            </p>
+            <h1 className="mb-6 font-display text-4xl uppercase tracking-[0.12em] text-white sm:text-5xl md:text-6xl lg:text-7xl">
+              Hablemos
+            </h1>
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-white/50 sm:text-base">
+              Estamos aquí para ayudarte con cualquier consulta sobre nuestras piezas
+            </p>
+          </div>
+        </section>
 
-      {/* Contact Section */}
-      <section className="bg-black py-12 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-            {/* Información de contacto */}
-            <div>
-              <h2 className="mb-4 font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] sm:mb-6">
-                Información de Contacto
-              </h2>
-              <p className="mb-10 text-sm leading-relaxed text-white/70 sm:text-base">
-                Si prefieres contactarnos directamente, puedes usar cualquiera de los siguientes medios. Estamos disponibles para responder tus consultas sobre nuestras piezas, pedidos personalizados o cualquier otra información que necesites.
-              </p>
-
-              <div className="space-y-8">
+        {/* Main Content */}
+        <section className="py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="grid gap-16 lg:grid-cols-5 lg:gap-20">
+              
+              {/* Info de contacto - Columna izquierda */}
+              <div className="lg:col-span-2 space-y-12">
+                
                 {/* Email */}
-                <div className="group relative">
-                  <div className="flex items-start gap-5">
-                    <div className="flex-shrink-0 rounded-sm border border-white/20 bg-white/5 p-4 transition-all group-hover:border-white/40 group-hover:bg-white/10">
-                      <MailIcon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <h3 className="mb-2 text-sm font-medium uppercase tracking-[0.15em] text-white sm:text-base">
-                        Email
-                      </h3>
-                      <a
-                        href="mailto:info@spanishgipsoteca.com"
-                        className="block text-sm text-white/70 transition-colors hover:text-white sm:text-base"
-                      >
-                        info@spanishgipsoteca.com
-                      </a>
-                      <p className="mt-1 text-xs text-white/50 sm:text-sm">
-                        Respuesta en 24-48 horas
-                      </p>
-                    </div>
-                  </div>
+                <div className="group">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                    Email
+                  </p>
+                  <a
+                    href="mailto:thespanishgipsoteca@gmail.com"
+                    className="text-lg sm:text-xl text-white/80 transition-colors duration-300 hover:text-white"
+                  >
+                    thespanishgipsoteca@gmail.com
+                  </a>
+                  <p className="mt-2 text-xs text-white/30">
+                    Respuesta en 24-48h
+                  </p>
                 </div>
 
                 {/* Teléfono */}
-                <div className="group relative">
-                  <div className="flex items-start gap-5">
-                    <div className="flex-shrink-0 rounded-sm border border-white/20 bg-white/5 p-4 transition-all group-hover:border-white/40 group-hover:bg-white/10">
-                      <PhoneIcon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <h3 className="mb-2 text-sm font-medium uppercase tracking-[0.15em] text-white sm:text-base">
-                        Teléfono
-                      </h3>
-                      <a
-                        href="tel:+34123456789"
-                        className="block text-sm text-white/70 transition-colors hover:text-white sm:text-base"
-                      >
-                        +34 123 456 789
-                      </a>
-                      <p className="mt-1 text-xs text-white/50 sm:text-sm">
-                        Lunes a Viernes, 9:00 - 18:00
-                      </p>
-                    </div>
-                  </div>
+                <div className="group">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                    Teléfono
+                  </p>
+                  <a
+                    href="tel:+34123456789"
+                    className="text-lg sm:text-xl text-white/80 transition-colors duration-300 hover:text-white"
+                  >
+                    +34 123 456 789
+                  </a>
+                  <p className="mt-2 text-xs text-white/30">
+                    Lun - Vie, 9:00 - 18:00
+                  </p>
                 </div>
 
-                {/* Dirección */}
-                <div className="group relative">
-                  <div className="flex items-start gap-5">
-                    <div className="flex-shrink-0 rounded-sm border border-white/20 bg-white/5 p-4 transition-all group-hover:border-white/40 group-hover:bg-white/10">
-                      <LocationIcon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <h3 className="mb-2 text-sm font-medium uppercase tracking-[0.15em] text-white sm:text-base">
-                        Dirección
-                      </h3>
-                      <p className="text-sm text-white/70 sm:text-base">
-                        Madrid, España
-                      </p>
-                      <p className="mt-1 text-xs text-white/50 sm:text-sm">
-                        Visitas con cita previa
-                      </p>
-                    </div>
-                  </div>
+                {/* Ubicación */}
+                <div className="group">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                    Ubicación
+                  </p>
+                  <p className="text-lg sm:text-xl text-white/80">
+                    Barcelona
+                  </p>
+                  <p className="mt-2 text-xs text-white/30">
+                    Visitas con cita previa
+                  </p>
                 </div>
 
-                {/* Horarios */}
-                <div className="group relative">
-                  <div className="flex items-start gap-5">
-                    <div className="flex-shrink-0 rounded-sm border border-white/20 bg-white/5 p-4 transition-all group-hover:border-white/40 group-hover:bg-white/10">
-                      <ClockIcon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <h3 className="mb-2 text-sm font-medium uppercase tracking-[0.15em] text-white sm:text-base">
-                        Horario de Atención
-                      </h3>
-                      <div className="space-y-1 text-sm text-white/70 sm:text-base">
-                        <p>Lunes - Viernes: 9:00 - 18:00</p>
-                        <p>Sábados: 10:00 - 14:00</p>
-                        <p className="text-white/50">Domingos: Cerrado</p>
-                      </div>
-                    </div>
-                  </div>
+                {/* Instagram - Sección simplificada */}
+                <div className="pt-8">
+                  <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-white/30">
+                    Síguenos
+                  </p>
+                  <a
+                    href="https://www.instagram.com/thespanishgipsoteca/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 group"
+                  >
+                    <span className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/10 to-white/5 text-white/70 transition-all duration-300 group-hover:from-white/15 group-hover:to-white/10 group-hover:text-white group-hover:scale-110">
+                      <InstagramIcon size={22} />
+                    </span>
+                    <span className="text-sm text-white/50 transition-colors duration-300 group-hover:text-white/80">
+                      @thespanishgipsoteca
+                    </span>
+                  </a>
                 </div>
 
-                {/* Redes sociales */}
-                <div className="group relative pt-4 border-t border-white/10">
-                  <div className="flex items-start gap-5">
-                    <div className="flex-shrink-0 rounded-sm border border-white/20 bg-white/5 p-4 transition-all group-hover:border-white/40 group-hover:bg-white/10">
-                      <InstagramIcon className="h-8 w-8 text-white" />
-                    </div>
-                    <div className="flex-1 pt-1">
-                      <h3 className="mb-3 text-sm font-medium uppercase tracking-[0.15em] text-white sm:text-base">
-                        Síguenos
-                      </h3>
-                      <div className="flex gap-4">
-                        <a
-                          href="https://www.instagram.com/thespanishgipsoteca/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group/icon rounded-sm border border-white/20 bg-white/5 p-3 text-white/70 transition-all hover:border-white/40 hover:bg-white/10 hover:text-white"
-                          aria-label="Instagram"
+              </div>
+
+              {/* Formulario - Columna derecha */}
+              <div className="lg:col-span-3">
+                <div className="relative">
+                  {/* Fondo del formulario */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent rounded-2xl" />
+                  
+                  <form onSubmit={handleSubmit} className="relative p-6 sm:p-10 space-y-6">
+                    
+                    {/* Grid para nombre y email */}
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      {/* Nombre */}
+                      <div className="relative">
+                        <label
+                          htmlFor="name"
+                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                            focusedField === 'name' || formData.name 
+                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                              : 'top-4 text-sm text-white/30'
+                          }`}
                         >
-                          <InstagramIcon className="h-6 w-6" />
-                        </a>
+                          Nombre
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          onFocus={() => setFocusedField('name')}
+                          onBlur={() => setFocusedField(null)}
+                          required
+                          className="w-full bg-transparent border-b border-white/10 pt-5 pb-3 text-white text-sm focus:border-white/40 focus:outline-none transition-colors duration-300"
+                        />
+                      </div>
+
+                      {/* Email */}
+                      <div className="relative">
+                        <label
+                          htmlFor="email"
+                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                            focusedField === 'email' || formData.email 
+                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                              : 'top-4 text-sm text-white/30'
+                          }`}
+                        >
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          onFocus={() => setFocusedField('email')}
+                          onBlur={() => setFocusedField(null)}
+                          required
+                          className="w-full bg-transparent border-b border-white/10 pt-5 pb-3 text-white text-sm focus:border-white/40 focus:outline-none transition-colors duration-300"
+                        />
                       </div>
                     </div>
-                  </div>
+
+                    {/* Asunto */}
+                    <div className="relative">
+                      <label
+                        htmlFor="subject"
+                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                          focusedField === 'subject' || formData.subject 
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                            : 'top-4 text-sm text-white/30'
+                        }`}
+                      >
+                        Asunto
+                      </label>
+                      <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        onFocus={() => setFocusedField('subject')}
+                        onBlur={() => setFocusedField(null)}
+                        required
+                        className="w-full bg-transparent border-b border-white/10 pt-5 pb-3 text-white text-sm focus:border-white/40 focus:outline-none transition-colors duration-300"
+                      />
+                    </div>
+
+                    {/* Mensaje */}
+                    <div className="relative pt-2">
+                      <label
+                        htmlFor="message"
+                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                          focusedField === 'message' || formData.message 
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                            : 'top-6 text-sm text-white/30'
+                        }`}
+                      >
+                        Mensaje
+                      </label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        onFocus={() => setFocusedField('message')}
+                        onBlur={() => setFocusedField(null)}
+                        required
+                        rows={5}
+                        className="w-full bg-transparent border-b border-white/10 pt-5 pb-3 text-white text-sm focus:border-white/40 focus:outline-none transition-colors duration-300 resize-none"
+                      />
+                    </div>
+
+                    {/* Mensajes de estado */}
+                    {submitStatus === "success" && (
+                      <div className="flex items-center gap-3 py-4 px-5 bg-emerald-500/10 rounded-lg">
+                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                          <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        <p className="text-sm text-emerald-400">
+                          Mensaje enviado correctamente. Te responderemos pronto.
+                        </p>
+                      </div>
+                    )}
+                    
+                    {submitStatus === "error" && (
+                      <div className="flex items-center gap-3 py-4 px-5 bg-red-500/10 rounded-lg">
+                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center">
+                          <svg className="w-3 h-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </span>
+                        <p className="text-sm text-red-400">
+                          Error al enviar. Contacta directamente a thespanishgipsoteca@gmail.com
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Botón de envío */}
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="group relative inline-flex items-center gap-3 bg-white text-black px-8 py-4 text-sm uppercase tracking-[0.15em] font-medium transition-all duration-300 hover:bg-white/90 hover:gap-5 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>{isSubmitting ? "Enviando..." : "Enviar mensaje"}</span>
+                        {!isSubmitting && (
+                          <ArrowIcon />
+                        )}
+                        {isSubmitting && (
+                          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Formulario */}
-            <div>
-              <h2 className="mb-4 font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] sm:mb-6">
-                Envíanos un Mensaje
-              </h2>
-              <p className="mb-8 text-sm leading-relaxed text-white/70 sm:text-base">
-                Completa el formulario y nos pondremos en contacto contigo lo antes posible.
-              </p>
+        {/* Features Section - Más sutil */}
+        <section className="py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="grid gap-10 sm:grid-cols-3 sm:gap-8">
+              
+              <div className="text-center sm:text-left">
+                <div className="mb-4 text-3xl">✦</div>
+                <h3 className="mb-2 text-sm uppercase tracking-[0.2em] text-white/80">
+                  Consultas Personalizadas
+                </h3>
+                <p className="text-sm leading-relaxed text-white/40">
+                  ¿Buscas una pieza específica? Te ayudamos a encontrar exactamente lo que necesitas.
+                </p>
+              </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Nombre */}
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm"
-                  >
-                    Nombre Completo
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="Tu nombre"
-                  />
-                </div>
+              <div className="text-center sm:text-left">
+                <div className="mb-4 text-3xl">✦</div>
+                <h3 className="mb-2 text-sm uppercase tracking-[0.2em] text-white/80">
+                  Pedidos Especiales
+                </h3>
+                <p className="text-sm leading-relaxed text-white/40">
+                  Realizamos moldes personalizados según tus especificaciones.
+                </p>
+              </div>
 
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="tu@email.com"
-                  />
-                </div>
+              <div className="text-center sm:text-left">
+                <div className="mb-4 text-3xl">✦</div>
+                <h3 className="mb-2 text-sm uppercase tracking-[0.2em] text-white/80">
+                  Visitas al Taller
+                </h3>
+                <p className="text-sm leading-relaxed text-white/40">
+                  Organizamos visitas guiadas con cita previa.
+                </p>
+              </div>
 
-                {/* Asunto */}
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm"
-                  >
-                    Asunto
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="Asunto del mensaje"
-                  />
-                </div>
-
-                {/* Mensaje */}
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm"
-                  >
-                    Mensaje
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={7}
-                    className="w-full resize-none rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="Cuéntanos en qué podemos ayudarte..."
-                  />
-                </div>
-
-                {/* Mensaje de éxito/error */}
-                {submitStatus === "success" && (
-                  <div className="rounded-sm border border-white/20 bg-white/10 px-4 py-3.5 text-sm text-white">
-                    ✓ Mensaje enviado correctamente. Te responderemos pronto.
-                  </div>
-                )}
-                {submitStatus === "error" && (
-                  <div className="rounded-sm border border-red-500/50 bg-red-500/10 px-4 py-3.5 text-sm text-red-400">
-                    ✗ Error al enviar el mensaje. Por favor, intenta de nuevo o contacta directamente a thespanishgipsoteca@gmail.com
-                  </div>
-                )}
-
-                {/* Botón de envío */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full rounded-sm bg-white px-6 py-3.5 text-sm font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 sm:py-4 sm:text-base sm:tracking-[0.2em]"
-                >
-                  {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
-                </button>
-              </form>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Additional Info Section */}
-      <section className="border-t border-white/10 bg-black/60 py-12 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <h3 className="mb-3 font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl">
-                Consultas Personalizadas
-              </h3>
-              <p className="text-sm leading-relaxed text-white/70 sm:text-base">
-                ¿Buscas una pieza específica? Contáctanos y te ayudaremos a encontrar lo que necesitas.
-              </p>
-            </div>
-            <div className="text-center">
-              <h3 className="mb-3 font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl">
-                Pedidos Especiales
-              </h3>
-              <p className="text-sm leading-relaxed text-white/70 sm:text-base">
-                Realizamos moldes personalizados según tus especificaciones. Consulta disponibilidad.
-              </p>
-            </div>
-            <div className="text-center">
-              <h3 className="mb-3 font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl">
-                Visitas al Taller
-              </h3>
-              <p className="text-sm leading-relaxed text-white/70 sm:text-base">
-                Organizamos visitas guiadas a nuestro taller. Reserva tu cita con antelación.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
       </div>
       <Footer />
     </div>
