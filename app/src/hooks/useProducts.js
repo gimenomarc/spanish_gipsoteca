@@ -2,6 +2,46 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { optimizeImageUrls, imagePresets } from '../utils/imageOptimizer';
 
+/**
+ * Ordena las imágenes priorizando las que tienen "DEF" en el nombre
+ * (fotos definitivas en blanco y negro para coherencia visual)
+ * 
+ * Prioridad:
+ * 1. Imágenes con "DEF" en el nombre van PRIMERO (son las principales)
+ * 2. Luego imágenes con números bajos (1, 01, _1)
+ * 3. Las demás mantienen su orden original
+ */
+function sortImagesByBackground(images) {
+  if (!images || images.length <= 1) return images;
+
+  return [...images].sort((a, b) => {
+    const aLower = a.toLowerCase();
+    const bLower = b.toLowerCase();
+    
+    // PRIORIDAD MÁXIMA: Imágenes con "DEF" en el nombre
+    const aIsDef = aLower.includes('def');
+    const bIsDef = bLower.includes('def');
+    
+    // Si una tiene DEF y la otra no, la DEF va primero
+    if (aIsDef && !bIsDef) return -1;
+    if (bIsDef && !aIsDef) return 1;
+    
+    // Si ambas tienen DEF o ninguna, ordenar por número
+    const getFileNumber = (url) => {
+      const filename = url.split('/').pop().split('.')[0];
+      // Buscar patrones como: _1, -1, 01, 1 al final del nombre
+      const match = filename.match(/[_-]?(\d+)$/);
+      return match ? parseInt(match[1], 10) : 999;
+    };
+    
+    const aNum = getFileNumber(a);
+    const bNum = getFileNumber(b);
+    
+    // Números más bajos primero
+    return aNum - bNum;
+  });
+}
+
 export function useProducts(categoryId = null) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,19 +74,23 @@ export function useProducts(categoryId = null) {
         if (error) throw error;
 
         // Transformar datos al formato esperado por la aplicación
-        const transformedProducts = data.map(product => ({
-          code: product.code,
-          name: product.name,
-          folder: product.folder_name || '',
-          price: product.price || '',
-          artist: product.artist || 'Unknown artist',
-          dimensions: product.dimensions || '',
-          description: product.description || '',
-          // Optimizar URLs de imágenes para tarjetas de producto (600x800, webp, quality 75)
-          images: optimizeImageUrls(product.images || [], imagePresets.card),
-          categoryId: product.category_id,
-          categoryName: product.categories?.name || '',
-        }));
+        const transformedProducts = data.map(product => {
+          // Ordenar imágenes priorizando fondo negro
+          const sortedImages = sortImagesByBackground(product.images || []);
+          return {
+            code: product.code,
+            name: product.name,
+            folder: product.folder_name || '',
+            price: product.price || '',
+            artist: product.artist || 'Unknown artist',
+            dimensions: product.dimensions || '',
+            description: product.description || '',
+            // Optimizar URLs de imágenes para tarjetas de producto (600x800, webp, quality 75)
+            images: optimizeImageUrls(sortedImages, imagePresets.card),
+            categoryId: product.category_id,
+            categoryName: product.categories?.name || '',
+          };
+        });
 
         setProducts(transformedProducts);
         setError(null);
@@ -95,6 +139,8 @@ export function useProduct(categoryId, productCode) {
         if (error) throw error;
 
         if (data) {
+          // Ordenar imágenes priorizando fondo negro
+          const sortedImages = sortImagesByBackground(data.images || []);
           const transformedProduct = {
             code: data.code,
             name: data.name,
@@ -104,7 +150,7 @@ export function useProduct(categoryId, productCode) {
             dimensions: data.dimensions || '',
             description: data.description || '',
             // Optimizar URLs de imágenes para página de detalle (1200x1600, webp, quality 85)
-            images: optimizeImageUrls(data.images || [], imagePresets.detail),
+            images: optimizeImageUrls(sortedImages, imagePresets.detail),
             categoryId: data.category_id,
             categoryName: data.categories?.name || '',
           };
@@ -184,18 +230,22 @@ export function useRelatedProducts(categoryId, currentProductCode, limit = 4) {
         }
 
         // Transformar datos
-        const transformedProducts = data.map(product => ({
-          code: product.code,
-          name: product.name,
-          folder: product.folder_name || '',
-          price: product.price || '',
-          artist: product.artist || 'Unknown artist',
-          dimensions: product.dimensions || '',
-          description: product.description || '',
-          images: optimizeImageUrls(product.images || [], imagePresets.card),
-          categoryId: product.category_id,
-          categoryName: product.categories?.name || '',
-        }));
+        const transformedProducts = data.map(product => {
+          // Ordenar imágenes priorizando fondo negro
+          const sortedImages = sortImagesByBackground(product.images || []);
+          return {
+            code: product.code,
+            name: product.name,
+            folder: product.folder_name || '',
+            price: product.price || '',
+            artist: product.artist || 'Unknown artist',
+            dimensions: product.dimensions || '',
+            description: product.description || '',
+            images: optimizeImageUrls(sortedImages, imagePresets.card),
+            categoryId: product.category_id,
+            categoryName: product.categories?.name || '',
+          };
+        });
 
         setRelatedProducts(transformedProducts);
       } catch (err) {

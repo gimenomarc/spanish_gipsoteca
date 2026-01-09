@@ -15,38 +15,57 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const IMAGES_BASE_PATH = path.join(__dirname, '..', 'public', 'images', 'categorias');
 
 // Mapeo de nombres de carpetas a IDs de categorías
+// Las claves son los nombres EXACTOS de las carpetas en el sistema de archivos
 const categoryMapping = {
-  'arquitectura-y-diseno': {
+  'Arquitectura y diseño': {
     id: 'arquitectura-y-diseno',
     name: 'Arquitectura y Diseño',
     nameEn: 'Design & Architecture'
   },
-  'figuras-anatomicas': {
+  'Figuras Anatomicas': {
     id: 'figuras-anatomicas',
     name: 'Figuras Anatómicas',
     nameEn: 'Anatomical Figures'
   },
-  'mascaras-y-bustos': {
+  'Mascaras Y Bustos': {
     id: 'mascaras-y-bustos',
     name: 'Máscaras y Bustos',
     nameEn: 'Masks & Busts'
   },
-  'relieves': {
+  'Relieves': {
     id: 'relieves',
     name: 'Relieves',
     nameEn: 'Reliefs'
   },
-  'torsos-y-figuras': {
+  'Torsos y Figuras': {
     id: 'torsos-y-figuras',
     name: 'Torsos y Figuras',
     nameEn: 'Torsos & Figures'
   },
-  'actualizacion-enero-2026': {
+  'Actualización Enero 2026': {
     id: 'actualizacion-enero-2026',
     name: 'Actualización Enero 2026',
     nameEn: 'January 2026 Update'
   }
 };
+
+// Función para ordenar imágenes priorizando las que tienen "DEF" en el nombre
+function sortImagesByDef(images) {
+  return images.sort((a, b) => {
+    const aLower = a.name.toLowerCase();
+    const bLower = b.name.toLowerCase();
+    
+    // PRIORIDAD: Imágenes con "DEF" en el nombre van primero
+    const aIsDef = aLower.includes('def');
+    const bIsDef = bLower.includes('def');
+    
+    if (aIsDef && !bIsDef) return -1;
+    if (bIsDef && !aIsDef) return 1;
+    
+    // Si ambas tienen DEF o ninguna, ordenar alfabéticamente
+    return aLower.localeCompare(bLower);
+  });
+}
 
 // Función para obtener todas las imágenes de una carpeta
 function getImagesInFolder(folderPath) {
@@ -71,7 +90,9 @@ function getImagesInFolder(folderPath) {
   } catch (error) {
     console.error(`Error leyendo carpeta ${folderPath}:`, error.message);
   }
-  return images;
+  
+  // Ordenar imágenes: las que tienen "DEF" van primero
+  return sortImagesByDef(images);
 }
 
 // Función para subir una imagen a Supabase Storage
