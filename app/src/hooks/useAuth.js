@@ -1,8 +1,11 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { supabase } from '../lib/supabase';
 
-// Email autorizado para acceder al admin
-const AUTHORIZED_EMAIL = 'thespanishgipsoteca@gmail.com';
+// Emails autorizados para acceder al admin
+const AUTHORIZED_EMAILS = [
+  'thespanishgipsoteca@gmail.com',
+  'demendozasculpture@gmail.com'
+];
 
 const AuthContext = createContext({});
 
@@ -18,7 +21,7 @@ export function AuthProvider({ children }) {
         const { data: { session } } = await supabase.auth.getSession();
         const currentUser = session?.user ?? null;
         setUser(currentUser);
-        setIsAuthorized(currentUser?.email?.toLowerCase() === AUTHORIZED_EMAIL.toLowerCase());
+        setIsAuthorized(AUTHORIZED_EMAILS.some(e => e.toLowerCase() === currentUser?.email?.toLowerCase()));
       } catch (error) {
         console.error('Error getting session:', error);
       } finally {
@@ -32,7 +35,7 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
-      setIsAuthorized(currentUser?.email?.toLowerCase() === AUTHORIZED_EMAIL.toLowerCase());
+      setIsAuthorized(AUTHORIZED_EMAILS.some(e => e.toLowerCase() === currentUser?.email?.toLowerCase()));
       setLoading(false);
     });
 
@@ -47,8 +50,9 @@ export function AuthProvider({ children }) {
       // Limpiar espacios en blanco del email
       const cleanEmail = email.trim().toLowerCase();
       
-      // Verificar que el email sea el autorizado
-      if (cleanEmail !== AUTHORIZED_EMAIL.toLowerCase()) {
+      // Verificar que el email sea uno de los autorizados
+      const isAuthorizedEmail = AUTHORIZED_EMAILS.some(e => e.toLowerCase() === cleanEmail);
+      if (!isAuthorizedEmail) {
         return { error: { message: 'Email no autorizado para acceder al panel de administración' } };
       }
 
