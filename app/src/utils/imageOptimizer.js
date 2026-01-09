@@ -98,67 +98,52 @@ export function generateSrcSetString(url, sizes = [400, 600, 800, 1200], quality
 }
 
 /**
+ * Convierte URL de imagen _full a _thumb para versiones pequeñas
+ * Las imágenes se suben en 2 versiones: _thumb.webp y _full.webp
+ */
+function getThumbUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  // Si la URL tiene _full.webp, cambiar a _thumb.webp
+  if (url.includes('_full.webp')) {
+    return url.replace('_full.webp', '_thumb.webp');
+  }
+  return url;
+}
+
+/**
  * Presets de optimización para diferentes contextos
+ * Ahora usa las versiones pre-optimizadas (_thumb.webp y _full.webp)
  */
 export const imagePresets = {
-  // Thumbnail pequeño (para carrito, listas)
-  thumbnail: (url) => optimizeImageUrl(url, {
-    width: 100,
-    height: 133, // 3:4 aspect ratio
-    quality: 70,
-    format: 'webp',
-  }),
+  // Thumbnail pequeño (para carrito, listas) - usa versión _thumb
+  thumbnail: (url) => getThumbUrl(url),
 
-  // Tarjeta de producto (grid de productos) - con srcset
-  card: (url) => optimizeImageUrl(url, {
-    width: 600,
-    height: 800, // 3:4 aspect ratio
-    quality: 75,
-    format: 'webp',
-  }),
+  // Tarjeta de producto (grid de productos) - usa versión _thumb (400x533px, ~5KB)
+  card: (url) => getThumbUrl(url),
 
-  // Imagen principal de detalle (página de producto) - con srcset
-  detail: (url) => optimizeImageUrl(url, {
-    width: 1200,
-    height: 1600, // 3:4 aspect ratio
-    quality: 85,
-    format: 'webp',
-  }),
+  // Imagen principal de detalle (página de producto) - usa versión _full (1200x1600px, ~150KB)
+  detail: (url) => url, // Ya es _full.webp
 
-  // Imagen grande (full size, pero optimizada)
-  full: (url) => optimizeImageUrl(url, {
-    width: 1920,
-    quality: 90,
-    format: 'webp',
-  }),
+  // Imagen grande (full size)
+  full: (url) => url, // Ya es _full.webp
 
-  // Thumbnail de galería
-  galleryThumb: (url) => optimizeImageUrl(url, {
-    width: 200,
-    height: 267, // 3:4 aspect ratio
-    quality: 70,
-    format: 'webp',
-  }),
+  // Thumbnail de galería - usa versión _thumb
+  galleryThumb: (url) => getThumbUrl(url),
 };
 
 /**
  * Presets de srcset para diferentes contextos
+ * Con imágenes pre-optimizadas, no necesitamos srcset dinámico
+ * Las imágenes ya están en el tamaño correcto
  */
 export const srcSetPresets = {
-  // Thumbnail pequeño
-  thumbnail: (url) => generateSrcSetString(url, [100, 150, 200], 70, 'webp'),
-  
-  // Tarjeta de producto (grid) - responsivo
-  card: (url) => generateSrcSetString(url, [300, 400, 600, 800], 75, 'webp'),
-  
-  // Imagen de detalle - responsivo
-  detail: (url) => generateSrcSetString(url, [600, 800, 1000, 1200, 1600], 85, 'webp'),
-  
-  // Thumbnail de galería
-  galleryThumb: (url) => generateSrcSetString(url, [150, 200, 250], 70, 'webp'),
-  
-  // Full size
-  full: (url) => generateSrcSetString(url, [800, 1200, 1600, 1920], 90, 'webp'),
+  // Con imágenes pre-optimizadas, srcset no es necesario
+  // Las imágenes _thumb son 400px y _full son 1200px
+  thumbnail: () => null,
+  card: () => null,
+  detail: () => null,
+  galleryThumb: () => null,
+  full: () => null,
 };
 
 /**
