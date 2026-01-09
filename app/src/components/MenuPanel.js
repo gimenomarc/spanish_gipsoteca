@@ -11,24 +11,36 @@ const images = {
 
 export default function MenuPanel({ open, onClose }) {
   const [castCollectionOpen, setCastCollectionOpen] = useState(false);
-  const { categories, loading } = useCategories();
+  const { categories, loading: loadingCategories } = useCategories();
 
   const mainMenuItems = [
     { label: "HOME", path: "/" },
     {
       label: "THE CAST COLLECTION",
       hasSubmenu: true,
-      submenu: loading ? [] : Object.values(categories).map((cat) => ({
+      submenuKey: "cast",
+      submenu: loadingCategories ? [] : Object.values(categories).map((cat) => ({
         label: cat.nameEn,
         path: `/shop/${cat.id}`,
       })),
     },
     { label: "SHOP", path: "/shop" },
+    { label: "THE SG GALLERY", path: "/sg-gallery" },
     { label: "ABOUT US", path: "/about" },
     { label: "FAQs", path: "/faqs" },
-    { label: "THE SG GALLERY", path: "/gallery" },
     { label: "CONTACT", path: "/contact" },
   ];
+
+  const toggleSubmenu = (key) => {
+    if (key === "cast") {
+      setCastCollectionOpen(!castCollectionOpen);
+    }
+  };
+
+  const isSubmenuOpen = (key) => {
+    if (key === "cast") return castCollectionOpen;
+    return false;
+  };
 
   return (
     <>
@@ -54,50 +66,43 @@ export default function MenuPanel({ open, onClose }) {
           <nav className="space-y-1 sm:space-y-2">
             {mainMenuItems.map((item, idx) => (
               <div key={idx}>
-                {item.path ? (
+                {item.path && !item.hasSubmenu ? (
                   <Link
                     to={item.path}
                     onClick={onClose}
                     className="flex w-full items-center justify-between py-2.5 text-left text-xs uppercase tracking-[0.15em] text-white transition-colors hover:text-accent sm:py-3 sm:text-sm sm:tracking-[0.2em]"
                   >
                     <span>{item.label}</span>
-                    {item.hasSubmenu && (
-                      <span
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCastCollectionOpen(!castCollectionOpen);
-                        }}
-                        className={`ml-2 text-xs transition-transform ${castCollectionOpen ? "rotate-180" : ""}`}
-                      >
-                        ▼
-                      </span>
-                    )}
                   </Link>
-                ) : (
+                ) : item.hasSubmenu ? (
                   <button
-                    onClick={() => item.hasSubmenu && setCastCollectionOpen(!castCollectionOpen)}
+                    onClick={() => toggleSubmenu(item.submenuKey)}
                     className="flex w-full items-center justify-between py-2.5 text-left text-xs uppercase tracking-[0.15em] text-white transition-colors hover:text-accent sm:py-3 sm:text-sm sm:tracking-[0.2em]"
                   >
                     <span>{item.label}</span>
-                    {item.hasSubmenu && (
-                      <span className={`ml-2 text-xs transition-transform ${castCollectionOpen ? "rotate-180" : ""}`}>
-                        ▼
-                      </span>
-                    )}
+                    <span className={`ml-2 text-xs transition-transform ${isSubmenuOpen(item.submenuKey) ? "rotate-180" : ""}`}>
+                      ▼
+                    </span>
                   </button>
-                )}
-                {item.hasSubmenu && castCollectionOpen && (
+                ) : null}
+                {item.hasSubmenu && isSubmenuOpen(item.submenuKey) && (
                   <div className="ml-3 space-y-0.5 border-l-2 border-white/10 pl-3 sm:ml-4 sm:space-y-1 sm:pl-4">
-                    {item.submenu.map((subItem, subIdx) => (
-                      <Link
-                        key={subIdx}
-                        to={subItem.path}
-                        onClick={onClose}
-                        className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
+                    {item.submenu.length === 0 ? (
+                      <p className="py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/50 sm:py-2 sm:text-xs">
+                        Cargando...
+                      </p>
+                    ) : (
+                      item.submenu.map((subItem, subIdx) => (
+                        <Link
+                          key={subIdx}
+                          to={subItem.path}
+                          onClick={onClose}
+                          className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -108,4 +113,3 @@ export default function MenuPanel({ open, onClose }) {
     </>
   );
 }
-

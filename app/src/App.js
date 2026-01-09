@@ -13,6 +13,8 @@ import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import About from "./pages/About";
 import FAQs from "./pages/FAQs";
+import SGGallery from "./pages/SGGallery";
+import SGGalleryCollection from "./pages/SGGalleryCollection";
 
 // Admin pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -23,6 +25,8 @@ import AdminProductEdit from "./pages/admin/AdminProductEdit";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminImages from "./pages/admin/AdminImages";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminSGCollections from "./pages/admin/AdminSGCollections";
+import AdminSGPhotos from "./pages/admin/AdminSGPhotos";
 
 import "./App.css";
 
@@ -42,6 +46,8 @@ function App() {
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="sg-gallery" element={<AdminSGCollections />} />
+                <Route path="sg-gallery/:collectionId/photos" element={<AdminSGPhotos />} />
               </Route>
 
               {/* Public Routes - Con Header */}
@@ -63,6 +69,8 @@ function App() {
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/cookies" element={<Cookies />} />
+                        <Route path="/sg-gallery" element={<SGGallery />} />
+                        <Route path="/sg-gallery/:collectionSlug" element={<SGGalleryCollection />} />
                       </Routes>
                     </main>
                   </div>
