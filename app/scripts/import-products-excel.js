@@ -205,15 +205,15 @@ async function importProducts() {
       continue;
     }
 
-    // Extraer datos del Excel
+    // Extraer datos del Excel (nota: "Autoría " tiene espacio al final en el Excel)
     const nombre = row['Nombre de la pieza'] || row['Nombre'] || row['Name'] || '';
     const tipologia = row['Tipología'] || row['Tipologia'] || row['Tipo'] || '';
     const fecha = row['Fecha'] || row['Date'] || '';
-    const autoria = row['Autoría'] || row['Autoria'] || row['Autor'] || row['Artist'] || '';
+    const autoria = row['Autoría '] || row['Autoría'] || row['Autoria'] || row['Autor'] || row['Artist'] || '';
     const dimensiones = row['Dimensiones'] || row['Dimensions'] || '';
     const pvp = row['PVP'] || row['Precio'] || row['Price'] || '';
     const catalogo = row['Catálogo'] || row['Catalogo'] || '';
-    const descripcion = row['Descripcion productos'] || row['Descripción'] || row['Descripcion'] || row['Description'] || '';
+    const descripcion = row['Descripcion productos'] || row['Descripcion'] || row['Descripción'] || row['Description'] || '';
 
     // Buscar categoría basada en tipología o en el código del producto
     let categoryId = findCategoryId(tipologia);

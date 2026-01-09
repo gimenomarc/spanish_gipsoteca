@@ -183,7 +183,7 @@ export default function ProductDetail() {
                   {product.name.toUpperCase()}
                 </h2>
                 <p className="mb-3 text-xs uppercase tracking-[0.15em] text-white/70 sm:mb-4 sm:text-sm sm:tracking-[0.2em]">
-                  {product.artist}, ca.130-100 a.e.c.
+                  {product.artist}
                 </p>
                 <p className="mb-4 text-xl font-medium text-white sm:mb-6 sm:text-2xl">{product.price}</p>
                 <p className="mb-4 text-xs leading-relaxed text-white/80 sm:mb-6 sm:text-sm">
@@ -255,7 +255,7 @@ export default function ProductDetail() {
                   {product.name.toUpperCase()}
                 </h2>
                 <p className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
-                  {product.artist}, ca.130-100 a.e.c.
+                  {product.artist}
                 </p>
                 <p className="mb-6 text-sm leading-relaxed text-white/80">
                   {extendedDescription} +
@@ -340,7 +340,7 @@ export default function ProductDetail() {
                   {product.name.toUpperCase()}
                 </h2>
                 <p className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
-                  {product.artist}, ca.130-100 a.e.c.
+                  {product.artist}
                 </p>
                 <p className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
                   Code: {product.code}
