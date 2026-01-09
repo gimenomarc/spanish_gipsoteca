@@ -1,6 +1,58 @@
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSGCollections } from "../hooks/useSGGallery";
 import Footer from "../components/Footer";
+
+// Componente para lazy loading de imágenes hero
+function LazyHeroImage({ src, srcHero, alt, priority = false }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    if (priority) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' } // Precargar 200px antes de que aparezca
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [priority]);
+
+  // Usar la versión hero para pantallas grandes si está disponible
+  const imageSrc = srcHero || src;
+
+  return (
+    <div ref={imgRef} className="absolute inset-0">
+      {/* Placeholder con gradiente mientras carga */}
+      <div 
+        className={`absolute inset-0 bg-gradient-to-br from-neutral-900 to-black transition-opacity duration-700 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
+      />
+      
+      {/* Imagen */}
+      {isInView && (
+        <img
+          src={imageSrc}
+          alt={alt}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-all duration-1000 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function SGGallery() {
   const { collections, loading } = useSGCollections();
@@ -9,7 +61,10 @@ export default function SGGallery() {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-white/70">Cargando colecciones...</p>
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-white/50 text-sm">Cargando colecciones...</p>
+          </div>
         </div>
       </div>
     );
@@ -30,12 +85,13 @@ export default function SGGallery() {
                 to={`/sg-gallery/${collection.slug}`}
                 className="group relative block w-full h-[70vh] sm:h-[80vh] lg:h-screen overflow-hidden"
               >
-                {/* Imagen de fondo */}
+                {/* Imagen de fondo con lazy loading */}
                 {collection.cover_image ? (
-                  <img
+                  <LazyHeroImage
                     src={collection.cover_image}
+                    srcHero={collection.cover_image_hero}
                     alt={collection.name}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    priority={index === 0} // Primera imagen se carga inmediatamente
                   />
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5" />

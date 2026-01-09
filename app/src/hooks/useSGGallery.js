@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { optimizeImageUrl } from '../utils/imageOptimizer';
+import { optimizeImageUrl, imagePresets } from '../utils/imageOptimizer';
 
 /**
  * Hook para obtener todas las colecciones de SG Gallery
@@ -23,12 +23,17 @@ export function useSGCollections() {
 
         if (error) throw error;
 
-        // Optimizar URLs de imágenes de portada
+        // Optimizar URLs de imágenes de portada con diferentes tamaños
         const optimizedCollections = (data || []).map(collection => ({
           ...collection,
+          // Versión para hero full-screen
+          cover_image_hero: collection.cover_image 
+            ? optimizeImageUrl(collection.cover_image, imagePresets.sgCollectionHero)
+            : null,
+          // Versión para tarjetas en home
           cover_image: collection.cover_image 
-            ? optimizeImageUrl(collection.cover_image, { width: 800, quality: 85, format: 'webp' })
-            : null
+            ? optimizeImageUrl(collection.cover_image, imagePresets.sgCollectionCover)
+            : null,
         }));
 
         setCollections(optimizedCollections);
@@ -119,15 +124,19 @@ export function useSGPhotos(collectionId) {
 
         if (error) throw error;
 
-        // Optimizar URLs de imágenes
+        // Optimizar URLs de imágenes con diferentes tamaños
         const optimizedPhotos = (data || []).map(photo => ({
           ...photo,
+          // Versión para grid (más pequeña, carga rápida)
           image_url: photo.image_url 
-            ? optimizeImageUrl(photo.image_url, { width: 600, quality: 80, format: 'webp' })
+            ? optimizeImageUrl(photo.image_url, imagePresets.sgPhotoGrid)
             : null,
+          // Versión para modal/detalle (alta calidad)
           image_url_full: photo.image_url 
-            ? optimizeImageUrl(photo.image_url, { width: 1400, quality: 90, format: 'webp' })
-            : null
+            ? optimizeImageUrl(photo.image_url, imagePresets.sgPhotoDetail)
+            : null,
+          // URL original sin optimizar (por si acaso)
+          image_url_original: photo.image_url
         }));
 
         setPhotos(optimizedPhotos);
@@ -221,8 +230,9 @@ export function useSGPhotoDetail(photoId) {
 
         setPhoto({
           ...photoData,
+          // Versión optimizada para detalle
           image_url_full: photoData.image_url 
-            ? optimizeImageUrl(photoData.image_url, { width: 1400, quality: 90, format: 'webp' })
+            ? optimizeImageUrl(photoData.image_url, imagePresets.sgPhotoDetail)
             : null
         });
         setRelatedProducts(products);

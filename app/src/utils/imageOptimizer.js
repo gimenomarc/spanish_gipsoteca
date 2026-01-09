@@ -129,6 +129,20 @@ export const imagePresets = {
 
   // Thumbnail de galería - usa versión _thumb
   galleryThumb: (url) => getThumbUrl(url),
+
+  // === SG GALLERY PRESETS ===
+  
+  // Portada de colección en Home (800px, calidad alta)
+  sgCollectionCover: { width: 800, quality: 85, format: 'webp' },
+  
+  // Foto en grid de colección (600px, calidad media-alta)
+  sgPhotoGrid: { width: 600, quality: 80, format: 'webp' },
+  
+  // Foto en modal/detalle (1400px, calidad alta)
+  sgPhotoDetail: { width: 1400, quality: 90, format: 'webp' },
+  
+  // Portada hero full-screen (1920px, calidad alta)
+  sgCollectionHero: { width: 1920, quality: 85, format: 'webp' },
 };
 
 /**

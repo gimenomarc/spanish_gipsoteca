@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSGCollection, useSGPhotos } from "../hooks/useSGGallery";
 import GalleryPhotoModal from "../components/GalleryPhotoModal";
@@ -9,6 +9,56 @@ const ArrowLeftIcon = () => (
     <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+// Componente para lazy loading de fotos del grid
+function LazyGridImage({ src, alt, priority = false }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(priority);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    if (priority) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px' }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [priority]);
+
+  return (
+    <div ref={imgRef} className="absolute inset-0">
+      {/* Placeholder/skeleton mientras carga */}
+      <div 
+        className={`absolute inset-0 bg-gradient-to-br from-neutral-800/50 to-neutral-900/50 transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
+      >
+        <div className="absolute inset-0 animate-pulse bg-white/5" />
+      </div>
+      
+      {/* Imagen */}
+      {isInView && (
+        <img
+          src={src}
+          alt={alt}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:scale-105 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function SGGalleryCollection() {
   const { collectionSlug } = useParams();
@@ -44,7 +94,10 @@ export default function SGGalleryCollection() {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-white/70">Cargando colección...</p>
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-white/50 text-sm">Cargando colección...</p>
+          </div>
         </div>
       </div>
     );
@@ -93,6 +146,11 @@ export default function SGGalleryCollection() {
                   {collection.description}
                 </p>
               )}
+              {photos.length > 0 && (
+                <p className="mt-4 text-xs uppercase tracking-[0.2em] text-white/30">
+                  {photos.length} {photos.length === 1 ? 'foto' : 'fotos'}
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -101,8 +159,11 @@ export default function SGGalleryCollection() {
         <section className="bg-black pb-16 sm:pb-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
             {loadingPhotos ? (
-              <div className="text-center py-10">
-                <p className="text-white/70">Cargando fotos...</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+                {/* Skeletons mientras carga */}
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="aspect-[4/3] bg-neutral-900 animate-pulse rounded-sm" />
+                ))}
               </div>
             ) : photos.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
@@ -110,23 +171,32 @@ export default function SGGalleryCollection() {
                   <button
                     key={photo.id}
                     onClick={() => handlePhotoClick(index)}
-                    className="group relative aspect-[4/3] overflow-hidden bg-black/50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black"
+                    className="group relative aspect-[4/3] overflow-hidden bg-neutral-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black rounded-sm"
                   >
-                    <img
+                    <LazyGridImage
                       src={photo.image_url}
-                      alt={photo.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={photo.title || `Foto ${index + 1}`}
+                      priority={index < 4} // Primeras 4 fotos se cargan inmediatamente
                     />
                     
                     {/* Overlay sutil en hover */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
                     
-                    {/* Indicador de productos relacionados */}
-                    {photo.product_codes && photo.product_codes.length > 0 && (
-                      <div className="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-sm text-black font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        {photo.product_codes.length}
+                    {/* Título en hover (si existe) */}
+                    {photo.title && (
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-white text-sm font-medium truncate">
+                          {photo.title}
+                        </p>
                       </div>
                     )}
+                    
+                    {/* Indicador de zoom */}
+                    <div className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </button>
                 ))}
               </div>
