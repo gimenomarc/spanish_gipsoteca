@@ -490,7 +490,7 @@ export default function ProductDetail() {
               {relatedProducts.map((relatedProduct, index) => (
                 <Link
                   key={relatedProduct.code}
-                  to={`/shop/${relatedProduct.categoryId}/${relatedProduct.code}`}
+                  to={`/product/${relatedProduct.categoryId}/${relatedProduct.code}`}
                   className="group block"
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-black/50 mb-3 sm:mb-4">

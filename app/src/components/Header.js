@@ -29,13 +29,6 @@ const BagIcon = () => (
   </svg>
 );
 
-const UserIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="8" r="5" stroke="currentColor" strokeWidth="2" />
-    <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-
 const InstagramIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" strokeWidth="2" />
@@ -113,9 +106,6 @@ export default function Header() {
             
             {/* Botones derecha */}
             <div className="flex items-center justify-end gap-2 sm:gap-3 md:gap-4">
-              <button className="text-white transition-colors hover:text-accent hidden sm:block" aria-label="User">
-                <UserIcon />
-              </button>
               <a
                 href={INSTAGRAM_URL}
                 target="_blank"
@@ -161,5 +151,3 @@ export default function Header() {
     </>
   );
 }
-
-
