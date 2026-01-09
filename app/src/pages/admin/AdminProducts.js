@@ -8,6 +8,7 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [publishedFilter, setPublishedFilter] = useState('all'); // 'all', 'published', 'unpublished'
   const [sortBy, setSortBy] = useState('code');
   const navigate = useNavigate();
 
@@ -69,6 +70,25 @@ export default function AdminProducts() {
     }
   };
 
+  // Toggle publicado
+  const togglePublished = async (code, currentValue) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ published: !currentValue })
+        .eq('code', code);
+
+      if (error) throw error;
+      
+      setProducts(products.map(p => 
+        p.code === code ? { ...p, published: !currentValue } : p
+      ));
+    } catch (error) {
+      console.error('Error toggling published:', error);
+      alert('Error al cambiar el estado');
+    }
+  };
+
   // Filtrar y ordenar productos
   const filteredProducts = products
     .filter(p => {
@@ -79,7 +99,11 @@ export default function AdminProducts() {
       
       const matchesCategory = !categoryFilter || p.category_id === categoryFilter;
       
-      return matchesSearch && matchesCategory;
+      const matchesPublished = publishedFilter === 'all' || 
+        (publishedFilter === 'published' && p.published === true) ||
+        (publishedFilter === 'unpublished' && p.published === false);
+      
+      return matchesSearch && matchesCategory && matchesPublished;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -144,6 +168,16 @@ export default function AdminProducts() {
         </select>
 
         <select
+          value={publishedFilter}
+          onChange={(e) => setPublishedFilter(e.target.value)}
+          className="bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
+        >
+          <option value="all">Todos</option>
+          <option value="published">✓ Publicados</option>
+          <option value="unpublished">✗ No publicados</option>
+        </select>
+
+        <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
@@ -177,6 +211,9 @@ export default function AdminProducts() {
                 </th>
                 <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Categoría
+                </th>
+                <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                  Publicado
                 </th>
                 <th className="text-right p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Acciones
@@ -223,6 +260,18 @@ export default function AdminProducts() {
                     <span className="text-xs px-2 py-1 bg-white/10 text-white/70">
                       {product.categories?.name || '—'}
                     </span>
+                  </td>
+                  <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => togglePublished(product.code, product.published)}
+                      className={`px-3 py-1 text-xs rounded transition-colors ${
+                        product.published 
+                          ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' 
+                          : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                      }`}
+                    >
+                      {product.published ? '✓ Sí' : '✗ No'}
+                    </button>
                   </td>
                   <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">

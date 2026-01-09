@@ -62,6 +62,7 @@ export function useProducts(categoryId = null) {
               name_en
             )
           `)
+          .eq('published', true)  // Solo productos publicados en la tienda
           .order('code', { ascending: true });
 
         // Si hay categoryId, filtrar por categoría
@@ -200,6 +201,7 @@ export function useRelatedProducts(categoryId, currentProductCode, limit = 4) {
               name_en
             )
           `)
+          .eq('published', true)  // Solo productos publicados
           .eq('category_id', categoryId)
           .neq('code', currentProductCode)
           .limit(limit);

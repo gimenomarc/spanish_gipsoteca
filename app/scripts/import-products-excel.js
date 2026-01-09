@@ -136,7 +136,6 @@ async function importProducts() {
 
   // Convertir el resto de filas a objetos usando los encabezados
   const data = [];
-  let skippedByPublish = 0;
   
   for (let i = headerRowIndex + 1; i < rawData.length; i++) {
     const row = rawData[i];
@@ -150,29 +149,14 @@ async function importProducts() {
       }
     });
     
-    // Verificar columna "Publicar"
-    // SOLO se publica si el valor es exactamente TRUE
-    // FALSE, vacío, o cualquier otro valor = NO publicar
-    const publicarValue = String(obj['Publicar'] || obj['publicar'] || obj['PUBLICAR'] || obj['Publish'] || '').trim().toUpperCase();
-    
-    // Solo publicar si es TRUE (estricto)
-    const shouldPublish = publicarValue === 'TRUE';
-    
-    if (!shouldPublish) {
-      const code = obj['Columna1'] || obj['Código'] || obj['Code'] || 'Sin código';
-      console.log(`   ⏭️  Saltando (Publicar≠TRUE): ${String(code).trim()}`);
-      skippedByPublish++;
-      continue;
+    // Añadir a data si tiene código
+    const code = obj['Columna1'] || obj['Código'] || obj['Code'] || '';
+    if (code && String(code).trim()) {
+      data.push(obj);
     }
-    
-    data.push(obj);
-  }
-  
-  if (skippedByPublish > 0) {
-    console.log(`\n🚫 Productos saltados (Publicar=NO): ${skippedByPublish}\n`);
   }
 
-  console.log(`📦 Productos válidos encontrados: ${data.length}\n`);
+  console.log(`📦 Productos encontrados en Excel: ${data.length}\n`);
 
   // Mostrar las primeras filas para debug
   if (data.length > 0) {
@@ -238,6 +222,12 @@ async function importProducts() {
       categoryId = prefixMap[prefix2] || prefixMap[prefix1] || 'torsos-y-figuras'; // Default si no se encuentra
     }
 
+    // Obtener valor de "Publicar" del Excel
+    const publicarValue = row['Publicar'] || row['publicar'] || row['PUBLICAR'] || row['Publish'] || '';
+    const isPublished = typeof publicarValue === 'boolean' 
+      ? publicarValue 
+      : ['true', 'si', 'sí', 'yes', '1', 'x', 'ok'].includes(String(publicarValue).toLowerCase().trim());
+
     // Preparar datos para actualizar
     const updateData = {};
     
@@ -248,10 +238,8 @@ async function importProducts() {
     if (descripcion) updateData.description = descripcion.trim();
     if (categoryId) updateData.category_id = categoryId;
     
-    // Guardar fecha y catálogo en campos adicionales si existen
-    // Puedes agregar estas columnas a tu tabla de Supabase si las necesitas
-    // if (fecha) updateData.date_original = fecha.trim();
-    // if (catalogo) updateData.catalog_info = catalogo.trim();
+    // Guardar el estado de publicación
+    updateData.published = isPublished;
 
     // Si no hay datos para actualizar, saltar
     if (Object.keys(updateData).length === 0) {
