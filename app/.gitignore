@@ -127,6 +127,13 @@ temp/
 *.tar.gz
 *.tar.bz2
 
+# Archivos Excel (datos locales, no subir a git)
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.csv
+
 # Lock files (opcional - algunos prefieren incluirlos)
 # package-lock.json
 # yarn.lock
