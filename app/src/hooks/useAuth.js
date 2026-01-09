@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 
 // Email autorizado para acceder al admin
 const AUTHORIZED_EMAIL = 'thespanishgipsoteca@gmail.com';
