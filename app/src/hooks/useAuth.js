@@ -44,13 +44,16 @@ export function AuthProvider({ children }) {
     try {
       setLoading(true);
       
+      // Limpiar espacios en blanco del email
+      const cleanEmail = email.trim().toLowerCase();
+      
       // Verificar que el email sea el autorizado
-      if (email.toLowerCase() !== AUTHORIZED_EMAIL.toLowerCase()) {
+      if (cleanEmail !== AUTHORIZED_EMAIL.toLowerCase()) {
         return { error: { message: 'Email no autorizado para acceder al panel de administración' } };
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       });
 
