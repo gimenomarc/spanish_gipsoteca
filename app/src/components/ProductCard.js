@@ -56,7 +56,7 @@ export default function ProductCard({ product, categoryId, index = 0 }) {
             {product.name}, {product.artist}
           </p>
           <p className="text-xs text-white/70 sm:text-sm">Code {product.code}</p>
-          <p className="mt-1 text-base font-medium text-white sm:text-lg">{product.price}</p>
+          <p className="mt-1 text-sm text-white/80">{product.price}</p>
         </div>
       </article>
     </Link>

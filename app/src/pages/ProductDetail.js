@@ -185,7 +185,7 @@ export default function ProductDetail() {
                 <p className="mb-3 text-xs uppercase tracking-[0.15em] text-white/70 sm:mb-4 sm:text-sm sm:tracking-[0.2em]">
                   {product.artist}
                 </p>
-                <p className="mb-4 text-xl font-medium text-white sm:mb-6 sm:text-2xl">{product.price}</p>
+                <p className="mb-4 text-base text-white/90 sm:mb-6 sm:text-lg">{product.price}</p>
                 <p className="mb-4 text-xs leading-relaxed text-white/80 sm:mb-6 sm:text-sm">
                   {extendedDescription}
                 </p>
