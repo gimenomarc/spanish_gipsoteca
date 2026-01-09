@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider } from "./context/SearchContext";
+import { AuthProvider } from "./hooks/useAuth";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
@@ -12,34 +13,66 @@ import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import About from "./pages/About";
 import FAQs from "./pages/FAQs";
+
+// Admin pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminProductEdit from "./pages/admin/AdminProductEdit";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminImages from "./pages/admin/AdminImages";
+import AdminSettings from "./pages/admin/AdminSettings";
+
 import "./App.css";
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <SearchProvider>
-          <div className="flex min-h-screen flex-col bg-black text-white">
-            <Header />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/shop/:categoryId" element={<Shop />} />
-                <Route path="/product/:categoryId/:productCode" element={<ProductDetail />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/faqs" element={<FAQs />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/cookies" element={<Cookies />} />
-              </Routes>
-            </main>
-          </div>
-        </SearchProvider>
-      </Router>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <SearchProvider>
+            <Routes>
+              {/* Admin Routes - Sin Header */}
+              <Route path="/admin-jdm-private" element={<AdminLogin />} />
+              <Route path="/admin-jdm-private/*" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="products/:code" element={<AdminProductEdit />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="images" element={<AdminImages />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
+
+              {/* Public Routes - Con Header */}
+              <Route
+                path="*"
+                element={
+                  <div className="flex min-h-screen flex-col bg-black text-white">
+                    <Header />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/shop" element={<Shop />} />
+                        <Route path="/shop/:categoryId" element={<Shop />} />
+                        <Route path="/product/:categoryId/:productCode" element={<ProductDetail />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/faqs" element={<FAQs />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/cookies" element={<Cookies />} />
+                      </Routes>
+                    </main>
+                  </div>
+                }
+              />
+            </Routes>
+          </SearchProvider>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
