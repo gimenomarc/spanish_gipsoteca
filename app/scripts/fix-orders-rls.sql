@@ -15,10 +15,21 @@ DROP POLICY IF EXISTS "Public can insert orders" ON orders;
 --    - Solo usuarios autenticados pueden LEER y ACTUALIZAR (para admin)
 
 -- Política: Cualquiera puede insertar pedidos (formularios públicos)
+-- IMPORTANTE: Esta política permite que usuarios NO autenticados inserten
 CREATE POLICY "Public can insert orders" 
 ON orders FOR INSERT 
 TO public 
 WITH CHECK (true);
+
+-- Verificar que la política se creó correctamente
+SELECT 
+  policyname,
+  cmd,
+  roles,
+  qual,
+  with_check
+FROM pg_policies
+WHERE tablename = 'orders' AND policyname = 'Public can insert orders';
 
 -- Política: Usuarios autenticados pueden leer pedidos (admin)
 CREATE POLICY "Authenticated users can read orders" 

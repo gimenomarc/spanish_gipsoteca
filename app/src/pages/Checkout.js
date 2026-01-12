@@ -42,6 +42,11 @@ export default function Checkout() {
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Verificar conexión a Supabase
+    console.log('🔍 Verificando conexión a Supabase...');
+    console.log('Supabase URL:', process.env.REACT_APP_SUPABASE_URL || 'https://vnefocljtdvkabfxwoqg.supabase.co');
+    console.log('Supabase Key configurada:', !!process.env.REACT_APP_SUPABASE_ANON_KEY);
+
     try {
       // Obtener información del dispositivo y navegador
       const userAgent = navigator.userAgent;
@@ -191,31 +196,48 @@ export default function Checkout() {
       };
 
       console.log('📦 Datos a insertar en BD:', JSON.stringify(orderDataToInsert, null, 2));
+      console.log('📦 Intentando insertar en tabla "orders"...');
 
+      // Intentar insertar
       const { data: orderData, error: dbError } = await supabase
         .from('orders')
         .insert(orderDataToInsert)
         .select();
 
       if (dbError) {
-        console.error('❌ Error guardando pedido en BD:', dbError);
-        console.error('Detalles del error:', JSON.stringify(dbError, null, 2));
-        console.error('Código de error:', dbError.code);
+        console.error('❌ ERROR AL GUARDAR PEDIDO EN BD:');
+        console.error('=====================================');
+        console.error('Código:', dbError.code);
         console.error('Mensaje:', dbError.message);
         console.error('Detalles:', dbError.details);
         console.error('Hint:', dbError.hint);
+        console.error('Error completo:', JSON.stringify(dbError, null, 2));
+        console.error('=====================================');
         
-        // Mostrar alerta si es un error crítico (tabla no existe, permisos, etc.)
+        // Mostrar alerta visual si es un error crítico
         if (dbError.code === '42P01' || dbError.message?.includes('does not exist')) {
+          alert('⚠️ Error: La tabla "orders" no existe. Contacta al administrador.');
           console.error('⚠️ La tabla "orders" no existe. Ejecuta el script orders-schema.sql en Supabase.');
-        } else if (dbError.code === '42501' || dbError.message?.includes('permission denied')) {
-          console.error('⚠️ Error de permisos. Verifica las políticas RLS en Supabase.');
+        } else if (dbError.code === '42501' || dbError.message?.includes('permission denied') || dbError.message?.includes('new row violates row-level security')) {
+          alert('⚠️ Error de permisos. Verifica las políticas RLS en Supabase. Ejecuta fix-orders-rls.sql');
+          console.error('⚠️ Error de permisos RLS. Ejecuta el script fix-orders-rls.sql en Supabase.');
+        } else if (dbError.message?.includes('Timeout')) {
+          alert('⚠️ Error: La conexión tardó demasiado. Verifica tu conexión a internet.');
+        } else {
+          // Mostrar error genérico al usuario
+          alert(`⚠️ Error al guardar el pedido: ${dbError.message || 'Error desconocido'}. El pedido se envió por email pero no se guardó en la base de datos.`);
         }
         // Continuamos aunque falle la BD para no bloquear el proceso
       } else {
-        console.log('✅ Pedido guardado correctamente en BD:', orderData);
+        console.log('✅✅✅ PEDIDO GUARDADO CORRECTAMENTE EN BD ✅✅✅');
+        console.log('Datos devueltos:', orderData);
         if (orderData && orderData.length > 0) {
-          console.log('ID del pedido:', orderData[0].id);
+          console.log('✅ ID del pedido:', orderData[0].id);
+          console.log('✅ Tipo:', orderData[0].order_type);
+          console.log('✅ Cliente:', orderData[0].customer_name);
+          console.log('✅ Email:', orderData[0].customer_email);
+        } else {
+          console.warn('⚠️ La inserción no devolvió datos. Verifica que la política RLS permita SELECT después de INSERT.');
         }
       }
 
