@@ -5,6 +5,7 @@ import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 import { imagePresets, srcSetPresets } from "../utils/imageOptimizer";
+import { searchInFields } from "../utils/textNormalizer";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,13 +59,19 @@ export default function Shop() {
   const artists = [...new Set(products.map(p => p.artist).filter(Boolean))].sort();
 
   // Filtrar por búsqueda y artista
+  // Busca en: name, code y artist (igual que SearchModal)
+  // Usa normalización sin acentos para mejor búsqueda
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.code.toLowerCase().includes(searchTerm.toLowerCase());
+    // Búsqueda general: busca en name, code y artist
+    const matchesSearch = !searchTerm || searchInFields(
+      product,
+      ['name', 'code', 'artist'],
+      searchTerm
+    );
     
+    // Filtro por artista específico
     const matchesArtist = !artistFilter || 
-      (product.artist && product.artist.toLowerCase().includes(artistFilter.toLowerCase()));
+      (product.artist && searchInFields(product, ['artist'], artistFilter));
     
     return matchesSearch && matchesArtist;
   });
@@ -150,7 +157,7 @@ export default function Shop() {
 
           <div className="mb-8 flex flex-col gap-6 sm:mb-12 md:flex-row md:items-start md:justify-between">
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 md:gap-6">
                 <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                   {categoryName}
                 </h2>
@@ -158,9 +165,22 @@ export default function Shop() {
                   href="/catalogo.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 sm:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/70 hover:text-accent transition-colors sm:text-sm"
+                  className="mt-2 sm:mt-0 whitespace-nowrap inline-flex items-center gap-2 border border-white/20 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.15em] text-white/80 transition-all hover:border-white/40 hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-sm"
                 >
-                  📄 Ver Catálogo PDF
+                  <svg 
+                    className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" 
+                    />
+                  </svg>
+                  <span className="whitespace-nowrap">Ver Catálogo PDF</span>
                 </a>
               </div>
               <p className="mt-1 text-xs text-white/70 sm:mt-2 sm:text-sm">
@@ -174,7 +194,7 @@ export default function Shop() {
               <div className="relative w-full sm:w-64">
                 <input
                   type="text"
-                  placeholder="Buscar por nombre o código..."
+                  placeholder="Buscar por nombre, código o artista..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full rounded-sm border border-white/20 bg-black/50 px-10 py-2.5 text-sm text-white placeholder-white/50 focus:border-white focus:outline-none sm:px-12 sm:py-2.5 sm:text-sm"

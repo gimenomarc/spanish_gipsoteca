@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSearch } from '../context/SearchContext';
 import { useProducts } from '../hooks/useProducts';
 import ProductCard from './ProductCard';
+import { searchInFields } from '../utils/textNormalizer';
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,10 +19,10 @@ export default function SearchModal() {
   const { products } = useProducts();
 
   // Filtrar productos
+  // Busca en: name, code y artist
+  // Usa normalización sin acentos para mejor búsqueda
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.artist && product.artist.toLowerCase().includes(searchTerm.toLowerCase()))
+    searchInFields(product, ['name', 'code', 'artist'], searchTerm)
   ).slice(0, 6); // Limitar a 6 resultados
 
   const handleSubmit = (e) => {
