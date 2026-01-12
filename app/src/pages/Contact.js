@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
 import emailjs from '@emailjs/browser';
+import { supabase } from '../lib/supabase';
 
 // Icono de Instagram moderno y minimalista
 const InstagramIcon = ({ size = 24 }) => (
@@ -73,22 +74,44 @@ export default function Contact() {
         }),
       };
 
+      // Guardar contacto en Supabase
+      const { error: dbError } = await supabase
+        .from('orders')
+        .insert({
+          order_type: 'contact',
+          status: 'pending',
+          customer_name: formData.name,
+          customer_email: formData.email,
+          customer_phone: null,
+          subject: formData.subject,
+          message: formData.message
+        });
+
+      if (dbError) {
+        console.error('Error guardando contacto en BD:', dbError);
+        // No bloqueamos el envío si falla la BD, pero lo registramos
+      }
+
       const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
       const templateId = process.env.REACT_APP_EMAILJS_CONTACT_TEMPLATE_ID || process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
       const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
       if (serviceId && templateId && publicKey) {
         await emailjs.send(serviceId, templateId, emailData, publicKey);
-        setSubmitStatus("success");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        
-        setTimeout(() => {
-          setSubmitStatus(null);
-        }, 5000);
       } else {
         console.log('EmailJS no configurado. Datos del contacto:', emailData);
-        throw new Error('EmailJS no está configurado.');
+        // No lanzamos error si ya se guardó en BD
+        if (dbError) {
+          throw new Error('Error al guardar el mensaje. Por favor, intenta de nuevo.');
+        }
       }
+
+      setSubmitStatus("success");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      
+      setTimeout(() => {
+        setSubmitStatus(null);
+      }, 5000);
     } catch (error) {
       console.error('Error sending email:', error);
       setSubmitStatus("error");

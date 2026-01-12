@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import Footer from '../components/Footer';
 import emailjs from '@emailjs/browser';
 import OptimizedImage from '../components/OptimizedImage';
+import { supabase } from '../lib/supabase';
 
 const ArrowLeftIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -151,6 +152,43 @@ export default function Checkout() {
         publicKey: publicKey ? '✓ Configurado' : '✗ Faltante'
       });
 
+      // Guardar pedido en Supabase
+      const orderItems = cart.map(item => ({
+        code: item.code || 'N/A',
+        name: item.name || 'Sin nombre',
+        quantity: item.quantity,
+        price: item.price || '0.00€',
+        categoryId: item.categoryId || null,
+        artist: item.artist || null
+      }));
+
+      const totalAmount = getTotalPrice();
+      
+      const { error: dbError } = await supabase
+        .from('orders')
+        .insert({
+          order_type: 'checkout',
+          status: 'pending',
+          customer_name: formData.name,
+          customer_email: formData.email,
+          customer_phone: formData.phone || null,
+          delivery_type: deliveryType,
+          delivery_address: deliveryType === 'shipping' ? formData.address : null,
+          delivery_city: deliveryType === 'shipping' ? formData.city : null,
+          delivery_postal_code: deliveryType === 'shipping' ? formData.postalCode : null,
+          delivery_country: deliveryType === 'shipping' ? formData.country : null,
+          order_items: orderItems,
+          total_amount: totalAmount,
+          shipping_cost: deliveryType === 'shipping' ? null : null, // Se puede calcular después
+          message: formData.message || null
+        });
+
+      if (dbError) {
+        console.error('Error guardando pedido en BD:', dbError);
+        // No bloqueamos el envío si falla la BD, pero lo registramos
+      }
+
+      // Enviar email usando EmailJS
       if (serviceId && templateId && publicKey) {
         await emailjs.send(serviceId, templateId, emailData, publicKey);
       } else {
@@ -161,7 +199,10 @@ export default function Checkout() {
           publicKey: !publicKey
         });
         console.log('Datos del pedido:', emailData);
-        throw new Error('EmailJS no está configurado. Por favor, configura las variables de entorno y reinicia el servidor. Ver EMAILJS_SETUP.md');
+        // No lanzamos error si ya se guardó en BD
+        if (dbError) {
+          throw new Error('Error al guardar el pedido. Por favor, intenta de nuevo.');
+        }
       }
 
       setSubmitStatus('success');

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 const navItems = [
   { to: '/admin-jdm-private/dashboard', label: 'Dashboard', icon: '📊' },
   { to: '/admin-jdm-private/analytics', label: 'Analytics', icon: '📈' },
+  { to: '/admin-jdm-private/orders', label: 'Pedidos', icon: '📦' },
   { to: '/admin-jdm-private/home', label: 'Home', icon: '🏠' },
   { to: '/admin-jdm-private/products', label: 'Productos', icon: '🗿' },
   { to: '/admin-jdm-private/product-sg-relations', label: 'Productos ↔ SG Gallery', icon: '📷' },

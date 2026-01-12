@@ -31,6 +31,7 @@ import AdminSGPhotos from "./pages/admin/AdminSGPhotos";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminProductSGRelations from "./pages/admin/AdminProductSGRelations";
+import AdminOrders from "./pages/admin/AdminOrders";
 
 import "./App.css";
 
@@ -67,6 +68,7 @@ function App() {
                 <Route path="settings" element={<AdminSettings />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="home" element={<AdminHome />} />
+              <Route path="orders" element={<AdminOrders />} />
               <Route path="sg-gallery" element={<AdminSGCollections />} />
               <Route path="sg-gallery/:collectionId/photos" element={<AdminSGPhotos />} />
               <Route path="product-sg-relations" element={<AdminProductSGRelations />} />
