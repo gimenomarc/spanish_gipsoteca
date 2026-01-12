@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider } from "./context/SearchContext";
 import { AuthProvider } from "./hooks/useAuth";
+import { usePageView } from "./hooks/useAnalytics";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
@@ -27,11 +28,15 @@ import AdminImages from "./pages/admin/AdminImages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminSGCollections from "./pages/admin/AdminSGCollections";
 import AdminSGPhotos from "./pages/admin/AdminSGPhotos";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 
 import "./App.css";
 
 // Layout para rutas públicas con Header
 function PublicLayout() {
+  // Trackear visitas de página
+  usePageView();
+  
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
       <Header />
@@ -58,6 +63,7 @@ function App() {
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="sg-gallery" element={<AdminSGCollections />} />
                 <Route path="sg-gallery/:collectionId/photos" element={<AdminSGPhotos />} />
               </Route>

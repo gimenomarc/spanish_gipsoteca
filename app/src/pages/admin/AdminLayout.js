@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 const navItems = [
   { to: '/admin-jdm-private/dashboard', label: 'Dashboard', icon: '📊' },
+  { to: '/admin-jdm-private/analytics', label: 'Analytics', icon: '📈' },
   { to: '/admin-jdm-private/products', label: 'Productos', icon: '🗿' },
   { to: '/admin-jdm-private/categories', label: 'Categorías', icon: '📁' },
   { to: '/admin-jdm-private/images', label: 'Imágenes', icon: '🖼️' },
