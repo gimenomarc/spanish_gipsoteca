@@ -30,8 +30,19 @@ export default function About() {
         </section>
 
         {/* Taller de vaciados Section */}
-        <section className="bg-black py-12 sm:py-16 md:py-20">
-          <div className="mx-auto max-w-6xl px-6 sm:px-8 md:px-10">
+        <section 
+          className="relative py-12 sm:py-16 md:py-20 overflow-hidden"
+          style={{
+            backgroundImage: aboutImages.taller 
+              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.taller})` 
+              : "none",
+            backgroundSize: "120%",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+            backgroundColor: "#000000"
+          }}
+        >
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 md:px-10">
             <div className="grid md:grid-cols-2 gap-10 sm:gap-14 items-center">
               {/* Contenido texto */}
               <div>
@@ -39,23 +50,23 @@ export default function About() {
                   Taller de vaciados
                 </h2>
                 <div className="space-y-6">
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     The Spanish Gipsoteca dispone de una amplia colección de reproducciones escultóricas en escayola para su venta y difusión.
                   </p>
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     Nuestro taller de vaciados elabora cada pieza de forma artesanal mediante técnicas tradicionales de reproducción escultórica combinadas con materiales y procesos modernos que permiten optimizar las propiedades técnicas de nuestros productos.
                   </p>
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     Trabajamos para ofrecer reproducciones escultóricas de máxima calidad, respetando fielmente los detalles de las obras originales y cumpliendo con las exigencias necesarias para su uso artístico y académico. El resultado son una selecta colección de vaciados de escayola de gran durabilidad y presencia, idóneas para su estudio en academias de arte o para inspirar a artistas y embellecer los hogares.
                   </p>
                 </div>
               </div>
-              {/* Imagen: TALLER */}
+              {/* Imagen: TALLER - Más grande */}
               <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
                 <img 
                   src={aboutImages.taller}
                   alt="Taller de vaciados"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-110"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
@@ -69,15 +80,26 @@ export default function About() {
         </section>
 
         {/* Transformación de espacios Section */}
-        <section className="bg-black/60 py-12 sm:py-16 md:py-20">
-          <div className="mx-auto max-w-6xl px-6 sm:px-8 md:px-10">
+        <section 
+          className="relative py-12 sm:py-16 md:py-20 overflow-hidden"
+          style={{
+            backgroundImage: aboutImages.espacios 
+              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.espacios})` 
+              : "none",
+            backgroundSize: "120%",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+            backgroundColor: "#000000"
+          }}
+        >
+          <div className="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 md:px-10">
             <div className="grid md:grid-cols-2 gap-10 sm:gap-14 items-center">
-              {/* Imagen: ESPACIOS */}
+              {/* Imagen: ESPACIOS - Más grande */}
               <div className="relative aspect-[3/4] overflow-hidden bg-black/50 order-2 md:order-1">
                 <img 
                   src={aboutImages.espacios}
                   alt="Transformación de espacios"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-110"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
@@ -92,13 +114,13 @@ export default function About() {
                   Transformación de espacios
                 </h2>
                 <div className="space-y-6">
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     Además de la colección de vaciados, The Spanish Gipsoteca dispone de una amplia variedad de piezas arquitectónicas de carácter ornamental: molduras, rosetones, columnas, pilastras y otros elementos decorativos que han moldeado el criterio estético del diseño de interiores durante siglos.
                   </p>
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     Nuestro propósito es ofrecer la posibilidad de incorporar este legado a cualquier hogar o comercio que quiera dotar a sus espacios de un carácter clásico y distinguido.
                   </p>
-                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-left">
+                  <p className="text-sm leading-relaxed text-white/85 sm:text-base md:text-lg text-center">
                     Las piezas de yesería de la colección abarcan algunos de los estilos más representativos de la tradición ornamental: desde las formas más exuberantes y dinámicas propias del gusto barroco, pasando por la elegancia equilibrada del neoclasicismo, a las orgánicas y vibrantes líneas del Modernismo o la riqueza decorativa del arte árabe.
                   </p>
                 </div>
