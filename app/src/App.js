@@ -29,6 +29,8 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminSGCollections from "./pages/admin/AdminSGCollections";
 import AdminSGPhotos from "./pages/admin/AdminSGPhotos";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminHome from "./pages/admin/AdminHome";
+import AdminProductSGRelations from "./pages/admin/AdminProductSGRelations";
 
 import "./App.css";
 
@@ -63,9 +65,11 @@ function App() {
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="images" element={<AdminImages />} />
                 <Route path="settings" element={<AdminSettings />} />
-                <Route path="analytics" element={<AdminAnalytics />} />
-                <Route path="sg-gallery" element={<AdminSGCollections />} />
-                <Route path="sg-gallery/:collectionId/photos" element={<AdminSGPhotos />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="home" element={<AdminHome />} />
+              <Route path="sg-gallery" element={<AdminSGCollections />} />
+              <Route path="sg-gallery/:collectionId/photos" element={<AdminSGPhotos />} />
+              <Route path="product-sg-relations" element={<AdminProductSGRelations />} />
               </Route>
 
               {/* Public Routes - Con Header */}

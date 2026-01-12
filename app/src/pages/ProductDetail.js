@@ -475,8 +475,8 @@ export default function ProductDetail() {
       )}
       </div>
       
-      {/* SG Gallery - Fotos en la vida real */}
-      {sgPhotos.length > 0 && (
+      {/* SG Gallery - Fotos en la vida real - Solo mostrar si hay fotos relacionadas */}
+      {sgPhotos && sgPhotos.length > 0 && (
         <section className="border-t border-white/10 bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
             <div className="mb-8 sm:mb-10 flex items-center justify-between">
