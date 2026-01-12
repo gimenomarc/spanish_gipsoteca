@@ -59,20 +59,24 @@ export default function Shop() {
   const artists = [...new Set(products.map(p => p.artist).filter(Boolean))].sort();
 
   // Filtrar por búsqueda y artista
-  // Busca en: name, code y artist (igual que SearchModal)
+  // Busca en: name (nombre de la obra), code (código) y artist (artista)
   // Usa normalización sin acentos para mejor búsqueda
+  // IMPORTANTE: La búsqueda funciona igual que el buscador del header
   const filteredProducts = products.filter((product) => {
-    // Búsqueda general: busca en name, code y artist
+    // Búsqueda general: busca en nombre de obra (name), código (code) y artista (artist)
+    // Si searchTerm está vacío, muestra todos los productos
     const matchesSearch = !searchTerm || searchInFields(
       product,
-      ['name', 'code', 'artist'],
+      ['name', 'code', 'artist'], // name = nombre de la obra
       searchTerm
     );
     
-    // Filtro por artista específico
+    // Filtro por artista específico (dropdown separado)
+    // Este filtro es independiente de la búsqueda general
     const matchesArtist = !artistFilter || 
       (product.artist && searchInFields(product, ['artist'], artistFilter));
     
+    // El producto debe cumplir AMBAS condiciones: búsqueda Y filtro de artista
     return matchesSearch && matchesArtist;
   });
 
