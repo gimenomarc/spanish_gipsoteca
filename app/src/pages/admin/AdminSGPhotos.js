@@ -484,7 +484,7 @@ export default function AdminSGPhotos() {
               <div className="aspect-square bg-black/50 overflow-hidden">
                 <img
                   src={photo.image_url}
-                  alt={photo.title}
+                  alt={photo.title || 'Foto'}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -515,7 +515,7 @@ export default function AdminSGPhotos() {
 
               {/* Info */}
               <div className="p-3">
-                <p className="text-sm text-white truncate">{photo.title}</p>
+                <p className="text-sm text-white truncate">{photo.title || 'Sin título'}</p>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-xs text-white/50">Orden: {photo.display_order}</p>
                   {photo.product_codes?.length > 0 && (

@@ -103,13 +103,13 @@ export default function GalleryPhotoModal({
             <p className="text-red-400">Error al cargar la foto</p>
           </div>
         ) : photo ? (
-          <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto">
-              {/* Imagen principal */}
-              <div className="relative aspect-[4/3] sm:aspect-[16/10] mb-8 bg-black/50 overflow-hidden">
+          <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+              {/* Imagen principal - Más pequeña para ver productos relacionados */}
+              <div className="relative aspect-[4/3] sm:aspect-[16/10] mb-6 bg-black/50 overflow-hidden max-w-3xl mx-auto">
                 <img
                   src={photo.image_url_full || photo.image_url}
-                  alt={photo.title}
+                  alt="Foto de SG Gallery"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -125,11 +125,6 @@ export default function GalleryPhotoModal({
                     ← {photo.sg_gallery_collections.name}
                   </Link>
                 )}
-
-                {/* Título */}
-                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase tracking-[0.1em] text-white mb-4">
-                  {photo.title}
-                </h2>
 
                 {/* Descripción */}
                 {photo.description && (

@@ -506,25 +506,20 @@ export default function ProductDetail() {
                 >
                   <OptimizedImage
                     src={photo.image_url || ''}
-                    alt={photo.title || 'Foto'}
+                    alt="Foto de SG Gallery"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     priority={index < 3}
                     aspectRatio="4/3"
                     size="card"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    {photo.title && (
-                      <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-white mb-1 sm:text-base">
-                        {photo.title}
-                      </h4>
-                    )}
-                    {photo.sg_gallery_collections && (
+                  {photo.sg_gallery_collections && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                       <p className="text-xs uppercase tracking-[0.15em] text-white/60 sm:text-sm">
                         {photo.sg_gallery_collections.name}
                       </p>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </Link>
               ))}
             </div>

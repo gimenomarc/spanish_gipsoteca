@@ -235,7 +235,11 @@ export default function AdminProductSGRelations() {
                           </div>
                         )}
                         <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/80 text-white text-xs truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                          {photo.title}
+                          {photo.title && (
+                            <span className="block text-white/90 text-[10px] mb-1">
+                              {photo.title}
+                            </span>
+                          )}
                           {photo.sg_gallery_collections && (
                             <span className="block text-white/60 text-[10px]">
                               {photo.sg_gallery_collections.name}

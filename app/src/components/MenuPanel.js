@@ -14,7 +14,7 @@ export default function MenuPanel({ open, onClose }) {
   const { categories, loading: loadingCategories } = useCategories();
 
   const mainMenuItems = [
-    { label: "INICIO", path: "/" },
+    { label: "HOME", path: "/" },
     {
       label: "COLECCIÓN",
       hasSubmenu: true,

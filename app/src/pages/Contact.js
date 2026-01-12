@@ -31,6 +31,10 @@ const ArrowIcon = () => (
 );
 
 export default function Contact() {
+  // Imagen de fondo desde Supabase Storage
+  // La imagen debe estar en: product-images/contacto/
+  const contactBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -94,30 +98,35 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white pt-16 sm:pt-20">
+    <div 
+      className="flex min-h-screen flex-col text-white pt-16 sm:pt-20"
+      style={{
+        backgroundImage: contactBackground 
+          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${contactBackground})` 
+          : "none",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        backgroundColor: "#000000"
+      }}
+    >
       <div className="flex-1">
-        {/* Hero Section - Minimalista */}
-        <section className="relative py-20 sm:py-28 md:py-32 overflow-hidden">
-          {/* Gradiente sutil de fondo */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111] to-[#0a0a0a]" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-radial from-white/[0.02] to-transparent rounded-full blur-3xl" />
-          
-          <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
-            <p className="mb-4 text-[11px] uppercase tracking-[0.4em] text-white/40 sm:text-xs">
-              Contacto
-            </p>
-            <h1 className="mb-6 font-display text-4xl uppercase tracking-[0.12em] text-white sm:text-5xl md:text-6xl lg:text-7xl">
+        {/* Hero Section */}
+        <section className="relative py-8 sm:py-12 md:py-16 overflow-hidden">
+          <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Contacto</p>
+            <h1 className="mb-4 font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:tracking-[0.2em] md:text-5xl lg:text-6xl sm:mb-6">
               Hablemos
             </h1>
-            <p className="mx-auto max-w-xl text-sm leading-relaxed text-white/50 sm:text-base">
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-white/80 sm:text-base md:text-lg">
               Estamos aquí para ayudarte con cualquier consulta sobre nuestras piezas
             </p>
           </div>
         </section>
 
         {/* Main Content */}
-        <section className="py-12 sm:py-16 md:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <section className="relative py-12 sm:py-16 md:py-20">
+          <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
             <div className="grid gap-16 lg:grid-cols-5 lg:gap-20">
               
               {/* Info de contacto - Columna izquierda */}
@@ -194,7 +203,7 @@ export default function Contact() {
               <div className="lg:col-span-3">
                 <div className="relative">
                   {/* Fondo del formulario */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent rounded-2xl" />
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl" />
                   
                   <form onSubmit={handleSubmit} className="relative p-6 sm:p-10 space-y-6">
                     
@@ -355,8 +364,8 @@ export default function Contact() {
         </section>
 
         {/* Features Section - Más sutil */}
-        <section className="py-16 sm:py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <section className="relative py-16 sm:py-20">
+          <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
             <div className="grid gap-10 sm:grid-cols-2 sm:gap-8 max-w-3xl mx-auto">
               
               <div className="text-center sm:text-left">

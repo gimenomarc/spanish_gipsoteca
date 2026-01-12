@@ -175,7 +175,7 @@ export default function SGGalleryCollection() {
                   >
                     <LazyGridImage
                       src={photo.image_url}
-                      alt={photo.title || `Foto ${index + 1}`}
+                      alt={`Foto ${index + 1}`}
                       priority={index < 4} // Primeras 4 fotos se cargan inmediatamente
                     />
                     
