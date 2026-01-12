@@ -28,6 +28,7 @@ export default function Checkout() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -152,7 +153,7 @@ export default function Checkout() {
         publicKey: publicKey ? '✓ Configurado' : '✗ Faltante'
       });
 
-      // Guardar pedido en Supabase
+      // Guardar pedido en Supabase PRIMERO
       const orderItems = cart.map(item => ({
         code: item.code || 'N/A',
         name: item.name || 'Sin nombre',
@@ -164,7 +165,14 @@ export default function Checkout() {
 
       const totalAmount = getTotalPrice();
       
-      const { error: dbError } = await supabase
+      console.log('Guardando pedido en BD...', {
+        order_type: 'checkout',
+        customer_name: formData.name,
+        customer_email: formData.email,
+        total_amount: totalAmount
+      });
+
+      const { data: orderData, error: dbError } = await supabase
         .from('orders')
         .insert({
           order_type: 'checkout',
@@ -179,33 +187,52 @@ export default function Checkout() {
           delivery_country: deliveryType === 'shipping' ? formData.country : null,
           order_items: orderItems,
           total_amount: totalAmount,
-          shipping_cost: deliveryType === 'shipping' ? null : null, // Se puede calcular después
+          shipping_cost: null, // Se puede calcular después
           message: formData.message || null
-        });
+        })
+        .select();
 
       if (dbError) {
-        console.error('Error guardando pedido en BD:', dbError);
-        // No bloqueamos el envío si falla la BD, pero lo registramos
+        console.error('❌ Error guardando pedido en BD:', dbError);
+        console.error('Detalles del error:', JSON.stringify(dbError, null, 2));
+        console.error('Código de error:', dbError.code);
+        console.error('Mensaje:', dbError.message);
+        console.error('Detalles:', dbError.details);
+        console.error('Hint:', dbError.hint);
+        
+        // Mostrar alerta si es un error crítico (tabla no existe, permisos, etc.)
+        if (dbError.code === '42P01' || dbError.message?.includes('does not exist')) {
+          console.error('⚠️ La tabla "orders" no existe. Ejecuta el script orders-schema.sql en Supabase.');
+        } else if (dbError.code === '42501' || dbError.message?.includes('permission denied')) {
+          console.error('⚠️ Error de permisos. Verifica las políticas RLS en Supabase.');
+        }
+        // Continuamos aunque falle la BD para no bloquear el proceso
+      } else {
+        console.log('✅ Pedido guardado correctamente en BD:', orderData);
+        if (orderData && orderData.length > 0) {
+          console.log('ID del pedido:', orderData[0].id);
+        }
       }
 
       // Enviar email usando EmailJS
       if (serviceId && templateId && publicKey) {
-        await emailjs.send(serviceId, templateId, emailData, publicKey);
+        try {
+          await emailjs.send(serviceId, templateId, emailData, publicKey);
+          console.log('Email enviado correctamente');
+        } catch (emailError) {
+          console.error('Error enviando email:', emailError);
+          // No bloqueamos si el email falla pero la BD funcionó
+        }
       } else {
-        // Si EmailJS no está configurado, mostrar los datos en consola
-        console.error('EmailJS no configurado. Variables faltantes:', {
+        console.warn('EmailJS no configurado. Variables faltantes:', {
           serviceId: !serviceId,
           templateId: !templateId,
           publicKey: !publicKey
         });
-        console.log('Datos del pedido:', emailData);
-        // No lanzamos error si ya se guardó en BD
-        if (dbError) {
-          throw new Error('Error al guardar el pedido. Por favor, intenta de nuevo.');
-        }
       }
 
       setSubmitStatus('success');
+      setOrderSuccess(true);
       clearCart();
       
       // Limpiar formulario
@@ -220,10 +247,7 @@ export default function Checkout() {
         message: '',
       });
 
-      // Redirigir después de 3 segundos
-      setTimeout(() => {
-        navigate('/shop');
-      }, 3000);
+      // NO redirigir automáticamente, mostrar mensaje de agradecimiento
     } catch (error) {
       console.error('Error sending email:', error);
       setSubmitStatus('error');
@@ -232,6 +256,75 @@ export default function Checkout() {
     }
   };
 
+  // Mostrar mensaje de agradecimiento si el pedido fue exitoso
+  if (orderSuccess || (cart.length === 0 && submitStatus === 'success')) {
+    return (
+      <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+        <div className="flex-1">
+          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 md:px-10">
+            <div className="mb-8">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20">
+                <svg className="h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="mb-4 font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl">
+                ¡Pedido Enviado!
+              </h1>
+              <p className="mb-4 text-lg text-white/80">
+                Gracias por tu pedido
+              </p>
+              <p className="mb-8 text-white/70">
+                Hemos recibido tu solicitud correctamente. Nos pondremos en contacto contigo en un plazo de 24-48 horas para coordinar el pago y la entrega.
+              </p>
+              <div className="mb-8 rounded-lg border border-white/10 bg-white/5 p-6 text-left">
+                <p className="mb-2 text-sm font-medium text-white">¿Qué sigue?</p>
+                <ul className="space-y-2 text-sm text-white/70">
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>Revisaremos tu pedido y te contactaremos por email o teléfono</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>Te informaremos sobre los métodos de pago disponibles</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>Coordinaremos la entrega o recogida según tu elección</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => {
+                  setOrderSuccess(false);
+                  setSubmitStatus(null);
+                  navigate('/shop');
+                }}
+                className="rounded-sm bg-white px-8 py-3 text-sm font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90"
+              >
+                Seguir Comprando
+              </button>
+              <button
+                onClick={() => {
+                  setOrderSuccess(false);
+                  setSubmitStatus(null);
+                  navigate('/');
+                }}
+                className="rounded-sm border border-white/20 bg-transparent px-8 py-3 text-sm font-medium uppercase tracking-[0.15em] text-white transition-all hover:border-white/40"
+              >
+                Volver al Inicio
+              </button>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Mostrar carrito vacío solo si no hay pedido exitoso
   if (cart.length === 0) {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">

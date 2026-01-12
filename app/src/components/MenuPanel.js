@@ -19,15 +19,18 @@ export default function MenuPanel({ open, onClose }) {
       label: "COLECCIÓN",
       hasSubmenu: true,
       submenuKey: "cast",
-      submenu: loadingCategories ? [] : Object.values(categories).map((cat) => ({
-        label: cat.name,
-        path: `/shop/${cat.id}`,
-      })),
+      submenu: loadingCategories ? [] : [
+        ...Object.values(categories).map((cat) => ({
+          label: cat.name,
+          path: `/shop/${cat.id}`,
+        })),
+        { label: "Ver Catálogo PDF", path: "/catalogo.pdf", external: true },
+      ],
     },
     { label: "TIENDA", path: "/shop" },
     { label: "THE SG GALLERY", path: "/sg-gallery" },
     { label: "SOBRE NOSOTROS", path: "/about" },
-    { label: "PREGUNTAS FRECUENTES", path: "/faqs" },
+    { label: "FAQ's", path: "/faqs" },
     { label: "CONTACTO", path: "/contact" },
   ];
 
@@ -94,24 +97,28 @@ export default function MenuPanel({ open, onClose }) {
                     ) : (
                       <>
                         {item.submenu.map((subItem, subIdx) => (
-                          <Link
-                            key={subIdx}
-                            to={subItem.path}
-                            onClick={onClose}
-                            className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
-                          >
-                            {subItem.label}
-                          </Link>
+                          subItem.external ? (
+                            <a
+                              key={subIdx}
+                              href={subItem.path}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={onClose}
+                              className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
+                            >
+                              {subItem.label}
+                            </a>
+                          ) : (
+                            <Link
+                              key={subIdx}
+                              to={subItem.path}
+                              onClick={onClose}
+                              className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em]"
+                            >
+                              {subItem.label}
+                            </Link>
+                          )
                         ))}
-                        <a
-                          href="/catalogo.pdf"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={onClose}
-                          className="block py-1.5 text-[10px] uppercase tracking-[0.1em] text-white/75 transition-colors hover:text-accent sm:py-2 sm:text-xs sm:tracking-[0.15em] border-t border-white/10 mt-2 pt-2"
-                        >
-                          📄 Catálogo PDF
-                        </a>
                       </>
                     )}
                   </div>
