@@ -33,24 +33,25 @@ export default function FAQs() {
   };
 
   // Imagen de fondo desde Supabase Storage
-  // La imagen se subirá a: product-images/faqs/Fondo FAQS.jpg
-  const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/Fondo%20FAQS.jpg";
+  // Archivo: F001_F003.jpg en la carpeta faqs
+  const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.jpg";
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
+    <div 
+      className="flex min-h-screen flex-col text-white pt-16 sm:pt-20"
+      style={{
+        backgroundImage: faqBackground 
+          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${faqBackground})` 
+          : "none",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        backgroundColor: "#000000"
+      }}
+    >
       <div className="flex-1">
         {/* Header Section con introducción */}
-        <section 
-          className="relative py-8 sm:py-12 md:py-16 overflow-hidden"
-          style={{
-            backgroundImage: faqBackground 
-              ? `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(${faqBackground})` 
-              : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-          }}
-        >
+        <section className="relative py-8 sm:py-12 md:py-16 overflow-hidden">
           <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 md:px-10">
             <div className="text-center mb-6 sm:mb-8">
               <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Preguntas Frecuentes</p>
@@ -64,14 +65,14 @@ export default function FAQs() {
           </div>
         </section>
 
-        {/* FAQs Section - Ahora más cerca del header */}
-        <section className="bg-black py-2 sm:py-4 md:py-6">
+        {/* FAQs Section */}
+        <section className="relative py-2 sm:py-4 md:py-6">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-10">
             <div className="space-y-4 sm:space-y-6">
               {faqs.map((faq, index) => (
                 <div
                   key={faq.id}
-                  className="border border-white/10 bg-black/50 backdrop-blur-sm transition-all hover:border-white/20"
+                  className="border border-white/20 bg-black/40 backdrop-blur-sm transition-all hover:border-white/30"
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
@@ -114,7 +115,7 @@ export default function FAQs() {
         </section>
 
         {/* Contact CTA Section */}
-        <section className="bg-black/60 py-8 sm:py-12 md:py-16">
+        <section className="relative py-8 sm:py-12 md:py-16">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 text-center">
             <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] mb-4">
               ¿Tienes más preguntas?
