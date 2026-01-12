@@ -18,8 +18,15 @@ export function useCategories() {
         if (error) throw error;
 
         // Transformar datos a formato esperado por la aplicación
+        // Filtrar categoría "Actualización enero 2026" o similares
         const categoriesMap = {};
         data.forEach(cat => {
+          // Excluir categorías de actualización temporal
+          const nameLower = (cat.name || '').toLowerCase();
+          if (nameLower.includes('actualización') || nameLower.includes('enero 2026') || nameLower.includes('january 2026')) {
+            return; // Saltar esta categoría
+          }
+          
           categoriesMap[cat.id] = {
             id: cat.id,
             name: cat.name,

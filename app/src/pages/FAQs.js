@@ -32,16 +32,29 @@ export default function FAQs() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  // Imagen de fondo desde Supabase Storage
+  const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/Fondo%20FAQS.jpg";
+
   return (
     <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
       <div className="flex-1">
         {/* Header Section con introducción */}
-        <section className="bg-black py-8 sm:py-12 md:py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-10">
+        <section 
+          className="relative py-8 sm:py-12 md:py-16 overflow-hidden"
+          style={{
+            backgroundImage: faqBackground 
+              ? `linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url(${faqBackground})` 
+              : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+          }}
+        >
+          <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 md:px-10">
             <div className="text-center mb-6 sm:mb-8">
               <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Preguntas Frecuentes</p>
               <h1 className="font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:tracking-[0.2em] md:text-5xl lg:text-6xl mb-4 sm:mb-6">
-                FAQs
+                FAQ's
               </h1>
               <p className="text-sm leading-relaxed text-white/80 sm:text-base md:text-lg max-w-2xl mx-auto">
                 Encuentra respuestas a las preguntas más comunes sobre nuestros productos, procesos de pedido y envíos. Si no encuentras lo que buscas, no dudes en contactarnos.

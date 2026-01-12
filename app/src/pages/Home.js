@@ -91,7 +91,7 @@ export default function Home() {
 
         {/* Hero Section - Cast Collection */}
         <section 
-          className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center overflow-hidden"
+          className="relative h-screen flex items-center justify-center overflow-hidden"
           style={{
             backgroundImage: images.hero 
               ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${images.hero})` 
@@ -106,14 +106,24 @@ export default function Home() {
               Cast Collection
             </h1>
             <p className="mx-auto max-w-2xl text-sm text-white/85 sm:text-base md:text-lg leading-relaxed">
-              The Spanish Gipsoteca es un proyecto artesanal especializado en la reproducción de esculturas clásicas en escayola. Una selección de las piezas más icónicas de la historia del arte.
+              The Spanish Gipsoteca es un proyecto artesanal especializado en la reproducción de esculturas clásicas en escayola. Explora nuestra selección de las piezas más icónicas de la historia del arte.
             </p>
-            <Link
-              to="/shop"
-              className="mt-8 inline-block border border-white/30 bg-white/5 backdrop-blur-sm px-8 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:border-white hover:bg-white/10 sm:px-10 sm:py-4 sm:text-sm"
-            >
-              Explorar Colección
-            </Link>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/shop"
+                className="inline-block border border-white/30 bg-white/5 backdrop-blur-sm px-8 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:border-white hover:bg-white/10 sm:px-10 sm:py-4 sm:text-sm"
+              >
+                Explorar Colección
+              </Link>
+              <a
+                href="/catalogo.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border border-white/20 bg-transparent backdrop-blur-sm px-8 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:border-white/40 hover:bg-white/5 sm:px-10 sm:py-4 sm:text-sm"
+              >
+                📄 Ver Catálogo PDF
+              </a>
+            </div>
           </div>
         </section>
 

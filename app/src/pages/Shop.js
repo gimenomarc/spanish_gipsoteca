@@ -150,9 +150,19 @@ export default function Shop() {
 
           <div className="mb-8 flex flex-col gap-6 sm:mb-12 md:flex-row md:items-start md:justify-between">
             <div className="flex-1 min-w-0">
-              <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
-                {categoryName}
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
+                  {categoryName}
+                </h2>
+                <a
+                  href="/catalogo.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 sm:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/70 hover:text-accent transition-colors sm:text-sm"
+                >
+                  📄 Ver Catálogo PDF
+                </a>
+              </div>
               <p className="mt-1 text-xs text-white/70 sm:mt-2 sm:text-sm">
                 {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
               </p>

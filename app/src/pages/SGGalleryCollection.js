@@ -182,15 +182,6 @@ export default function SGGalleryCollection() {
                     {/* Overlay sutil en hover */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
                     
-                    {/* Título en hover (si existe) */}
-                    {photo.title && (
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p className="text-white text-sm font-medium truncate">
-                          {photo.title}
-                        </p>
-                      </div>
-                    )}
-                    
                     {/* Indicador de zoom */}
                     <div className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
