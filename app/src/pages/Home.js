@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useProducts } from "../hooks/useProducts";
+import { useFeaturedProducts } from "../hooks/useProducts";
 import { useSGCollections } from "../hooks/useSGGallery";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
@@ -77,8 +77,8 @@ function CollectionCard({ collection, index }) {
 
 export default function Home() {
   // Obtener productos destacados (8 piezas para completar dos filas)
-  const { products: allProducts, loading: loadingProducts } = useProducts();
-  const featuredProducts = allProducts.slice(0, 8);
+  // Usa el campo is_featured de la base de datos, o los primeros 8 si no hay destacados
+  const { products: featuredProducts, loading: loadingProducts } = useFeaturedProducts(8);
   
   // Obtener colecciones de SG Gallery
   const { collections, loading: loadingCollections } = useSGCollections();
@@ -88,6 +88,59 @@ export default function Home() {
       <div className="flex-1">
         {/* Spacer para el header fijo */}
         <div className="h-16 sm:h-20" />
+
+        {/* Hero Section - Cast Collection */}
+        <section 
+          className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center overflow-hidden"
+          style={{
+            backgroundImage: images.hero 
+              ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${images.hero})` 
+              : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 md:px-10 text-center">
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">The Spanish Gipsoteca</p>
+            <h1 className="font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:tracking-[0.2em] md:text-5xl lg:text-6xl mb-6">
+              Cast Collection
+            </h1>
+            <p className="mx-auto max-w-2xl text-sm text-white/85 sm:text-base md:text-lg leading-relaxed">
+              The Spanish Gipsoteca es un proyecto artesanal especializado en la reproducción de esculturas clásicas en escayola. Una selección de las piezas más icónicas de la historia del arte.
+            </p>
+            <Link
+              to="/shop"
+              className="mt-8 inline-block border border-white/30 bg-white/5 backdrop-blur-sm px-8 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:border-white hover:bg-white/10 sm:px-10 sm:py-4 sm:text-sm"
+            >
+              Explorar Colección
+            </Link>
+          </div>
+        </section>
+
+        {/* Artesanía Clásica Section */}
+        <section className="bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-10">
+            <div className="text-center mb-10 sm:mb-14">
+              <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
+                Artesanía Clásica
+              </h2>
+              
+              {/* Características */}
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm text-white/70">
+                <span className="flex items-center gap-2">
+                  <span className="text-accent">+100</span> reproducciones
+                </span>
+                <span className="hidden sm:inline text-white/30">·</span>
+                <span>100% artesanal</span>
+              </div>
+              
+              {/* Descripción */}
+              <p className="mx-auto mt-6 max-w-2xl text-sm text-white/70 sm:text-base leading-relaxed">
+                Nuestra colección dispone de una amplia variedad de reproducciones escultóricas en escayola, elaboradas de forma artesanal mediante técnicas tradicionales. Cada pieza está fielmente reproducida para capturar la esencia de las obras originales.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Featured Products Section - Piezas Seleccionadas */}
         <section className="bg-black py-12 sm:py-16 md:py-20">

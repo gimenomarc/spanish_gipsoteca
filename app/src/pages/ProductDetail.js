@@ -185,7 +185,10 @@ export default function ProductDetail() {
                 <p className="mb-3 text-xs uppercase tracking-[0.15em] text-white/70 sm:mb-4 sm:text-sm sm:tracking-[0.2em]">
                   {product.artist}
                 </p>
-                <p className="mb-4 text-base text-white/90 sm:mb-6 sm:text-lg">{product.price}</p>
+                <p className="mb-4 text-base text-white/90 sm:mb-6 sm:text-lg">
+                  {product.price}
+                  <span className="text-xs text-white/50 ml-1">(+ gastos de envío)</span>
+                </p>
                 <p className="mb-4 text-xs leading-relaxed text-white/80 sm:mb-6 sm:text-sm">
                   {extendedDescription}
                 </p>
@@ -236,7 +239,7 @@ export default function ProductDetail() {
                       isAddingToCart ? 'animate-pulse scale-95' : ''
                     }`}
                   >
-                    {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
+                    {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
                   </button>
                 </div>
               </div>
@@ -282,7 +285,7 @@ export default function ProductDetail() {
                     isAddingToCart ? 'animate-pulse scale-95' : ''
                   }`}
                 >
-                  {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
+                  {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
                 </button>
               </div>
 
@@ -385,7 +388,7 @@ export default function ProductDetail() {
                       isAddingToCart ? 'animate-pulse scale-95' : ''
                     }`}
                   >
-                    {isAddingToCart ? 'Añadiendo...' : 'Add to cart'}
+                    {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
                   </button>
                 </div>
               </div>

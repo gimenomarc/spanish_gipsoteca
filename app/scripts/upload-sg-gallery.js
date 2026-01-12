@@ -65,7 +65,7 @@ const COLLECTIONS_CONFIG = {
     description: 'Piezas bañadas en luz dorada. Una colección que celebra la belleza atemporal del arte clásico.',
     order: 3
   },
-  'L_Empordà Collection': {
+  "L'Empordà Collection": {
     slug: 'lemporda-collection',
     description: 'Inspiración mediterránea desde el corazón de Catalunya. Arte clásico en un entorno único.',
     order: 4

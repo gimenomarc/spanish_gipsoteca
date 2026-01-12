@@ -9,6 +9,7 @@ export default function AdminProducts() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [publishedFilter, setPublishedFilter] = useState('all'); // 'all', 'published', 'unpublished'
+  const [featuredFilter, setFeaturedFilter] = useState('all'); // 'all', 'featured', 'not_featured'
   const [sortBy, setSortBy] = useState('code');
   const navigate = useNavigate();
 
@@ -89,6 +90,25 @@ export default function AdminProducts() {
     }
   };
 
+  // Toggle destacado
+  const toggleFeatured = async (code, currentValue) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ is_featured: !currentValue })
+        .eq('code', code);
+
+      if (error) throw error;
+      
+      setProducts(products.map(p => 
+        p.code === code ? { ...p, is_featured: !currentValue } : p
+      ));
+    } catch (error) {
+      console.error('Error toggling featured:', error);
+      alert('Error al cambiar destacado');
+    }
+  };
+
   // Filtrar y ordenar productos
   const filteredProducts = products
     .filter(p => {
@@ -103,7 +123,11 @@ export default function AdminProducts() {
         (publishedFilter === 'published' && p.published === true) ||
         (publishedFilter === 'unpublished' && p.published === false);
       
-      return matchesSearch && matchesCategory && matchesPublished;
+      const matchesFeatured = featuredFilter === 'all' ||
+        (featuredFilter === 'featured' && p.is_featured === true) ||
+        (featuredFilter === 'not_featured' && p.is_featured !== true);
+      
+      return matchesSearch && matchesCategory && matchesPublished && matchesFeatured;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -178,6 +202,16 @@ export default function AdminProducts() {
         </select>
 
         <select
+          value={featuredFilter}
+          onChange={(e) => setFeaturedFilter(e.target.value)}
+          className="bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
+        >
+          <option value="all">Todos</option>
+          <option value="featured">⭐ Destacados</option>
+          <option value="not_featured">☆ No destacados</option>
+        </select>
+
+        <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
@@ -214,6 +248,9 @@ export default function AdminProducts() {
                 </th>
                 <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Publicado
+                </th>
+                <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                  Destacado
                 </th>
                 <th className="text-right p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Acciones
@@ -271,6 +308,18 @@ export default function AdminProducts() {
                       }`}
                     >
                       {product.published ? '✓ Sí' : '✗ No'}
+                    </button>
+                  </td>
+                  <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => toggleFeatured(product.code, product.is_featured)}
+                      className={`px-3 py-1 text-xs rounded transition-colors ${
+                        product.is_featured 
+                          ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
+                          : 'bg-white/10 text-white/50 hover:bg-white/20'
+                      }`}
+                    >
+                      {product.is_featured ? '⭐ Sí' : '☆ No'}
                     </button>
                   </td>
                   <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>

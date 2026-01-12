@@ -14,21 +14,21 @@ export default function MenuPanel({ open, onClose }) {
   const { categories, loading: loadingCategories } = useCategories();
 
   const mainMenuItems = [
-    { label: "HOME", path: "/" },
+    { label: "INICIO", path: "/" },
     {
-      label: "THE CAST COLLECTION",
+      label: "COLECCIÓN",
       hasSubmenu: true,
       submenuKey: "cast",
       submenu: loadingCategories ? [] : Object.values(categories).map((cat) => ({
-        label: cat.nameEn,
+        label: cat.name,
         path: `/shop/${cat.id}`,
       })),
     },
-    { label: "SHOP", path: "/shop" },
-    { label: "THE SG GALLERY", path: "/sg-gallery" },
-    { label: "ABOUT US", path: "/about" },
-    { label: "FAQs", path: "/faqs" },
-    { label: "CONTACT", path: "/contact" },
+    { label: "TIENDA", path: "/shop" },
+    { label: "GALERÍA SG", path: "/sg-gallery" },
+    { label: "SOBRE NOSOTROS", path: "/about" },
+    { label: "PREGUNTAS FRECUENTES", path: "/faqs" },
+    { label: "CONTACTO", path: "/contact" },
   ];
 
   const toggleSubmenu = (key) => {

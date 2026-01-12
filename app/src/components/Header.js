@@ -117,7 +117,7 @@ export default function Header() {
               </a>
               <button
                 onClick={openSearch}
-                className="text-white transition-colors hover:text-accent hidden sm:block relative"
+                className="text-white transition-colors hover:text-accent relative"
                 aria-label="Search"
               >
                 <SearchIcon />

@@ -175,6 +175,87 @@ export function useProduct(categoryId, productCode) {
   return { product, loading, error };
 }
 
+// Hook para obtener productos destacados
+export function useFeaturedProducts(limit = 8) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchFeaturedProducts() {
+      try {
+        setLoading(true);
+        
+        // Intentar obtener productos destacados (is_featured = true)
+        let { data, error } = await supabase
+          .from('products')
+          .select(`
+            *,
+            categories (
+              id,
+              name,
+              name_en
+            )
+          `)
+          .eq('published', true)
+          .eq('is_featured', true)
+          .order('featured_order', { ascending: true })
+          .limit(limit);
+
+        // Si no hay productos destacados o hay error, obtener los primeros productos
+        if (error || !data || data.length === 0) {
+          const fallbackResult = await supabase
+            .from('products')
+            .select(`
+              *,
+              categories (
+                id,
+                name,
+                name_en
+              )
+            `)
+            .eq('published', true)
+            .order('code', { ascending: true })
+            .limit(limit);
+          
+          data = fallbackResult.data || [];
+        }
+
+        // Transformar datos
+        const transformedProducts = data.map(product => {
+          const sortedImages = sortImagesByBackground(product.images || []);
+          return {
+            code: product.code,
+            name: product.name,
+            folder: product.folder_name || '',
+            price: product.price || '',
+            artist: product.artist || 'Unknown artist',
+            dimensions: product.dimensions || '',
+            description: product.description || '',
+            images: optimizeImageUrls(sortedImages, imagePresets.card),
+            categoryId: product.category_id,
+            categoryName: product.categories?.name || '',
+            isFeatured: product.is_featured || false,
+            featuredOrder: product.featured_order || 0,
+          };
+        });
+
+        setProducts(transformedProducts);
+        setError(null);
+      } catch (err) {
+        console.error('Error cargando productos destacados:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFeaturedProducts();
+  }, [limit]);
+
+  return { products, loading, error };
+}
+
 // Hook para obtener productos relacionados (misma categoría, excluyendo el actual)
 export function useRelatedProducts(categoryId, currentProductCode, limit = 4) {
   const [relatedProducts, setRelatedProducts] = useState([]);

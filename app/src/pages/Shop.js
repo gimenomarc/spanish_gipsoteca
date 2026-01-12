@@ -204,7 +204,7 @@ export default function Shop() {
               <p className="text-sm text-white/70 sm:text-base">No se encontraron productos</p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
               {filteredProducts.map((product, index) => (
                 <ProductCard
                   key={`${product.categoryId || categoryId || "all"}-${product.code}`}

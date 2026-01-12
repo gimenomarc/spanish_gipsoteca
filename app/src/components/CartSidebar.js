@@ -174,7 +174,7 @@ export default function CartSidebar({ isOpen, onClose }) {
                 onClick={onClose}
                 className="block w-full rounded-sm bg-white px-6 py-3 text-center text-sm font-medium uppercase tracking-[0.15em] text-black transition-all hover:bg-white/90"
               >
-                Proceder al Checkout
+                Tramitar Pedido
               </Link>
             </div>
           )}

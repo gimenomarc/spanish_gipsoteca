@@ -14,6 +14,7 @@ const ArrowLeftIcon = () => (
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, clearCart, getTotalPrice } = useCart();
+  const [deliveryType, setDeliveryType] = useState('pickup'); // 'pickup' o 'shipping'
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -82,17 +83,21 @@ export default function Checkout() {
 
       // Preparar datos del email con estructura completa
       const now = new Date();
+      const deliveryTypeText = deliveryType === 'pickup' ? '📍 RECOGIDA EN TALLER' : '🚚 ENVÍO A DOMICILIO';
       const emailData = {
         to_email: 'thespanishgipsoteca@gmail.com',
         to_name: 'The Spanish Gipsoteca',
         from_name: formData.name,
         from_email: formData.email,
         phone: formData.phone || 'No proporcionado',
-        address: formData.address || 'No proporcionado',
-        city: formData.city || 'No proporcionado',
-        postal_code: formData.postalCode || 'No proporcionado',
-        country: formData.country || 'No proporcionado',
-        full_address: `${formData.address || ''}, ${formData.city || ''}, ${formData.postalCode || ''}, ${formData.country || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'No proporcionado',
+        delivery_type: deliveryTypeText,
+        address: deliveryType === 'shipping' ? (formData.address || 'No proporcionado') : 'N/A - Recogida en taller',
+        city: deliveryType === 'shipping' ? (formData.city || 'No proporcionado') : 'N/A - Recogida en taller',
+        postal_code: deliveryType === 'shipping' ? (formData.postalCode || 'No proporcionado') : 'N/A',
+        country: deliveryType === 'shipping' ? (formData.country || 'No proporcionado') : 'N/A',
+        full_address: deliveryType === 'shipping' 
+          ? `${formData.address || ''}, ${formData.city || ''}, ${formData.postalCode || ''}, ${formData.country || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'No proporcionado'
+          : 'RECOGIDA EN TALLER - Barcelona',
         message: formData.message || 'Sin mensaje adicional',
         // Productos detallados
         products_list: productsList || 'No hay productos',
@@ -224,7 +229,7 @@ export default function Checkout() {
         </button>
 
         <h1 className="mb-2 font-display text-3xl uppercase tracking-[0.15em] text-white sm:text-4xl sm:mb-4">
-          Checkout
+          Tramitar Pedido
         </h1>
         <p className="mb-8 text-sm text-white/70 sm:text-base">
           Completa tus datos y te contactaremos para finalizar tu pedido.
@@ -237,6 +242,9 @@ export default function Checkout() {
           </h2>
           <p className="mb-2 text-sm leading-relaxed text-white/80 sm:text-base">
             El pago online no está disponible actualmente. Al completar este formulario, enviaremos tu solicitud a <strong>Javier</strong>, quien se pondrá en contacto contigo para coordinar el pago y la entrega.
+          </p>
+          <p className="mb-2 text-sm leading-relaxed text-white/80 sm:text-base">
+            <strong>Gastos de envío:</strong> Los gastos de envío se cobran aparte y se calcularán según el destino. Si eliges <strong>recogida en taller</strong>, no habrá gastos de envío.
           </p>
           <p className="text-sm text-white/70 sm:text-base">
             Recibirás una respuesta en un plazo de 24-48 horas.
@@ -276,16 +284,25 @@ export default function Checkout() {
                     <h3 className="mb-1 text-sm font-medium text-white">{item.name}</h3>
                     <p className="mb-1 text-xs text-white/50">Code: {item.code}</p>
                     <p className="mb-1 text-xs text-white/70">Cantidad: {item.quantity}</p>
-                    <p className="text-sm font-medium text-white">{item.price}</p>
+                    <p className="text-sm font-medium text-white">
+                      {item.price}
+                      <span className="text-xs text-white/50 ml-1">(+ gastos de envío)</span>
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-6">
-              <span className="text-lg uppercase tracking-[0.1em] text-white/70">Total</span>
-              <span className="text-2xl font-medium text-white">
-                {getTotalPrice().toFixed(2)}€
-              </span>
+            <div className="mt-6 space-y-2 border-t border-white/10 pt-6">
+              <div className="flex items-center justify-between">
+                <span className="text-lg uppercase tracking-[0.1em] text-white/70">Subtotal</span>
+                <span className="text-2xl font-medium text-white">
+                  {getTotalPrice().toFixed(2)}€
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-white/50">Gastos de envío</span>
+                <span className="text-white/50">Se calcularán según destino</span>
+              </div>
             </div>
           </div>
 
@@ -296,6 +313,53 @@ export default function Checkout() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Selector de Tipo de Entrega */}
+              <div className="mb-8">
+                <label className="mb-4 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                  Método de Entrega *
+                </label>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType('pickup')}
+                    className={`p-4 sm:p-6 border text-left transition-all ${
+                      deliveryType === 'pickup'
+                        ? 'border-white bg-white/10'
+                        : 'border-white/20 bg-black/50 hover:border-white/40'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-xl">📍</span>
+                      <span className="font-display text-sm uppercase tracking-[0.1em] text-white sm:text-base">
+                        Recogida en Taller
+                      </span>
+                    </div>
+                    <p className="text-xs text-white/60 sm:text-sm">
+                      Recoge tu pedido en nuestro taller de Barcelona. Te contactaremos para coordinar la recogida.
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType('shipping')}
+                    className={`p-4 sm:p-6 border text-left transition-all ${
+                      deliveryType === 'shipping'
+                        ? 'border-white bg-white/10'
+                        : 'border-white/20 bg-black/50 hover:border-white/40'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-xl">🚚</span>
+                      <span className="font-display text-sm uppercase tracking-[0.1em] text-white sm:text-base">
+                        Envío a Domicilio
+                      </span>
+                    </div>
+                    <p className="text-xs text-white/60 sm:text-sm">
+                      Enviamos a toda España y Europa. Gastos de envío según destino.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
               {/* Nombre */}
               <div>
                 <label htmlFor="name" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
@@ -347,73 +411,93 @@ export default function Checkout() {
                 />
               </div>
 
-              {/* Dirección */}
-              <div>
-                <label htmlFor="address" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
-                  Dirección *
-                </label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                  placeholder="Calle y número"
-                />
-              </div>
+              {/* Campos de dirección - Solo si es envío */}
+              {deliveryType === 'shipping' && (
+                <>
+                  {/* Dirección */}
+                  <div>
+                    <label htmlFor="address" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                      Dirección *
+                    </label>
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      required
+                      className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                      placeholder="Calle y número"
+                    />
+                  </div>
 
-              {/* Ciudad y Código Postal */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="city" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
-                    Ciudad *
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="Ciudad"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="postalCode" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
-                    Código Postal *
-                  </label>
-                  <input
-                    type="text"
-                    id="postalCode"
-                    name="postalCode"
-                    value={formData.postalCode}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                    placeholder="28001"
-                  />
-                </div>
-              </div>
+                  {/* Ciudad y Código Postal */}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="city" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                        Ciudad *
+                      </label>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                        required
+                        className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                        placeholder="Ciudad"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="postalCode" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                        Código Postal *
+                      </label>
+                      <input
+                        type="text"
+                        id="postalCode"
+                        name="postalCode"
+                        value={formData.postalCode}
+                        onChange={handleChange}
+                        required
+                        className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                        placeholder="28001"
+                      />
+                    </div>
+                  </div>
 
-              {/* País */}
-              <div>
-                <label htmlFor="country" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
-                  País *
-                </label>
-                <input
-                  type="text"
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  required
-                  className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
-                  placeholder="España"
-                />
-              </div>
+                  {/* País */}
+                  <div>
+                    <label htmlFor="country" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                      País *
+                    </label>
+                    <input
+                      type="text"
+                      id="country"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      required
+                      className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                      placeholder="España"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Info de recogida en taller */}
+              {deliveryType === 'pickup' && (
+                <div className="rounded-sm border border-white/10 bg-white/5 p-4 sm:p-6">
+                  <h3 className="font-display text-sm uppercase tracking-[0.1em] text-white mb-3">
+                    📍 Información de Recogida
+                  </h3>
+                  <p className="text-sm text-white/70 mb-2">
+                    Te contactaremos por teléfono para coordinar el día y hora de recogida.
+                  </p>
+                  <p className="text-xs text-white/50">
+                    Ubicación: Barcelona (se proporcionará dirección exacta al confirmar el pedido)
+                  </p>
+                </div>
+              )}
 
               {/* Mensaje adicional */}
               <div>

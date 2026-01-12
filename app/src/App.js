@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { SearchProvider } from "./context/SearchContext";
 import { AuthProvider } from "./hooks/useAuth";
@@ -30,6 +30,18 @@ import AdminSGPhotos from "./pages/admin/AdminSGPhotos";
 
 import "./App.css";
 
+// Layout para rutas públicas con Header
+function PublicLayout() {
+  return (
+    <div className="flex min-h-screen flex-col bg-black text-white">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -51,31 +63,21 @@ function App() {
               </Route>
 
               {/* Public Routes - Con Header */}
-              <Route
-                path="*"
-                element={
-                  <div className="flex min-h-screen flex-col bg-black text-white">
-                    <Header />
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/shop" element={<Shop />} />
-                        <Route path="/shop/:categoryId" element={<Shop />} />
-                        <Route path="/product/:categoryId/:productCode" element={<ProductDetail />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/faqs" element={<FAQs />} />
-                        <Route path="/checkout" element={<Checkout />} />
-                        <Route path="/terms" element={<Terms />} />
-                        <Route path="/privacy" element={<Privacy />} />
-                        <Route path="/cookies" element={<Cookies />} />
-                        <Route path="/sg-gallery" element={<SGGallery />} />
-                        <Route path="/sg-gallery/:collectionSlug" element={<SGGalleryCollection />} />
-                      </Routes>
-                    </main>
-                  </div>
-                }
-              />
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/shop/:categoryId" element={<Shop />} />
+                <Route path="/product/:categoryId/:productCode" element={<ProductDetail />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/faqs" element={<FAQs />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/cookies" element={<Cookies />} />
+                <Route path="/sg-gallery" element={<SGGallery />} />
+                <Route path="/sg-gallery/:collectionSlug" element={<SGGalleryCollection />} />
+              </Route>
             </Routes>
           </SearchProvider>
         </Router>
