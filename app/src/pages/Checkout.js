@@ -172,24 +172,29 @@ export default function Checkout() {
         total_amount: totalAmount
       });
 
+      // Preparar datos para insertar
+      const orderDataToInsert = {
+        order_type: 'checkout',
+        status: 'pending',
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone || null,
+        delivery_type: deliveryType,
+        delivery_address: deliveryType === 'shipping' ? formData.address : null,
+        delivery_city: deliveryType === 'shipping' ? formData.city : null,
+        delivery_postal_code: deliveryType === 'shipping' ? formData.postalCode : null,
+        delivery_country: deliveryType === 'shipping' ? formData.country : null,
+        order_items: orderItems,
+        total_amount: totalAmount,
+        shipping_cost: null,
+        message: formData.message || null
+      };
+
+      console.log('📦 Datos a insertar en BD:', JSON.stringify(orderDataToInsert, null, 2));
+
       const { data: orderData, error: dbError } = await supabase
         .from('orders')
-        .insert({
-          order_type: 'checkout',
-          status: 'pending',
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_phone: formData.phone || null,
-          delivery_type: deliveryType,
-          delivery_address: deliveryType === 'shipping' ? formData.address : null,
-          delivery_city: deliveryType === 'shipping' ? formData.city : null,
-          delivery_postal_code: deliveryType === 'shipping' ? formData.postalCode : null,
-          delivery_country: deliveryType === 'shipping' ? formData.country : null,
-          order_items: orderItems,
-          total_amount: totalAmount,
-          shipping_cost: null, // Se puede calcular después
-          message: formData.message || null
-        })
+        .insert(orderDataToInsert)
         .select();
 
       if (dbError) {

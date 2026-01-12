@@ -75,17 +75,32 @@ export default function Contact() {
       };
 
       // Guardar contacto en Supabase
-      const { error: dbError } = await supabase
+      const contactDataToInsert = {
+        order_type: 'contact',
+        status: 'pending',
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: null,
+        subject: formData.subject,
+        message: formData.message
+      };
+
+      console.log('📧 Guardando contacto en BD...', contactDataToInsert);
+
+      const { data: contactData, error: dbError } = await supabase
         .from('orders')
-        .insert({
-          order_type: 'contact',
-          status: 'pending',
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_phone: null,
-          subject: formData.subject,
-          message: formData.message
-        });
+        .insert(contactDataToInsert)
+        .select();
+
+      if (dbError) {
+        console.error('❌ Error guardando contacto en BD:', dbError);
+        console.error('Código:', dbError.code);
+        console.error('Mensaje:', dbError.message);
+        console.error('Detalles:', dbError.details);
+        console.error('Hint:', dbError.hint);
+      } else {
+        console.log('✅ Contacto guardado correctamente en BD:', contactData);
+      }
 
       if (dbError) {
         console.error('Error guardando contacto en BD:', dbError);
