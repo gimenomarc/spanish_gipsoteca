@@ -21,10 +21,20 @@ export default function AdminOrders() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching orders:', error);
+        // Si es un error de permisos, mostrar mensaje específico
+        if (error.code === '42501' || error.message?.includes('permission denied') || error.message?.includes('row-level security')) {
+          console.error('⚠️ Error de permisos RLS. Asegúrate de estar autenticado y de que las políticas RLS estén correctamente configuradas.');
+          alert('⚠️ Error de permisos. Verifica que estés autenticado y que las políticas RLS estén configuradas correctamente.');
+        }
+        throw error;
+      }
       setOrders(data || []);
+      console.log(`✅ ${data?.length || 0} pedidos cargados correctamente`);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      // Si hay error, mantener orders vacío pero no bloquear la UI
+      setOrders([]);
     } finally {
       setLoading(false);
     }

@@ -198,11 +198,11 @@ export default function Checkout() {
       console.log('📦 Datos a insertar en BD:', JSON.stringify(orderDataToInsert, null, 2));
       console.log('📦 Intentando insertar en tabla "orders"...');
 
-      // Intentar insertar
-      const { data: orderData, error: dbError } = await supabase
+      // Intentar insertar (sin .select() para evitar problemas con RLS)
+      // Los usuarios públicos pueden insertar pero no leer, así que no usamos .select()
+      const { error: dbError } = await supabase
         .from('orders')
-        .insert(orderDataToInsert)
-        .select();
+        .insert(orderDataToInsert);
 
       if (dbError) {
         console.error('❌ ERROR AL GUARDAR PEDIDO EN BD:');
@@ -219,8 +219,9 @@ export default function Checkout() {
           alert('⚠️ Error: La tabla "orders" no existe. Contacta al administrador.');
           console.error('⚠️ La tabla "orders" no existe. Ejecuta el script orders-schema.sql en Supabase.');
         } else if (dbError.code === '42501' || dbError.message?.includes('permission denied') || dbError.message?.includes('new row violates row-level security')) {
-          alert('⚠️ Error de permisos. Verifica las políticas RLS en Supabase. Ejecuta fix-orders-rls.sql');
-          console.error('⚠️ Error de permisos RLS. Ejecuta el script fix-orders-rls.sql en Supabase.');
+          alert('⚠️ Error de permisos. Verifica las políticas RLS en Supabase. Ejecuta fix-orders-rls-definitive.sql');
+          console.error('⚠️ Error de permisos RLS. Ejecuta el script fix-orders-rls-definitive.sql en Supabase.');
+          throw new Error('Error de permisos RLS');
         } else if (dbError.message?.includes('Timeout')) {
           alert('⚠️ Error: La conexión tardó demasiado. Verifica tu conexión a internet.');
         } else {
@@ -230,15 +231,7 @@ export default function Checkout() {
         // Continuamos aunque falle la BD para no bloquear el proceso
       } else {
         console.log('✅✅✅ PEDIDO GUARDADO CORRECTAMENTE EN BD ✅✅✅');
-        console.log('Datos devueltos:', orderData);
-        if (orderData && orderData.length > 0) {
-          console.log('✅ ID del pedido:', orderData[0].id);
-          console.log('✅ Tipo:', orderData[0].order_type);
-          console.log('✅ Cliente:', orderData[0].customer_name);
-          console.log('✅ Email:', orderData[0].customer_email);
-        } else {
-          console.warn('⚠️ La inserción no devolvió datos. Verifica que la política RLS permita SELECT después de INSERT.');
-        }
+        console.log('El pedido se ha guardado correctamente. Los usuarios públicos no pueden leer los datos después de insertar (comportamiento esperado por RLS).');
       }
 
       // Enviar email usando EmailJS

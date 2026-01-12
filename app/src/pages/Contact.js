@@ -87,10 +87,11 @@ export default function Contact() {
 
       console.log('📧 Guardando contacto en BD...', contactDataToInsert);
 
-      const { data: contactData, error: dbError } = await supabase
+      // Insertar sin .select() para evitar problemas con RLS
+      // Los usuarios públicos pueden insertar pero no leer
+      const { error: dbError } = await supabase
         .from('orders')
-        .insert(contactDataToInsert)
-        .select();
+        .insert(contactDataToInsert);
 
       if (dbError) {
         console.error('❌ Error guardando contacto en BD:', dbError);
@@ -98,13 +99,15 @@ export default function Contact() {
         console.error('Mensaje:', dbError.message);
         console.error('Detalles:', dbError.details);
         console.error('Hint:', dbError.hint);
+        
+        // Si es un error de permisos RLS, mostrar mensaje específico
+        if (dbError.code === '42501' || dbError.message?.includes('permission denied') || dbError.message?.includes('new row violates row-level security')) {
+          console.error('⚠️ Error de permisos RLS. Ejecuta el script fix-orders-rls-definitive.sql en Supabase.');
+          // No bloqueamos el envío del email, pero registramos el error
+        }
       } else {
-        console.log('✅ Contacto guardado correctamente en BD:', contactData);
-      }
-
-      if (dbError) {
-        console.error('Error guardando contacto en BD:', dbError);
-        // No bloqueamos el envío si falla la BD, pero lo registramos
+        console.log('✅ Contacto guardado correctamente en BD');
+        console.log('El contacto se ha guardado correctamente. Los usuarios públicos no pueden leer los datos después de insertar (comportamiento esperado por RLS).');
       }
 
       const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
