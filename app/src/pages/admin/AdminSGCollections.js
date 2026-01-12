@@ -35,6 +35,9 @@ export default function AdminSGCollections() {
   });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [collectionPhotos, setCollectionPhotos] = useState([]);
+  const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const [showPhotoSelector, setShowPhotoSelector] = useState(false);
 
   const resetForm = () => {
     setFormData({
@@ -47,9 +50,11 @@ export default function AdminSGCollections() {
     });
     setEditingId(null);
     setShowNewForm(false);
+    setCollectionPhotos([]);
+    setShowPhotoSelector(false);
   };
 
-  const handleEdit = (collection) => {
+  const handleEdit = async (collection) => {
     setFormData({
       name: collection.name,
       slug: collection.slug,
@@ -60,6 +65,33 @@ export default function AdminSGCollections() {
     });
     setEditingId(collection.id);
     setShowNewForm(false);
+    
+    // Cargar fotos de la colección para poder seleccionar una como portada
+    await loadCollectionPhotos(collection.id);
+  };
+
+  const loadCollectionPhotos = async (collectionId) => {
+    setLoadingPhotos(true);
+    try {
+      const { data, error } = await supabase
+        .from('sg_gallery_photos')
+        .select('id, title, image_url')
+        .eq('collection_id', collectionId)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setCollectionPhotos(data || []);
+    } catch (err) {
+      console.error('Error cargando fotos:', err);
+      setCollectionPhotos([]);
+    } finally {
+      setLoadingPhotos(false);
+    }
+  };
+
+  const selectPhotoAsCover = (photoUrl) => {
+    setFormData(prev => ({ ...prev, cover_image: photoUrl }));
+    setShowPhotoSelector(false);
   };
 
   const handleNameChange = (name) => {
@@ -228,34 +260,85 @@ export default function AdminSGCollections() {
                 <label className="block text-xs uppercase tracking-[0.1em] text-white/50 mb-2">
                   Imagen de Portada
                 </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={formData.cover_image}
-                    onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
-                    className="flex-1 px-4 py-2 bg-black border border-white/20 text-white text-sm focus:border-white/40 focus:outline-none"
-                    placeholder="URL de la imagen o subir archivo"
-                  />
-                  <label className="px-4 py-2 bg-white/10 text-white text-sm cursor-pointer hover:bg-white/20 transition-colors">
-                    {uploading ? '...' : 'Subir'}
+                <div className="space-y-2">
+                  <div className="flex gap-2">
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      disabled={uploading}
+                      type="text"
+                      value={formData.cover_image}
+                      onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
+                      className="flex-1 px-4 py-2 bg-black border border-white/20 text-white text-sm focus:border-white/40 focus:outline-none"
+                      placeholder="URL de la imagen o subir archivo"
                     />
-                  </label>
-                </div>
-                {formData.cover_image && (
-                  <div className="mt-2 w-24 h-24 bg-black/50 overflow-hidden">
-                    <img
-                      src={formData.cover_image}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
+                    <label className="px-4 py-2 bg-white/10 text-white text-sm cursor-pointer hover:bg-white/20 transition-colors">
+                      {uploading ? '...' : 'Subir'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={uploading}
+                      />
+                    </label>
                   </div>
-                )}
+                  
+                  {/* Botón para seleccionar de fotos existentes (solo al editar) */}
+                  {editingId && collectionPhotos.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPhotoSelector(!showPhotoSelector)}
+                      className="w-full px-4 py-2 bg-white/5 border border-white/20 text-white text-xs uppercase tracking-[0.1em] hover:bg-white/10 transition-colors"
+                    >
+                      {showPhotoSelector ? '✕ Cerrar Selector' : '📷 Seleccionar de Fotos Existentes'}
+                    </button>
+                  )}
+                  
+                  {/* Selector de fotos */}
+                  {showPhotoSelector && editingId && (
+                    <div className="border border-white/20 bg-black/50 p-4 max-h-64 overflow-y-auto">
+                      {loadingPhotos ? (
+                        <p className="text-white/50 text-xs text-center py-4">Cargando fotos...</p>
+                      ) : collectionPhotos.length === 0 ? (
+                        <p className="text-white/50 text-xs text-center py-4">No hay fotos en esta colección</p>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2">
+                          {collectionPhotos.map((photo) => (
+                            <button
+                              key={photo.id}
+                              type="button"
+                              onClick={() => selectPhotoAsCover(photo.image_url)}
+                              className={`relative aspect-square overflow-hidden border-2 transition-all ${
+                                formData.cover_image === photo.image_url
+                                  ? 'border-accent ring-2 ring-accent/50'
+                                  : 'border-white/20 hover:border-white/40'
+                              }`}
+                            >
+                              <img
+                                src={photo.image_url}
+                                alt={photo.title || 'Foto'}
+                                className="w-full h-full object-cover"
+                              />
+                              {formData.cover_image === photo.image_url && (
+                                <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
+                                  <span className="text-accent text-lg">✓</span>
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {formData.cover_image && (
+                    <div className="mt-2 w-32 h-32 bg-black/50 overflow-hidden border border-white/20">
+                      <img
+                        src={formData.cover_image}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block text-xs uppercase tracking-[0.1em] text-white/50 mb-2">

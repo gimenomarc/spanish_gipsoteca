@@ -33,6 +33,7 @@ export default function FAQs() {
   };
 
   // Imagen de fondo desde Supabase Storage
+  // La imagen se subirá a: product-images/faqs/Fondo FAQS.jpg
   const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/Fondo%20FAQS.jpg";
 
   return (
