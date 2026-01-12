@@ -22,11 +22,16 @@ export default function AdminProductEdit() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [sgPhotos, setSgPhotos] = useState([]);
+  const [relatedPhotoIds, setRelatedPhotoIds] = useState([]);
+  const [loadingSGPhotos, setLoadingSGPhotos] = useState(false);
 
   useEffect(() => {
     fetchCategories();
     if (!isNew) {
       fetchProduct();
+      fetchSGPhotos();
+      fetchRelatedPhotos();
     }
   }, [code, isNew]);
 
@@ -59,6 +64,82 @@ export default function AdminProductEdit() {
       setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchSGPhotos = async () => {
+    setLoadingSGPhotos(true);
+    try {
+      const { data, error } = await supabase
+        .from('sg_gallery_photos')
+        .select(`
+          id,
+          title,
+          image_url,
+          sg_gallery_collections (
+            id,
+            name
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSgPhotos(data || []);
+    } catch (error) {
+      console.error('Error fetching SG photos:', error);
+    } finally {
+      setLoadingSGPhotos(false);
+    }
+  };
+
+  const fetchRelatedPhotos = async () => {
+    if (!code || isNew) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('sg_gallery_photo_products')
+        .select('photo_id')
+        .eq('product_code', code);
+
+      if (error) throw error;
+      setRelatedPhotoIds((data || []).map(item => item.photo_id));
+    } catch (error) {
+      console.error('Error fetching related photos:', error);
+    }
+  };
+
+  const togglePhotoRelation = async (photoId) => {
+    if (!code || isNew) return;
+
+    const isRelated = relatedPhotoIds.includes(photoId);
+    
+    try {
+      if (isRelated) {
+        // Eliminar relación
+        const { error } = await supabase
+          .from('sg_gallery_photo_products')
+          .delete()
+          .eq('product_code', code)
+          .eq('photo_id', photoId);
+
+        if (error) throw error;
+        setRelatedPhotoIds(prev => prev.filter(id => id !== photoId));
+      } else {
+        // Añadir relación
+        const { error } = await supabase
+          .from('sg_gallery_photo_products')
+          .insert({
+            product_code: code,
+            photo_id: photoId
+          });
+
+        if (error) throw error;
+        setRelatedPhotoIds(prev => [...prev, photoId]);
+      }
+    } catch (error) {
+      console.error('Error updating photo relation:', error);
+      alert('Error al actualizar la relación: ' + error.message);
     }
   };
 
@@ -290,6 +371,66 @@ export default function AdminProductEdit() {
             <p className="text-xs text-white/40 mt-2">
               Para gestionar imágenes, usa la sección de <Link to="/admin-jdm-private/images" className="text-white/60 hover:text-white underline">Imágenes</Link>
             </p>
+          </div>
+        )}
+
+        {/* SG Gallery - Fotos relacionadas */}
+        {!isNew && (
+          <div className="border-t border-white/10 pt-6">
+            <label className="block text-xs uppercase tracking-[0.15em] text-white/70 mb-4">
+              📷 Fotos de SG Gallery Relacionadas
+            </label>
+            <p className="text-xs text-white/50 mb-4">
+              Selecciona las fotos de SG Gallery que muestran este producto en la vida real. Estas fotos aparecerán en la página del producto.
+            </p>
+            
+            {loadingSGPhotos ? (
+              <p className="text-white/50 text-sm">Cargando fotos...</p>
+            ) : sgPhotos.length === 0 ? (
+              <p className="text-white/50 text-sm">No hay fotos en SG Gallery todavía.</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {sgPhotos.map((photo) => {
+                  const isRelated = relatedPhotoIds.includes(photo.id);
+                  return (
+                    <button
+                      key={photo.id}
+                      type="button"
+                      onClick={() => togglePhotoRelation(photo.id)}
+                      className={`relative aspect-square overflow-hidden border-2 transition-all group ${
+                        isRelated
+                          ? 'border-accent ring-2 ring-accent/50'
+                          : 'border-white/20 hover:border-white/40'
+                      }`}
+                    >
+                      <img
+                        src={photo.image_url}
+                        alt={photo.title || 'Foto'}
+                        className="w-full h-full object-cover"
+                      />
+                      {isRelated && (
+                        <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
+                          <span className="text-accent text-2xl">✓</span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/80 text-white text-xs truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                        {photo.title}
+                        {photo.sg_gallery_collections && (
+                          <span className="block text-white/60 text-[10px]">
+                            {photo.sg_gallery_collections.name}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            {relatedPhotoIds.length > 0 && (
+              <p className="text-xs text-white/50 mt-4">
+                {relatedPhotoIds.length} foto{relatedPhotoIds.length !== 1 ? 's' : ''} relacionada{relatedPhotoIds.length !== 1 ? 's' : ''}
+              </p>
+            )}
           </div>
         )}
 

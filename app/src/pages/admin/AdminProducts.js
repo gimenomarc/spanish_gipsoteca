@@ -93,21 +93,54 @@ export default function AdminProducts() {
   // Toggle destacado
   const toggleFeatured = async (code, currentValue) => {
     try {
+      // Si está marcando como destacado, asignar un orden
+      const featuredOrder = !currentValue ? (products.filter(p => p.is_featured).length + 1) : null;
+      
       const { error } = await supabase
         .from('products')
-        .update({ is_featured: !currentValue })
+        .update({ 
+          is_featured: !currentValue,
+          featured_order: featuredOrder || null
+        })
         .eq('code', code);
 
       if (error) throw error;
       
       setProducts(products.map(p => 
-        p.code === code ? { ...p, is_featured: !currentValue } : p
+        p.code === code ? { ...p, is_featured: !currentValue, featured_order: featuredOrder || null } : p
       ));
     } catch (error) {
       console.error('Error toggling featured:', error);
       alert('Error al cambiar destacado');
     }
   };
+
+  // Actualizar orden destacado
+  const updateFeaturedOrder = async (code, newOrder) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ featured_order: newOrder })
+        .eq('code', code);
+
+      if (error) throw error;
+      
+      // Refrescar productos para obtener el orden actualizado
+      await fetchProducts();
+    } catch (error) {
+      console.error('Error updating featured order:', error);
+      alert('Error al actualizar el orden');
+    }
+  };
+
+  // Obtener productos destacados ordenados
+  const featuredProducts = products
+    .filter(p => p.is_featured === true && p.published === true)
+    .sort((a, b) => {
+      const orderA = a.featured_order || 999;
+      const orderB = b.featured_order || 999;
+      return orderA - orderB;
+    });
 
   // Filtrar y ordenar productos
   const filteredProducts = products
@@ -169,6 +202,103 @@ export default function AdminProducts() {
           + Nuevo Producto
         </Link>
       </div>
+
+      {/* Sección de Productos Destacados para Home */}
+      {featuredProducts.length > 0 && (
+        <div className="mb-8 p-6 bg-black border border-white/10">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-display uppercase tracking-[0.15em] text-white mb-1">
+                ⭐ Productos Destacados en Home
+              </h2>
+              <p className="text-xs text-white/50">
+                {featuredProducts.length} producto{featuredProducts.length !== 1 ? 's' : ''} destacado{featuredProducts.length !== 1 ? 's' : ''} 
+                {featuredProducts.length > 8 && (
+                  <span className="text-yellow-400 ml-2">
+                    (Se muestran los primeros 8 en la home)
+                  </span>
+                )}
+              </p>
+            </div>
+            <button
+              onClick={() => setFeaturedFilter(featuredFilter === 'featured' ? 'all' : 'featured')}
+              className="px-4 py-2 text-xs uppercase tracking-[0.1em] bg-white/10 text-white hover:bg-white/20 transition-colors"
+            >
+              {featuredFilter === 'featured' ? 'Ver Todos' : 'Ver Solo Destacados'}
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3">
+            {featuredProducts.slice(0, 8).map((product, index) => (
+              <div
+                key={product.code}
+                className={`relative border-2 p-2 ${
+                  index < 8 
+                    ? 'border-accent bg-accent/10' 
+                    : 'border-white/20 bg-black/50'
+                }`}
+              >
+                <div className="aspect-[3/4] overflow-hidden bg-white/10 mb-2">
+                  {product.images && product.images[0] ? (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white/30 text-xs">
+                      Sin img
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-mono text-white/70">{product.code}</span>
+                  <span className="text-xs text-accent font-bold">#{index + 1}</span>
+                </div>
+                <p className="text-[10px] text-white/80 truncate">{product.name || '—'}</p>
+                <div className="mt-2 flex gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (index > 0) {
+                        updateFeaturedOrder(product.code, index);
+                        updateFeaturedOrder(featuredProducts[index - 1].code, index + 1);
+                      }
+                    }}
+                    disabled={index === 0}
+                    className="flex-1 px-1 py-0.5 text-[10px] bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Subir"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (index < featuredProducts.length - 1 && index < 7) {
+                        updateFeaturedOrder(product.code, index + 2);
+                        updateFeaturedOrder(featuredProducts[index + 1].code, index + 1);
+                      }
+                    }}
+                    disabled={index === featuredProducts.length - 1 || index >= 7}
+                    className="flex-1 px-1 py-0.5 text-[10px] bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Bajar"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
+            ))}
+            {featuredProducts.length > 8 && (
+              <div className="col-span-full mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20">
+                <p className="text-xs text-yellow-400 text-center">
+                  ⚠️ Tienes {featuredProducts.length} productos destacados, pero solo se muestran los primeros 8 en la home.
+                  Considera desmarcar algunos o ajustar el orden.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-6">

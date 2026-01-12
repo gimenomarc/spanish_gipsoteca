@@ -253,6 +253,82 @@ export function useSGPhotoDetail(photoId) {
 }
 
 /**
+ * Hook para obtener las fotos de SG Gallery relacionadas con un producto
+ */
+export function useSGPhotosByProduct(productCode) {
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchPhotos() {
+      if (!productCode) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        
+        // Obtener los IDs de las fotos relacionadas con el producto
+        const { data: links, error: linksError } = await supabase
+          .from('sg_gallery_photo_products')
+          .select('photo_id')
+          .eq('product_code', productCode);
+
+        if (linksError) throw linksError;
+
+        if (!links || links.length === 0) {
+          setPhotos([]);
+          setLoading(false);
+          return;
+        }
+
+        const photoIds = links.map(link => link.photo_id);
+
+        // Obtener las fotos con sus colecciones
+        const { data: photosData, error: photosError } = await supabase
+          .from('sg_gallery_photos')
+          .select(`
+            *,
+            sg_gallery_collections (
+              id,
+              name,
+              slug
+            )
+          `)
+          .in('id', photoIds)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+
+        if (photosError) throw photosError;
+
+        // Optimizar URLs de imágenes
+        const optimizedPhotos = (photosData || []).map(photo => ({
+          ...photo,
+          image_url: photo.image_url 
+            ? optimizeImageUrl(photo.image_url, imagePresets.sgPhotoCard)
+            : null
+        }));
+
+        setPhotos(optimizedPhotos);
+        setError(null);
+      } catch (err) {
+        console.error('Error cargando fotos de SG Gallery:', err);
+        setError(err.message);
+        setPhotos([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPhotos();
+  }, [productCode]);
+
+  return { photos, loading, error };
+}
+
+/**
  * Hook para administración: obtener todas las colecciones (incluyendo inactivas)
  */
 export function useAdminSGCollections() {

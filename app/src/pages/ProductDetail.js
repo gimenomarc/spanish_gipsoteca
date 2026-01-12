@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useProduct, useRelatedProducts } from "../hooks/useProducts";
+import { useSGPhotosByProduct } from "../hooks/useSGGallery";
 import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
@@ -49,6 +50,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const { product, loading, error } = useProduct(categoryId, productCode);
   const { relatedProducts, loading: loadingRelated } = useRelatedProducts(categoryId, productCode, 4);
+  const { photos: sgPhotos, loading: loadingSGPhotos } = useSGPhotosByProduct(productCode);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -472,6 +474,63 @@ export default function ProductDetail() {
         </div>
       )}
       </div>
+      
+      {/* SG Gallery - Fotos en la vida real */}
+      {sgPhotos.length > 0 && (
+        <section className="border-t border-white/10 bg-black py-12 sm:py-16 md:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
+            <div className="mb-8 sm:mb-10 flex items-center justify-between">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">SG Gallery</p>
+                <h3 className="font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl sm:tracking-[0.2em] md:text-2xl">
+                  En la Vida Real
+                </h3>
+                <p className="mt-2 text-xs text-white/60 sm:text-sm">
+                  Descubre cómo se ve este producto en espacios reales
+                </p>
+              </div>
+              <Link 
+                to="/sg-gallery" 
+                className="text-xs uppercase tracking-[0.15em] text-white/50 transition-colors hover:text-white sm:text-sm"
+              >
+                Ver galería →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {sgPhotos.map((photo, index) => (
+                <Link
+                  key={photo.id}
+                  to={`/sg-gallery/${photo.sg_gallery_collections?.slug || ''}`}
+                  className="group relative block aspect-[4/3] overflow-hidden bg-black/50"
+                >
+                  <OptimizedImage
+                    src={photo.image_url || ''}
+                    alt={photo.title || 'Foto'}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority={index < 3}
+                    aspectRatio="4/3"
+                    size="card"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    {photo.title && (
+                      <h4 className="text-sm font-medium uppercase tracking-[0.1em] text-white mb-1 sm:text-base">
+                        {photo.title}
+                      </h4>
+                    )}
+                    {photo.sg_gallery_collections && (
+                      <p className="text-xs uppercase tracking-[0.15em] text-white/60 sm:text-sm">
+                        {photo.sg_gallery_collections.name}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
       
       {/* Sección de Productos Relacionados */}
       {relatedProducts.length > 0 && (
