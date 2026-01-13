@@ -7,6 +7,7 @@ export default function AdminImages() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isPrimary, setIsPrimary] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -35,6 +36,15 @@ export default function AdminImages() {
     }
   };
 
+  // Función para sanitizar nombres de archivo (mantener nombre original pero seguro)
+  const sanitizeFileName = (fileName) => {
+    // Mantener el nombre original pero eliminar caracteres peligrosos
+    return fileName
+      .replace(/[^a-zA-Z0-9._-]/g, '_') // Reemplazar caracteres especiales con _
+      .replace(/_{2,}/g, '_') // Eliminar múltiples _ consecutivos
+      .replace(/^_+|_+$/g, ''); // Eliminar _ al inicio y final
+  };
+
   const handleFileUpload = async (e) => {
     if (!selectedProduct) return;
     
@@ -45,12 +55,20 @@ export default function AdminImages() {
 
     try {
       const newImages = [...(selectedProduct.images || [])];
+      const primaryImages = []; // Imágenes que deben ir al principio
+      const regularImages = []; // Imágenes normales
 
       for (const file of files) {
-        // Crear nombre de archivo
-        const ext = file.name.split('.').pop();
-        const fileName = `${selectedProduct.code}_${Date.now()}.${ext}`;
+        // Mantener el nombre original del archivo (sanitizado)
+        const originalName = file.name;
+        const ext = originalName.split('.').pop();
+        const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'));
+        const sanitizedName = sanitizeFileName(nameWithoutExt);
+        const fileName = `${sanitizedName}.${ext}`;
         const path = `${selectedProduct.category_id}/${selectedProduct.code}/${fileName}`;
+
+        // Verificar si debe ser principal: tiene "DEF" en el nombre O está marcado como principal
+        const shouldBePrimary = isPrimary || nameWithoutExt.toUpperCase().includes('DEF');
 
         // Subir a Supabase Storage
         const { error: uploadError } = await supabase.storage
@@ -60,31 +78,66 @@ export default function AdminImages() {
             upsert: false
           });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          // Si el archivo ya existe, intentar con un sufijo único
+          const timestamp = Date.now();
+          const uniqueFileName = `${sanitizedName}_${timestamp}.${ext}`;
+          const uniquePath = `${selectedProduct.category_id}/${selectedProduct.code}/${uniqueFileName}`;
+          
+          const { error: retryError } = await supabase.storage
+            .from('product-images')
+            .upload(uniquePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
 
-        // Obtener URL pública
-        const { data: { publicUrl } } = supabase.storage
-          .from('product-images')
-          .getPublicUrl(path);
+          if (retryError) throw retryError;
 
-        newImages.push(publicUrl);
+          // Obtener URL pública con el nombre único
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(uniquePath);
+
+          if (shouldBePrimary) {
+            primaryImages.push(publicUrl);
+          } else {
+            regularImages.push(publicUrl);
+          }
+        } else {
+          // Obtener URL pública
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(path);
+
+          if (shouldBePrimary) {
+            primaryImages.push(publicUrl);
+          } else {
+            regularImages.push(publicUrl);
+          }
+        }
       }
+
+      // Combinar: primero las principales, luego las regulares, luego las existentes
+      const finalImages = [...primaryImages, ...regularImages, ...newImages];
 
       // Actualizar producto con nuevas imágenes
       const { error: updateError } = await supabase
         .from('products')
-        .update({ images: newImages })
+        .update({ images: finalImages })
         .eq('code', selectedProduct.code);
 
       if (updateError) throw updateError;
 
       // Actualizar estado local
-      setSelectedProduct({ ...selectedProduct, images: newImages });
+      setSelectedProduct({ ...selectedProduct, images: finalImages });
       setProducts(products.map(p => 
         p.code === selectedProduct.code 
-          ? { ...p, images: newImages }
+          ? { ...p, images: finalImages }
           : p
       ));
+
+      // Resetear checkbox de principal
+      setIsPrimary(false);
 
       alert('Imágenes subidas correctamente');
     } catch (error) {
@@ -237,18 +290,30 @@ export default function AdminImages() {
                   <h2 className="text-lg text-white">{selectedProduct.name}</h2>
                   <p className="text-xs text-white/50">{selectedProduct.code}</p>
                 </div>
-                <label className="bg-white text-black px-4 py-2 text-xs uppercase tracking-[0.1em] hover:bg-white/90 transition-colors cursor-pointer">
-                  {uploading ? 'Subiendo...' : '+ Subir Imágenes'}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-                </label>
+                <div className="flex flex-col items-end gap-2">
+                  <label className="flex items-center gap-2 text-xs text-white/70">
+                    <input
+                      type="checkbox"
+                      checked={isPrimary}
+                      onChange={(e) => setIsPrimary(e.target.checked)}
+                      disabled={uploading}
+                      className="w-4 h-4"
+                    />
+                    <span>Marcar como principal (DEF)</span>
+                  </label>
+                  <label className="bg-white text-black px-4 py-2 text-xs uppercase tracking-[0.1em] hover:bg-white/90 transition-colors cursor-pointer">
+                    {uploading ? 'Subiendo...' : '+ Subir Imágenes'}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               {selectedProduct.images && selectedProduct.images.length > 0 ? (
@@ -297,9 +362,14 @@ export default function AdminImages() {
               )}
 
               <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 text-xs">
-                <p className="text-blue-400">
-                  <strong>💡 Tip:</strong> Nombra las imágenes con "DEF" para que se usen como principal automáticamente al subir desde el script.
+                <p className="text-blue-400 mb-2">
+                  <strong>💡 Información:</strong>
                 </p>
+                <ul className="text-blue-300 space-y-1 ml-4 list-disc">
+                  <li>El nombre del archivo se mantiene tal como lo subes</li>
+                  <li>Marca "Marcar como principal" para que la imagen vaya al inicio</li>
+                  <li>O incluye "DEF" en el nombre del archivo para que sea principal automáticamente</li>
+                </ul>
               </div>
             </>
           ) : (
