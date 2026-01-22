@@ -111,6 +111,7 @@ export default function Checkout() {
         products_summary: cart.map(item => 
           `${item.name || 'Sin nombre'} (${item.code || 'N/A'}) x${item.quantity} - ${item.price || '0.00€'}`
         ).join('\n') || 'No hay productos',
+        subtotal: `${getTotalPrice().toFixed(2)}€`,
         total: `${getTotalPrice().toFixed(2)}€`,
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
         // Fecha y hora completa
