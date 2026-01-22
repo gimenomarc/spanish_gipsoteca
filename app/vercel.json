@@ -1,7 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "installCommand": "npm install",
-  "framework": "create-react-app",
-  "rootDirectory": "app"
+  "buildCommand": "cd app && npm run build",
+  "outputDirectory": "app/build",
+  "installCommand": "cd app && npm install",
+  "framework": "create-react-app"
 }
