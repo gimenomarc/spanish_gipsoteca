@@ -4,7 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
-import { imagePresets, srcSetPresets } from "../utils/imageOptimizer";
+import { imagePresets } from "../utils/imageOptimizer";
 import { searchInFields } from "../utils/textNormalizer";
 
 const SearchIcon = () => (

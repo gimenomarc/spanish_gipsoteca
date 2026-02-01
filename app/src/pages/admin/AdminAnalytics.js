@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 
 export default function AdminAnalytics() {
@@ -8,11 +8,7 @@ export default function AdminAnalytics() {
   const [recentVisits, setRecentVisits] = useState([]);
   const [recentEvents, setRecentEvents] = useState([]);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [dateRange]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -55,7 +51,11 @@ export default function AdminAnalytics() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('es-ES', {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useProduct, useRelatedProducts } from "../hooks/useProducts";
 import { useSGPhotosByProduct } from "../hooks/useSGGallery";
@@ -49,8 +49,8 @@ export default function ProductDetail() {
   const { categoryId, productCode } = useParams();
   const navigate = useNavigate();
   const { product, loading, error } = useProduct(categoryId, productCode);
-  const { relatedProducts, loading: loadingRelated } = useRelatedProducts(categoryId, productCode, 4);
-  const { photos: sgPhotos, loading: loadingSGPhotos } = useSGPhotosByProduct(productCode);
+  const { relatedProducts } = useRelatedProducts(categoryId, productCode, 4);
+  const { photos: sgPhotos } = useSGPhotosByProduct(productCode);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -66,7 +66,9 @@ export default function ProductDetail() {
   }, [product, loading, navigate]);
 
   // Obtener imágenes del producto desde Supabase (antes de los returns)
-  const productImages = product ? getProductImages(product) : [];
+  const productImages = useMemo(() => {
+    return product ? getProductImages(product) : [];
+  }, [product]);
   const mainImage = productImages[selectedImage] || productImages[0] || '';
 
   // Preload optimizado: solo la imagen principal y la siguiente

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { optimizeImageUrl, imagePresets, srcSetPresets, sizesPresets } from '../utils/imageOptimizer';
-import { imageCache } from '../utils/imageCache';
 
 /**
  * Componente de imagen optimizada con:
@@ -117,8 +116,9 @@ export default function OptimizedImage({
 
     return () => {
       clearTimeout(timeoutId);
-      if (observerRef.current && imgRef.current) {
-        observerRef.current.unobserve(imgRef.current);
+      const currentImg = imgRef.current;
+      if (observerRef.current && currentImg) {
+        observerRef.current.unobserve(currentImg);
       }
     };
   }, [priority]);

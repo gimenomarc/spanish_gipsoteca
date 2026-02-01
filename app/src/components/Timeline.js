@@ -26,8 +26,6 @@ const icons = {
 };
 
 function TimelineItem({ item, index, isVisible }) {
-  const isEven = index % 2 === 0;
-  
   return (
     <div 
       className={`relative flex items-start gap-6 group transition-all duration-700 ${

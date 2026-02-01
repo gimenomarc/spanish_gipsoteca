@@ -59,15 +59,7 @@ export default function Checkout() {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       
       // Intentar obtener ubicación (si el usuario lo permite)
-      let locationInfo = 'No disponible';
-      try {
-        if (navigator.geolocation) {
-          // Solo intentamos obtener si está disponible, pero no bloqueamos el envío
-          locationInfo = 'Disponible (no obtenida para no bloquear el envío)';
-        }
-      } catch (e) {
-        locationInfo = 'No disponible';
-      }
+      // Nota: No obtenemos la ubicación para no bloquear el envío del formulario
 
       // Formatear productos con toda la información
       const productsList = cart.map((item, index) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 
@@ -26,16 +26,7 @@ export default function AdminProductEdit() {
   const [relatedPhotoIds, setRelatedPhotoIds] = useState([]);
   const [loadingSGPhotos, setLoadingSGPhotos] = useState(false);
 
-  useEffect(() => {
-    fetchCategories();
-    if (!isNew) {
-      fetchProduct();
-      fetchSGPhotos();
-      fetchRelatedPhotos();
-    }
-  }, [code, isNew]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('products')
@@ -51,9 +42,9 @@ export default function AdminProductEdit() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [code]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('categories')
@@ -65,9 +56,9 @@ export default function AdminProductEdit() {
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
-  };
+  }, []);
 
-  const fetchSGPhotos = async () => {
+  const fetchSGPhotos = useCallback(async () => {
     setLoadingSGPhotos(true);
     try {
       const { data, error } = await supabase
@@ -91,9 +82,9 @@ export default function AdminProductEdit() {
     } finally {
       setLoadingSGPhotos(false);
     }
-  };
+  }, []);
 
-  const fetchRelatedPhotos = async () => {
+  const fetchRelatedPhotos = useCallback(async () => {
     if (!code || isNew) return;
     
     try {
@@ -107,7 +98,16 @@ export default function AdminProductEdit() {
     } catch (error) {
       console.error('Error fetching related photos:', error);
     }
-  };
+  }, [code, isNew]);
+
+  useEffect(() => {
+    fetchCategories();
+    if (!isNew) {
+      fetchProduct();
+      fetchSGPhotos();
+      fetchRelatedPhotos();
+    }
+  }, [code, isNew, fetchCategories, fetchProduct, fetchSGPhotos, fetchRelatedPhotos]);
 
   const togglePhotoRelation = async (photoId) => {
     if (!code || isNew) return;
