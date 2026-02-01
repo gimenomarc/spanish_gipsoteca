@@ -35,6 +35,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 
 import "./App.css";
 
+// a
 // Layout para rutas públicas con Header
 function PublicLayout() {
   // Trackear visitas de página
