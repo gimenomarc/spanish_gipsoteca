@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "app/build",
+  "buildCommand": "npm run build && rm -rf build && mv app/build build",
+  "outputDirectory": "build",
   "installCommand": "npm install"
 }
