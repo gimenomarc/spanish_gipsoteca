@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import { imagePresets } from "../utils/imageOptimizer";
 
 const faqs = [
   {
@@ -32,9 +33,9 @@ export default function FAQs() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  // Imagen de fondo desde Supabase Storage
-  // Archivo: F001_F003.jpg en la carpeta faqs
-  const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.jpg";
+  const faqBackground = imagePresets.sectionBackground(
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.jpg"
+  );
 
   return (
     <div 

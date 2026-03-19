@@ -2,6 +2,7 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
+import { imagePresets } from '../utils/imageOptimizer';
 
 // Icono de Instagram moderno y minimalista
 const InstagramIcon = ({ size = 24 }) => (
@@ -32,9 +33,9 @@ const ArrowIcon = () => (
 );
 
 export default function Contact() {
-  // Imagen de fondo desde Supabase Storage
-  // La imagen debe estar en: product-images/contacto/
-  const contactBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg";
+  const contactBackground = imagePresets.sectionBackground(
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg"
+  );
 
   const [formData, setFormData] = useState({
     name: "",

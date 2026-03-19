@@ -1,16 +1,13 @@
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
+import { imagePresets } from "../utils/imageOptimizer";
 
-// Imágenes de About Us desde Supabase Storage
-// Para subir/actualizar fotos: 
-// 1. Pon las fotos en public/images/about/ (taller.jpg, espacios.jpg, javier.jpg)
-// 2. Ejecuta: node scripts/upload-about-images.js
 const SUPABASE_STORAGE_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images";
 
 const aboutImages = {
-  taller: `${SUPABASE_STORAGE_URL}/about/taller.jpg`,
-  espacios: `${SUPABASE_STORAGE_URL}/about/espacios.jpg`,
-  javier: `${SUPABASE_STORAGE_URL}/about/javier.jpg`,
+  taller: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/taller.jpg`),
+  espacios: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/espacios.jpg`),
+  javier: imagePresets.portrait(`${SUPABASE_STORAGE_URL}/about/javier.jpg`),
 };
 
 export default function About() {
@@ -36,7 +33,7 @@ export default function About() {
             backgroundImage: aboutImages.taller 
               ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.taller})` 
               : "none",
-            backgroundSize: "120%",
+            backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundAttachment: "fixed",
             backgroundColor: "#000000"
@@ -69,7 +66,7 @@ export default function About() {
             backgroundImage: aboutImages.espacios 
               ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.espacios})` 
               : "none",
-            backgroundSize: "120%",
+            backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundAttachment: "fixed",
             backgroundColor: "#000000"

@@ -1,47 +1,29 @@
 import { useState, useRef, useEffect } from 'react';
 import OptimizedImage from './OptimizedImage';
+import { imagePresets } from '../utils/imageOptimizer';
 
-/**
- * Componente de imagen con zoom hover
- * Muestra una lupa/ventana de zoom que sigue el cursor cuando se pasa sobre la imagen
- */
 export default function ImageZoom({ 
   src, 
   alt, 
   className = '',
-  zoomScale = 3, // Factor de zoom (3x por defecto)
-  zoomSize = 250, // Tamaño de la lupa en píxeles
+  zoomScale = 3,
+  zoomSize = 250,
   ...props 
 }) {
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, bgX: 0, bgY: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef(null);
 
-  // Extraer URL original sin optimización para el zoom
-  const getOriginalUrl = (url) => {
-    if (!url) return url;
-    // Remover parámetros de optimización de Supabase para obtener imagen original
-    if (url.includes('?')) {
-      return url.split('?')[0];
-    }
-    return url;
-  };
+  const zoomSrc = src ? imagePresets.zoomDetail(src) : src;
 
-  const originalSrc = getOriginalUrl(src);
-
-  // Precargar imagen original para el zoom
   useEffect(() => {
-    if (originalSrc) {
+    if (zoomSrc) {
       const img = new Image();
-      img.onload = () => {
-        setImageLoaded(true);
-        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-      };
-      img.src = originalSrc;
+      img.onload = () => setImageLoaded(true);
+      img.src = zoomSrc;
     }
-  }, [originalSrc]);
+  }, [zoomSrc]);
 
   const handleMouseEnter = () => {
     if (imageLoaded) {
@@ -125,7 +107,7 @@ export default function ImageZoom({
         >
           {/* Imagen ampliada dentro de la lupa */}
           <img
-            src={originalSrc}
+            src={zoomSrc}
             alt={`${alt} - zoom`}
             style={{
               width: `${zoomPosition.zoomedWidth}px`,

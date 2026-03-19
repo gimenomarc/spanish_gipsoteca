@@ -3,14 +3,12 @@ import { useFeaturedProducts } from "../hooks/useProducts";
 import { useSGCollections } from "../hooks/useSGGallery";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
-import { optimizeImageUrl } from "../utils/imageOptimizer";
+import OptimizedImage from "../components/OptimizedImage";
+import { imagePresets } from "../utils/imageOptimizer";
 
-// Imagen hero desde Supabase Storage (optimizada)
+const HERO_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg";
 const images = {
-  hero: optimizeImageUrl(
-    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg",
-    { width: 1920, quality: 85, format: 'webp' }
-  ),
+  hero: imagePresets.heroBackground(HERO_URL),
 };
 
 // Componente para mostrar una colección de la galería
@@ -25,11 +23,15 @@ function CollectionCard({ collection, index }) {
     >
       {/* Imagen de fondo */}
       {collection.cover_image ? (
-        <img
-          src={collection.cover_image}
-          alt={collection.name}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+        <div className="absolute inset-0">
+          <OptimizedImage
+            src={collection.cover_image}
+            alt={collection.name}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            size="sgCollectionCover"
+            aspectRatio="4/5"
+          />
+        </div>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5" />
       )}

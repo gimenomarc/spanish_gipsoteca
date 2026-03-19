@@ -1,41 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
-import { optimizeImageUrl, imagePresets, srcSetPresets, sizesPresets } from '../utils/imageOptimizer';
+import { cdnUrl, imagePresets, srcSetPresets, sizesPresets } from '../utils/imageOptimizer';
 
-/**
- * Componente de imagen optimizada con:
- * - Lazy loading inteligente con Intersection Observer
- * - srcset responsivo para múltiples tamaños
- * - Preloading agresivo de imágenes críticas
- * - Placeholder blur mejorado
- * - Priorización de carga
- * - Manejo de errores robusto
- */
 export default function OptimizedImage({
   src,
   alt,
   className = '',
-  priority = false, // Si es true, carga inmediatamente con alta prioridad
-  aspectRatio = '3/4', // Aspect ratio para el placeholder
-  size = 'card', // 'thumbnail', 'card', 'detail', 'full', 'galleryThumb'
+  priority = false,
+  aspectRatio = '3/4',
+  size = 'card',
   onLoad,
   onError,
   ...props
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [shouldLoad, setShouldLoad] = useState(priority); // Si priority=true, carga inmediatamente
+  const [shouldLoad, setShouldLoad] = useState(priority);
   const imgRef = useRef(null);
   const observerRef = useRef(null);
   const preloadLinkRef = useRef(null);
 
-  // Optimizar URL según el tamaño solicitado
   const optimizedSrc = src ? (
     typeof size === 'string' && imagePresets[size]
       ? imagePresets[size](src)
-      : optimizeImageUrl(src, typeof size === 'object' ? size : {})
+      : typeof size === 'object'
+        ? cdnUrl(src, size)
+        : cdnUrl(src)
   ) : src;
 
-  // Generar srcset y sizes para imágenes responsivas
   const srcSet = src && typeof size === 'string' && srcSetPresets[size]
     ? srcSetPresets[size](src)
     : null;
@@ -69,15 +60,18 @@ export default function OptimizedImage({
       return;
     }
 
+    // Capturar el elemento actual una sola vez para evitar acceder a imgRef.current en la limpieza
+    const imgElement = imgRef.current;
+
     // Pequeño delay para asegurar que el elemento esté en el DOM
     const timeoutId = setTimeout(() => {
       // Verificar que el elemento existe
-      if (!imgRef.current) {
+      if (!imgElement) {
         return;
       }
 
       // Verificar si el elemento ya está en el viewport (para elementos que ya son visibles)
-      const rect = imgRef.current.getBoundingClientRect();
+      const rect = imgElement.getBoundingClientRect();
       const isInViewport = 
         rect.top < window.innerHeight + 200 && // Reducido a 200px
         rect.bottom > -200 &&
@@ -96,8 +90,8 @@ export default function OptimizedImage({
             if (entry.isIntersecting) {
               setShouldLoad(true);
               // Desconectar después de activar
-              if (observerRef.current && imgRef.current) {
-                observerRef.current.unobserve(imgRef.current);
+              if (observerRef.current && imgElement) {
+                observerRef.current.unobserve(imgElement);
               }
             }
           });
@@ -111,14 +105,13 @@ export default function OptimizedImage({
       );
 
       // Observar el contenedor
-      observerRef.current.observe(imgRef.current);
+      observerRef.current.observe(imgElement);
     }, 0);
 
     return () => {
       clearTimeout(timeoutId);
-      const currentImg = imgRef.current;
-      if (observerRef.current && currentImg) {
-        observerRef.current.unobserve(currentImg);
+      if (observerRef.current && imgElement) {
+        observerRef.current.unobserve(imgElement);
       }
     };
   }, [priority]);

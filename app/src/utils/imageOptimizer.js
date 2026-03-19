@@ -1,109 +1,56 @@
 /**
- * Utilidad para optimizar URLs de imágenes de Supabase Storage
- * usando las transformaciones nativas de Supabase
+ * Image Optimization via CDN Proxy (wsrv.nl)
+ *
+ * All Supabase Storage images are routed through wsrv.nl which provides:
+ * - Edge caching (Supabase is only hit ONCE per unique URL)
+ * - Real image transformation (resize, WebP/AVIF, quality)
+ * - Works on ANY Supabase plan (no Pro plan needed)
+ *
+ * This dramatically reduces Supabase egress bandwidth.
  */
+
+const CDN_PROXY_BASE = 'https://wsrv.nl/';
 
 /**
- * Optimiza una URL de imagen de Supabase con transformaciones
- * @param {string} url - URL original de Supabase Storage
- * @param {Object} options - Opciones de optimización
- * @param {number} options.width - Ancho máximo en píxeles
- * @param {number} options.height - Alto máximo en píxeles
- * @param {number} options.quality - Calidad de compresión (1-100, default: 80)
- * @param {string} options.format - Formato de salida: 'webp', 'avif', 'auto' (default: 'webp')
- * @param {boolean} options.resize - Si debe redimensionar (default: true)
- * @returns {string} URL optimizada
+ * Routes a Supabase image URL through the CDN proxy with transformations.
+ * Non-Supabase URLs are returned unchanged.
  */
-export function optimizeImageUrl(url, options = {}) {
-  if (!url || typeof url !== 'string') {
-    return url;
-  }
-
-  // Si la URL no es de Supabase Storage, retornar sin cambios
-  if (!url.includes('supabase.co') && !url.includes('storage')) {
-    return url;
-  }
+export function cdnUrl(url, options = {}) {
+  if (!url || typeof url !== 'string') return url;
+  if (!url.includes('supabase.co')) return url;
 
   const {
     width,
     height,
     quality = 80,
     format = 'webp',
-    resize = true,
   } = options;
 
-  // Construir parámetros de transformación
   const params = new URLSearchParams();
+  params.set('url', url);
+  if (width) params.set('w', width.toString());
+  if (height) params.set('h', height.toString());
+  params.set('q', quality.toString());
+  params.set('output', format);
+  params.set('fit', 'cover');
 
-  if (width) {
-    params.append('width', width.toString());
-  }
-
-  if (height) {
-    params.append('height', height.toString());
-  }
-
-  if (resize && (width || height)) {
-    params.append('resize', 'cover'); // cover, contain, fill
-  }
-
-  if (quality && quality !== 100) {
-    params.append('quality', quality.toString());
-  }
-
-  if (format && format !== 'auto') {
-    params.append('format', format);
-  }
-
-  // Si hay parámetros, agregarlos a la URL
-  if (params.toString()) {
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}${params.toString()}`;
-  }
-
-  return url;
+  return `${CDN_PROXY_BASE}?${params.toString()}`;
 }
 
 /**
- * Genera múltiples tamaños de una imagen para srcset responsivo
- * @param {string} url - URL original de la imagen
- * @param {Object} sizes - Objeto con diferentes tamaños { width: height }
- * @param {number} quality - Calidad de compresión (default: 80)
- * @param {string} format - Formato de salida (default: 'webp')
- * @returns {Array} Array de objetos { url, width, descriptor }
+ * @deprecated Use cdnUrl() instead. Kept for backward compatibility.
+ * Supabase query-param transformations only work on Pro plan.
  */
-export function generateSrcSet(url, sizes = [400, 600, 800, 1200], quality = 80, format = 'webp') {
-  if (!url || typeof url !== 'string') {
-    return [];
-  }
-
-  return sizes.map(width => ({
-    url: optimizeImageUrl(url, { width, quality, format }),
-    width,
-    descriptor: `${width}w`
-  }));
+export function optimizeImageUrl(url, options = {}) {
+  return cdnUrl(url, options);
 }
 
 /**
- * Genera srcset string para usar en el atributo srcset de img
- * @param {string} url - URL original de la imagen
- * @param {Array} sizes - Array de anchos en píxeles
- * @param {number} quality - Calidad de compresión
- * @param {string} format - Formato de salida
- * @returns {string} String srcset
- */
-export function generateSrcSetString(url, sizes = [400, 600, 800, 1200], quality = 80, format = 'webp') {
-  const srcSet = generateSrcSet(url, sizes, quality, format);
-  return srcSet.map(({ url, descriptor }) => `${url} ${descriptor}`).join(', ');
-}
-
-/**
- * Convierte URL de imagen _full a _thumb para versiones pequeñas
- * Las imágenes se suben en 2 versiones: _thumb.webp y _full.webp
+ * Switches _full.webp → _thumb.webp for pre-optimized thumbnail variants.
+ * Product images are uploaded in two sizes: _thumb.webp (~5KB) and _full.webp (~150KB).
  */
 function getThumbUrl(url) {
   if (!url || typeof url !== 'string') return url;
-  // Si la URL tiene _full.webp, cambiar a _thumb.webp
   if (url.includes('_full.webp')) {
     return url.replace('_full.webp', '_thumb.webp');
   }
@@ -111,81 +58,89 @@ function getThumbUrl(url) {
 }
 
 /**
- * Presets de optimización para diferentes contextos
- * Ahora usa las versiones pre-optimizadas (_thumb.webp y _full.webp)
+ * All presets are functions: (url) => optimizedUrl
+ * Product presets use pre-optimized _thumb/_full variants + CDN caching.
+ * Other presets use CDN resize + caching.
  */
 export const imagePresets = {
-  // Thumbnail pequeño (para carrito, listas) - usa versión _thumb
-  thumbnail: (url) => getThumbUrl(url),
+  thumbnail: (url) => cdnUrl(getThumbUrl(url), { width: 100, quality: 75 }),
 
-  // Tarjeta de producto (grid de productos) - usa versión _thumb (400x533px, ~5KB)
-  card: (url) => getThumbUrl(url),
+  card: (url) => cdnUrl(getThumbUrl(url), { width: 400, quality: 80 }),
 
-  // Imagen principal de detalle (página de producto) - usa versión _full (1200x1600px, ~150KB)
-  detail: (url) => url, // Ya es _full.webp
+  detail: (url) => cdnUrl(url, { width: 1200, quality: 85 }),
 
-  // Imagen grande (full size)
-  full: (url) => url, // Ya es _full.webp
+  full: (url) => cdnUrl(url, { width: 1600, quality: 85 }),
 
-  // Thumbnail de galería - usa versión _thumb
-  galleryThumb: (url) => getThumbUrl(url),
+  galleryThumb: (url) => cdnUrl(getThumbUrl(url), { width: 200, quality: 75 }),
 
-  // === SG GALLERY PRESETS ===
-  
-  // Portada de colección en Home (800px, calidad alta)
-  sgCollectionCover: { width: 800, quality: 85, format: 'webp' },
-  
-  // Foto en grid de colección (600px, calidad media-alta)
-  sgPhotoGrid: { width: 600, quality: 80, format: 'webp' },
-  
-  // Foto en modal/detalle (1400px, calidad alta)
-  sgPhotoDetail: { width: 1400, quality: 90, format: 'webp' },
-  
-  // Portada hero full-screen (1920px, calidad alta)
-  sgCollectionHero: { width: 1920, quality: 85, format: 'webp' },
+  // SG Gallery presets
+  sgCollectionCover: (url) => cdnUrl(url, { width: 800, quality: 80 }),
+  sgPhotoGrid: (url) => cdnUrl(url, { width: 600, quality: 80 }),
+  sgPhotoDetail: (url) => cdnUrl(url, { width: 1400, quality: 85 }),
+  sgCollectionHero: (url) => cdnUrl(url, { width: 1920, quality: 80 }),
+
+  // Static page backgrounds
+  heroBackground: (url) => cdnUrl(url, { width: 1920, quality: 70 }),
+  sectionBackground: (url) => cdnUrl(url, { width: 1400, quality: 70 }),
+  portrait: (url) => cdnUrl(url, { width: 800, quality: 80 }),
+
+  // ImageZoom: larger than detail but NOT the raw original
+  zoomDetail: (url) => cdnUrl(url, { width: 2400, quality: 90 }),
 };
 
+export { getThumbUrl };
+
 /**
- * Presets de srcset para diferentes contextos
- * Con imágenes pre-optimizadas, no necesitamos srcset dinámico
- * Las imágenes ya están en el tamaño correcto
+ * Generates srcset string for responsive images.
+ * With CDN proxy, we can generate real multi-size srcsets.
+ */
+export function generateSrcSetString(url, sizes = [400, 600, 800, 1200], quality = 80, format = 'webp') {
+  if (!url || typeof url !== 'string') return '';
+  return sizes
+    .map(w => `${cdnUrl(url, { width: w, quality, format })} ${w}w`)
+    .join(', ');
+}
+
+/**
+ * Preset-specific srcset generators.
+ * Product _thumb/_full variants don't need srcset (fixed sizes).
+ * Other presets generate real responsive srcsets.
  */
 export const srcSetPresets = {
-  // Con imágenes pre-optimizadas, srcset no es necesario
-  // Las imágenes _thumb son 400px y _full son 1200px
   thumbnail: () => null,
   card: () => null,
-  detail: () => null,
+  detail: (url) => generateSrcSetString(url, [800, 1000, 1200], 85),
   galleryThumb: () => null,
-  full: () => null,
+  full: (url) => generateSrcSetString(url, [1000, 1400, 1800], 85),
+
+  sgCollectionCover: (url) => generateSrcSetString(url, [400, 600, 800], 80),
+  sgPhotoGrid: (url) => generateSrcSetString(url, [300, 400, 600], 80),
+  sgPhotoDetail: (url) => generateSrcSetString(url, [800, 1000, 1400], 85),
+  sgCollectionHero: (url) => generateSrcSetString(url, [800, 1200, 1920], 80),
 };
 
-/**
- * Genera sizes string para el atributo sizes de img
- */
 export const sizesPresets = {
   thumbnail: '100px',
-  card: '(max-width: 640px) 300px, (max-width: 1024px) 400px, 600px',
+  card: '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw',
   detail: '(max-width: 640px) 100vw, (max-width: 1024px) 800px, 1200px',
   galleryThumb: '200px',
   full: '100vw',
+  sgCollectionCover: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw',
+  sgPhotoGrid: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
+  sgPhotoDetail: '(max-width: 1024px) 100vw, 1400px',
+  sgCollectionHero: '100vw',
 };
 
 /**
- * Optimiza un array de URLs de imágenes
- * @param {string[]} urls - Array de URLs
- * @param {Function} preset - Función preset o opciones personalizadas
- * @returns {string[]} Array de URLs optimizadas
+ * Optimizes an array of image URLs using a given preset.
+ * @param {string[]} urls
+ * @param {string|Function} preset - Preset name string or preset function
  */
-export function optimizeImageUrls(urls, preset = imagePresets.card) {
-  if (!Array.isArray(urls)) {
-    return urls;
-  }
-
-  return urls.map(url => {
-    if (typeof preset === 'function') {
-      return preset(url);
-    }
-    return optimizeImageUrl(url, preset);
-  });
+export function optimizeImageUrls(urls, preset = 'card') {
+  if (!Array.isArray(urls)) return urls;
+  const fn = typeof preset === 'function' ? preset
+    : typeof preset === 'string' ? imagePresets[preset]
+    : null;
+  if (!fn) return urls;
+  return urls.map(url => fn(url));
 }

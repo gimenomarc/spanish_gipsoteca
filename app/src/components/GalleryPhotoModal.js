@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSGPhotoDetail } from "../hooks/useSGGallery";
-import { optimizeImageUrl } from "../utils/imageOptimizer";
+import { cdnUrl } from "../utils/imageOptimizer";
 
 const CloseIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -162,7 +162,7 @@ export default function GalleryPhotoModal({
                           <div className="aspect-[3/4] overflow-hidden bg-black/50 mb-2">
                             {product.images && product.images[0] ? (
                               <img
-                                src={optimizeImageUrl(product.images[0], { width: 300, quality: 75, format: 'webp' })}
+                                src={cdnUrl(product.images[0], { width: 300, quality: 75 })}
                                 alt={product.name}
                                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                               />

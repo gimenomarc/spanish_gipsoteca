@@ -6,6 +6,7 @@ import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
 import ImageZoom from "../components/ImageZoom";
+import { imagePresets } from "../utils/imageOptimizer";
 
 const SearchIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,17 +72,13 @@ export default function ProductDetail() {
   }, [product]);
   const mainImage = productImages[selectedImage] || productImages[0] || '';
 
-  // Preload optimizado: solo la imagen principal y la siguiente
-  // OptimizedImage ya maneja el preload con priority, así que solo preloadamos la siguiente
   useEffect(() => {
     if (!productImages || productImages.length === 0) return;
 
-    // Preload de la siguiente imagen con prioridad baja (para navegación rápida)
-    // Reducido a solo 1 imagen siguiente para evitar sobrecarga
     const nextImage = productImages[selectedImage + 1];
     if (nextImage) {
       const img = new Image();
-      img.src = nextImage;
+      img.src = imagePresets.card(nextImage);
       img.fetchPriority = 'low';
     }
   }, [productImages, selectedImage]);
