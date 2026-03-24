@@ -2,6 +2,7 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 // Icono de Instagram moderno y minimalista
 const InstagramIcon = ({ size = 24 }) => (
@@ -30,8 +31,6 @@ const ArrowIcon = () => (
     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
-
-import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 export default function Contact() {
   // Imagen de fondo desde Supabase Storage
@@ -260,8 +259,8 @@ export default function Contact() {
                         <label
                           htmlFor="name"
                           className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'name' || formData.name
-                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
-                              : 'top-4 text-sm text-white/30'
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
+                            : 'top-4 text-sm text-white/30'
                             }`}
                         >
                           Nombre
@@ -284,8 +283,8 @@ export default function Contact() {
                         <label
                           htmlFor="email"
                           className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'email' || formData.email
-                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
-                              : 'top-4 text-sm text-white/30'
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
+                            : 'top-4 text-sm text-white/30'
                             }`}
                         >
                           Email
@@ -309,8 +308,8 @@ export default function Contact() {
                       <label
                         htmlFor="subject"
                         className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'subject' || formData.subject
-                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
-                            : 'top-4 text-sm text-white/30'
+                          ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
+                          : 'top-4 text-sm text-white/30'
                           }`}
                       >
                         Asunto
@@ -333,8 +332,8 @@ export default function Contact() {
                       <label
                         htmlFor="message"
                         className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'message' || formData.message
-                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
-                            : 'top-6 text-sm text-white/30'
+                          ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
+                          : 'top-6 text-sm text-white/30'
                           }`}
                       >
                         Mensaje

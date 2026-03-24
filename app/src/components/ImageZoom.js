@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { optimizeImageUrl } from '../utils/imageOptimizer';
 import OptimizedImage from './OptimizedImage';
 
 /**

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 const faqs = [
   {
@@ -24,8 +25,6 @@ const faqs = [
     answer: "No se aceptan devoluciones. En el caso de que la pieza sufra una rotura producida por el envío y pueda ser demostrado, el cliente deberá proceder a la devolución de la pieza para que la empresa pueda reenviar una nueva copia al usuario sin coste adicional."
   }
 ];
-
-import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 export default function FAQs() {
   const [openIndex, setOpenIndex] = useState(null);
