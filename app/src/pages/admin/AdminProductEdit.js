@@ -33,6 +33,7 @@ export default function AdminProductEdit() {
       fetchSGPhotos();
       fetchRelatedPhotos();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, isNew]);
 
   const fetchProduct = async () => {
@@ -95,7 +96,7 @@ export default function AdminProductEdit() {
 
   const fetchRelatedPhotos = async () => {
     if (!code || isNew) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('sg_gallery_photo_products')
@@ -113,7 +114,7 @@ export default function AdminProductEdit() {
     if (!code || isNew) return;
 
     const isRelated = relatedPhotoIds.includes(photoId);
-    
+
     try {
       if (isRelated) {
         // Eliminar relación
@@ -383,7 +384,7 @@ export default function AdminProductEdit() {
             <p className="text-xs text-white/50 mb-4">
               Selecciona las fotos de SG Gallery que muestran este producto en la vida real. Estas fotos aparecerán en la página del producto.
             </p>
-            
+
             {loadingSGPhotos ? (
               <p className="text-white/50 text-sm">Cargando fotos...</p>
             ) : sgPhotos.length === 0 ? (
@@ -397,11 +398,10 @@ export default function AdminProductEdit() {
                       key={photo.id}
                       type="button"
                       onClick={() => togglePhotoRelation(photo.id)}
-                      className={`relative aspect-square overflow-hidden border-2 transition-all group ${
-                        isRelated
+                      className={`relative aspect-square overflow-hidden border-2 transition-all group ${isRelated
                           ? 'border-accent ring-2 ring-accent/50'
                           : 'border-white/20 hover:border-white/40'
-                      }`}
+                        }`}
                     >
                       <img
                         src={photo.image_url}

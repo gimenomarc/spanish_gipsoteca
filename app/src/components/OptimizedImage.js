@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { optimizeImageUrl, imagePresets, srcSetPresets, sizesPresets } from '../utils/imageOptimizer';
-import { imageCache } from '../utils/imageCache';
+
 
 /**
  * Componente de imagen optimizada con:
@@ -52,7 +52,7 @@ export default function OptimizedImage({
       const preloadImg = new Image();
       preloadImg.src = optimizedSrc;
       preloadImg.fetchPriority = 'high';
-      
+
       // Guardar referencia para limpieza si es necesario
       preloadLinkRef.current = preloadImg;
     }
@@ -79,7 +79,7 @@ export default function OptimizedImage({
 
       // Verificar si el elemento ya está en el viewport (para elementos que ya son visibles)
       const rect = imgRef.current.getBoundingClientRect();
-      const isInViewport = 
+      const isInViewport =
         rect.top < window.innerHeight + 200 && // Reducido a 200px
         rect.bottom > -200 &&
         rect.left < window.innerWidth + 200 &&
@@ -117,8 +117,9 @@ export default function OptimizedImage({
 
     return () => {
       clearTimeout(timeoutId);
-      if (observerRef.current && imgRef.current) {
-        observerRef.current.unobserve(imgRef.current);
+      const currentImg = imgRef.current;
+      if (observerRef.current && currentImg) {
+        observerRef.current.unobserve(currentImg);
       }
     };
   }, [priority]);
@@ -167,9 +168,8 @@ export default function OptimizedImage({
           srcSet={srcSet || undefined}
           sizes={sizes || undefined}
           alt={alt}
-          className={`h-full w-full object-cover transition-opacity duration-300 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          } ${hasError ? 'hidden' : ''}`}
+          className={`h-full w-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'
+            } ${hasError ? 'hidden' : ''}`}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           fetchPriority={priority ? 'high' : 'auto'}

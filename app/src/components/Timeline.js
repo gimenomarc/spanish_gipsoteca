@@ -26,27 +26,25 @@ const icons = {
 };
 
 function TimelineItem({ item, index, isVisible }) {
-  const isEven = index % 2 === 0;
-  
+
   return (
-    <div 
-      className={`relative flex items-start gap-6 group transition-all duration-700 ${
-        isVisible 
-          ? 'opacity-100 translate-y-0' 
+    <div
+      className={`relative flex items-start gap-6 group transition-all duration-700 ${isVisible
+          ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-8'
-      }`}
+        }`}
       style={{ transitionDelay: `${index * 150}ms` }}
     >
       {/* Conector a la línea central */}
       <div className="absolute left-[27px] top-8 w-8 h-px bg-gradient-to-r from-white/30 to-transparent"></div>
-      
+
       {/* Círculo/Nodo del timeline */}
       <div className="relative flex-shrink-0 z-10">
         <div className={`
           w-14 h-14 rounded-full flex items-center justify-center
           transition-all duration-500 group-hover:scale-110
-          ${item.current 
-            ? 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-500/30' 
+          ${item.current
+            ? 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-500/30'
             : 'bg-gradient-to-br from-white/20 to-white/5 border border-white/20 group-hover:border-white/40'
           }
         `}>
@@ -54,7 +52,7 @@ function TimelineItem({ item, index, isVisible }) {
             {icons[item.icon] || icons.education}
           </div>
         </div>
-        
+
         {/* Pulse animation for current */}
         {item.current && (
           <div className="absolute inset-0 rounded-full bg-amber-400/30 animate-ping"></div>
@@ -70,20 +68,20 @@ function TimelineItem({ item, index, isVisible }) {
         <div className="flex items-center gap-3 mb-2">
           <span className={`
             inline-block px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider
-            ${item.current 
-              ? 'bg-amber-400/20 text-amber-400 border border-amber-400/30' 
+            ${item.current
+              ? 'bg-amber-400/20 text-amber-400 border border-amber-400/30'
               : 'bg-white/10 text-white/60 border border-white/10'
             }
           `}>
             {item.date}
           </span>
         </div>
-        
+
         {/* Tarjeta de contenido */}
         <div className={`
           relative p-5 rounded-lg transition-all duration-300
-          ${item.current 
-            ? 'bg-gradient-to-br from-amber-400/10 to-transparent border border-amber-400/20' 
+          ${item.current
+            ? 'bg-gradient-to-br from-amber-400/10 to-transparent border border-amber-400/20'
             : 'bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/20'
           }
         `}>
@@ -94,7 +92,7 @@ function TimelineItem({ item, index, isVisible }) {
           `}>
             {item.title}
           </h4>
-          
+
           {/* Subtítulo/Ubicación */}
           <p className="text-sm text-white/50 flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,7 +101,7 @@ function TimelineItem({ item, index, isVisible }) {
             </svg>
             {item.location}
           </p>
-          
+
           {/* Descripción opcional */}
           {item.description && (
             <p className="mt-3 text-sm text-white/60 leading-relaxed">
@@ -149,7 +147,7 @@ export default function Timeline({ items, title }) {
 
       {/* Línea vertical del timeline */}
       <div className="absolute left-7 top-20 bottom-0 w-px">
-        <div 
+        <div
           className={`
             h-full bg-gradient-to-b from-amber-400/50 via-white/20 to-transparent
             transition-all duration-1000 origin-top
@@ -161,9 +159,9 @@ export default function Timeline({ items, title }) {
       {/* Items */}
       <div className="space-y-2">
         {items.map((item, index) => (
-          <TimelineItem 
-            key={index} 
-            item={item} 
+          <TimelineItem
+            key={index}
+            item={item}
             index={index}
             isVisible={isVisible}
           />

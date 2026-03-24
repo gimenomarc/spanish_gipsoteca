@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 
 export default function AdminAnalytics() {
@@ -8,14 +8,10 @@ export default function AdminAnalytics() {
   const [recentVisits, setRecentVisits] = useState([]);
   const [recentEvents, setRecentEvents] = useState([]);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [dateRange]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - parseInt(dateRange));
@@ -55,7 +51,11 @@ export default function AdminAnalytics() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString('es-ES', {
@@ -95,7 +95,7 @@ export default function AdminAnalytics() {
             Estadísticas de visitas y comportamiento de usuarios
           </p>
         </div>
-        
+
         {/* Selector de rango de fechas */}
         <select
           value={dateRange}

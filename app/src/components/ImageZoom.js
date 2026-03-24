@@ -17,7 +17,6 @@ export default function ImageZoom({
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, bgX: 0, bgY: 0 });
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef(null);
 
   // Obtener URL optimizada de alta calidad para el zoom
@@ -30,7 +29,6 @@ export default function ImageZoom({
       const img = new Image();
       img.onload = () => {
         setImageLoaded(true);
-        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
       };
       img.src = originalSrc;
     }
