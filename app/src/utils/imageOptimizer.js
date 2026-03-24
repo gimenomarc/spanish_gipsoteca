@@ -103,6 +103,9 @@ export const imagePresets = {
   // Foto en grid de colección (600px, calidad media-alta)
   sgPhotoGrid: (url) => optimizeImageUrl(url, { width: 600, quality: 80, format: 'webp' }),
 
+  // Card de foto (para secciones relacionadas) - 400px
+  sgPhotoCard: (url) => optimizeImageUrl(url, { width: 400, quality: 80, format: 'webp' }),
+
   // Foto en modal/detalle (1400px, calidad alta)
   sgPhotoDetail: (url) => optimizeImageUrl(url, { width: 1400, quality: 90, format: 'webp' }),
 
