@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSGCollections } from "../hooks/useSGGallery";
 import Footer from "../components/Footer";
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 // Componente para lazy loading de imágenes hero
-function LazyHeroImage({ src, srcHero, alt, priority = false }) {
+function LazyHeroImage({ src, alt, priority = false }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
   const imgRef = useRef(null);
@@ -29,16 +30,16 @@ function LazyHeroImage({ src, srcHero, alt, priority = false }) {
     return () => observer.disconnect();
   }, [priority]);
 
-  // Usar la versión hero para pantallas grandes si está disponible
-  const imageSrc = srcHero || src;
+  // Usar optimización para la imagen hero (1920px)
+  const imageSrc = optimizeImageUrl(src, { width: 1920, quality: 85, format: 'webp' });
 
   return (
     <div ref={imgRef} className="absolute inset-0">
       {/* Placeholder con gradiente mientras carga */}
-      <div 
+      <div
         className={`absolute inset-0 bg-gradient-to-br from-neutral-900 to-black transition-opacity duration-700 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
       />
-      
+
       {/* Imagen */}
       {isInView && (
         <img
@@ -96,10 +97,10 @@ export default function SGGallery() {
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5" />
                 )}
-                
+
                 {/* Overlay oscuro */}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-500" />
-                
+
                 {/* Contenido centrado */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
                   <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-[0.2em] text-white mb-4 sm:mb-6">
@@ -108,23 +109,23 @@ export default function SGGallery() {
                   <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-white/70">
                     The SG Gallery
                   </p>
-                  
+
                   {/* Indicador de explorar en hover */}
                   <div className="mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/80 border border-white/30 px-6 py-3 group-hover:border-white/60 transition-colors">
                       Explorar colección
-                      <svg 
-                        width="16" 
-                        height="16" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
                         className="transition-transform group-hover:translate-x-1"
                       >
-                        <path 
-                          d="M5 12H19M19 12L12 5M19 12L12 19" 
-                          stroke="currentColor" 
-                          strokeWidth="2" 
-                          strokeLinecap="round" 
+                        <path
+                          d="M5 12H19M19 12L12 5M19 12L12 19"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
                           strokeLinejoin="round"
                         />
                       </svg>

@@ -5,19 +5,19 @@ import { supabase } from '../lib/supabase';
 
 // Icono de Instagram moderno y minimalista
 const InstagramIcon = ({ size = 24 }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <path 
-      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z" 
+    <path
+      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"
       fill="currentColor"
     />
-    <path 
-      d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z" 
+    <path
+      d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z"
       fill="currentColor"
     />
     <circle cx="18.406" cy="5.594" r="1.44" fill="currentColor" />
@@ -27,14 +27,19 @@ const InstagramIcon = ({ size = 24 }) => (
 // Icono de flecha para el botón
 const ArrowIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 export default function Contact() {
   // Imagen de fondo desde Supabase Storage
   // La imagen debe estar en: product-images/contacto/
-  const contactBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg";
+  const contactBackground = optimizeImageUrl(
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg",
+    { width: 1200, quality: 80 }
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -65,12 +70,12 @@ export default function Contact() {
         from_email: formData.email,
         subject: formData.subject,
         message: formData.message,
-        date: new Date().toLocaleString('es-ES', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit' 
+        date: new Date().toLocaleString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
         }),
       };
 
@@ -99,7 +104,7 @@ export default function Contact() {
         console.error('Mensaje:', dbError.message);
         console.error('Detalles:', dbError.details);
         console.error('Hint:', dbError.hint);
-        
+
         // Si es un error de permisos RLS, mostrar mensaje específico
         if (dbError.code === '42501' || dbError.message?.includes('permission denied') || dbError.message?.includes('new row violates row-level security')) {
           console.error('⚠️ Error de permisos RLS. Ejecuta el script fix-orders-rls-definitive.sql en Supabase.');
@@ -126,7 +131,7 @@ export default function Contact() {
 
       setSubmitStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
-      
+
       setTimeout(() => {
         setSubmitStatus(null);
       }, 5000);
@@ -139,11 +144,11 @@ export default function Contact() {
   };
 
   return (
-    <div 
+    <div
       className="flex min-h-screen flex-col text-white pt-16 sm:pt-20"
       style={{
-        backgroundImage: contactBackground 
-          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${contactBackground})` 
+        backgroundImage: contactBackground
+          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${contactBackground})`
           : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -169,10 +174,10 @@ export default function Contact() {
         <section className="relative py-12 sm:py-16 md:py-20">
           <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
             <div className="grid gap-16 lg:grid-cols-5 lg:gap-20">
-              
+
               {/* Info de contacto - Columna izquierda */}
               <div className="lg:col-span-2 space-y-12">
-                
+
                 {/* Email */}
                 <div className="group">
                   <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/30">
@@ -245,20 +250,19 @@ export default function Contact() {
                 <div className="relative">
                   {/* Fondo del formulario */}
                   <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl" />
-                  
+
                   <form onSubmit={handleSubmit} className="relative p-6 sm:p-10 space-y-6">
-                    
+
                     {/* Grid para nombre y email */}
                     <div className="grid gap-6 sm:grid-cols-2">
                       {/* Nombre */}
                       <div className="relative">
                         <label
                           htmlFor="name"
-                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                            focusedField === 'name' || formData.name 
-                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'name' || formData.name
+                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
                               : 'top-4 text-sm text-white/30'
-                          }`}
+                            }`}
                         >
                           Nombre
                         </label>
@@ -279,11 +283,10 @@ export default function Contact() {
                       <div className="relative">
                         <label
                           htmlFor="email"
-                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                            focusedField === 'email' || formData.email 
-                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                          className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'email' || formData.email
+                              ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
                               : 'top-4 text-sm text-white/30'
-                          }`}
+                            }`}
                         >
                           Email
                         </label>
@@ -305,11 +308,10 @@ export default function Contact() {
                     <div className="relative">
                       <label
                         htmlFor="subject"
-                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                          focusedField === 'subject' || formData.subject 
-                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'subject' || formData.subject
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
                             : 'top-4 text-sm text-white/30'
-                        }`}
+                          }`}
                       >
                         Asunto
                       </label>
@@ -330,11 +332,10 @@ export default function Contact() {
                     <div className="relative pt-2">
                       <label
                         htmlFor="message"
-                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                          focusedField === 'message' || formData.message 
-                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40' 
+                        className={`absolute left-0 transition-all duration-300 pointer-events-none ${focusedField === 'message' || formData.message
+                            ? 'top-0 text-[10px] uppercase tracking-[0.2em] text-white/40'
                             : 'top-6 text-sm text-white/30'
-                        }`}
+                          }`}
                       >
                         Mensaje
                       </label>
@@ -364,7 +365,7 @@ export default function Contact() {
                         </p>
                       </div>
                     )}
-                    
+
                     {submitStatus === "error" && (
                       <div className="flex items-center gap-3 py-4 px-5 bg-red-500/10 rounded-lg">
                         <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -408,7 +409,7 @@ export default function Contact() {
         <section className="relative py-16 sm:py-20">
           <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
             <div className="grid gap-10 sm:grid-cols-2 sm:gap-8 max-w-3xl mx-auto">
-              
+
               <div className="text-center sm:text-left">
                 <div className="mb-4 text-3xl">✦</div>
                 <h3 className="mb-2 text-sm uppercase tracking-[0.2em] text-white/80">

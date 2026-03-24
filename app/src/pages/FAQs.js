@@ -25,6 +25,8 @@ const faqs = [
   }
 ];
 
+import { optimizeImageUrl } from "../utils/imageOptimizer";
+
 export default function FAQs() {
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -34,14 +36,17 @@ export default function FAQs() {
 
   // Imagen de fondo desde Supabase Storage
   // Archivo: F001_F003.jpg en la carpeta faqs
-  const faqBackground = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.jpg";
+  const faqBackground = optimizeImageUrl(
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.jpg",
+    { width: 1200, quality: 80 }
+  );
 
   return (
-    <div 
+    <div
       className="flex min-h-screen flex-col text-white pt-16 sm:pt-20"
       style={{
-        backgroundImage: faqBackground 
-          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${faqBackground})` 
+        backgroundImage: faqBackground
+          ? `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${faqBackground})`
           : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -82,9 +87,8 @@ export default function FAQs() {
                       {faq.question}
                     </span>
                     <svg
-                      className={`w-5 h-5 text-white/70 transition-transform duration-300 flex-shrink-0 ${
-                        openIndex === index ? "rotate-180" : ""
-                      }`}
+                      className={`w-5 h-5 text-white/70 transition-transform duration-300 flex-shrink-0 ${openIndex === index ? "rotate-180" : ""
+                        }`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -98,9 +102,8 @@ export default function FAQs() {
                     </svg>
                   </button>
                   <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                    className={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                      }`}
                   >
                     <div className="px-6 pb-5 sm:px-8 sm:pb-6 pt-0">
                       <p className="text-sm leading-relaxed text-white/80 sm:text-base">

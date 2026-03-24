@@ -4,14 +4,14 @@
  */
 
 /**
- * Optimiza una URL de imagen de Supabase con transformaciones
+ * Optimiza una URL de imagen de Supabase con transformaciones nativas.
+ * Cambia el endpoint de 'object/public' a 'render/image/public' para activar la optimización.
  * @param {string} url - URL original de Supabase Storage
  * @param {Object} options - Opciones de optimización
  * @param {number} options.width - Ancho máximo en píxeles
  * @param {number} options.height - Alto máximo en píxeles
  * @param {number} options.quality - Calidad de compresión (1-100, default: 80)
  * @param {string} options.format - Formato de salida: 'webp', 'avif', 'auto' (default: 'webp')
- * @param {boolean} options.resize - Si debe redimensionar (default: true)
  * @returns {string} URL optimizada
  */
 export function optimizeImageUrl(url, options = {}) {
@@ -20,7 +20,7 @@ export function optimizeImageUrl(url, options = {}) {
   }
 
   // Si la URL no es de Supabase Storage, retornar sin cambios
-  if (!url.includes('supabase.co') && !url.includes('storage')) {
+  if (!url.includes('supabase.co') || !url.includes('storage/v1/object/public/')) {
     return url;
   }
 
@@ -29,51 +29,33 @@ export function optimizeImageUrl(url, options = {}) {
     height,
     quality = 80,
     format = 'webp',
-    resize = true,
   } = options;
+
+  // Construir la URL de renderizado de Supabase
+  // Formato: https://[project-id].supabase.co/storage/v1/render/image/public/[bucket]/[path]
+  const renderUrl = url.replace('storage/v1/object/public/', 'storage/v1/render/image/public/');
 
   // Construir parámetros de transformación
   const params = new URLSearchParams();
 
-  if (width) {
-    params.append('width', width.toString());
+  if (width) params.append('width', width.toString());
+  if (height) params.append('height', height.toString());
+  if (quality) params.append('quality', quality.toString());
+  if (format) params.append('format', format);
+
+  // Por defecto, todas las imágenes se sirven como cover si hay redimensión
+  if (width || height) {
+    params.append('resize', 'cover');
   }
 
-  if (height) {
-    params.append('height', height.toString());
-  }
-
-  if (resize && (width || height)) {
-    params.append('resize', 'cover'); // cover, contain, fill
-  }
-
-  if (quality && quality !== 100) {
-    params.append('quality', quality.toString());
-  }
-
-  if (format && format !== 'auto') {
-    params.append('format', format);
-  }
-
-  // Si hay parámetros, agregarlos a la URL
-  if (params.toString()) {
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}${params.toString()}`;
-  }
-
-  return url;
+  return `${renderUrl}?${params.toString()}`;
 }
 
 /**
  * Genera múltiples tamaños de una imagen para srcset responsivo
- * @param {string} url - URL original de la imagen
- * @param {Object} sizes - Objeto con diferentes tamaños { width: height }
- * @param {number} quality - Calidad de compresión (default: 80)
- * @param {string} format - Formato de salida (default: 'webp')
- * @returns {Array} Array de objetos { url, width, descriptor }
  */
 export function generateSrcSet(url, sizes = [400, 600, 800, 1200], quality = 80, format = 'webp') {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== 'string' || !url.includes('supabase.co')) {
     return [];
   }
 
@@ -86,78 +68,57 @@ export function generateSrcSet(url, sizes = [400, 600, 800, 1200], quality = 80,
 
 /**
  * Genera srcset string para usar en el atributo srcset de img
- * @param {string} url - URL original de la imagen
- * @param {Array} sizes - Array de anchos en píxeles
- * @param {number} quality - Calidad de compresión
- * @param {string} format - Formato de salida
- * @returns {string} String srcset
  */
 export function generateSrcSetString(url, sizes = [400, 600, 800, 1200], quality = 80, format = 'webp') {
   const srcSet = generateSrcSet(url, sizes, quality, format);
+  if (srcSet.length === 0) return '';
   return srcSet.map(({ url, descriptor }) => `${url} ${descriptor}`).join(', ');
 }
 
 /**
- * Convierte URL de imagen _full a _thumb para versiones pequeñas
- * Las imágenes se suben en 2 versiones: _thumb.webp y _full.webp
- */
-function getThumbUrl(url) {
-  if (!url || typeof url !== 'string') return url;
-  // Si la URL tiene _full.webp, cambiar a _thumb.webp
-  if (url.includes('_full.webp')) {
-    return url.replace('_full.webp', '_thumb.webp');
-  }
-  return url;
-}
-
-/**
  * Presets de optimización para diferentes contextos
- * Ahora usa las versiones pre-optimizadas (_thumb.webp y _full.webp)
+ * Ahora usa transformaciones en tiempo real de Supabase
  */
 export const imagePresets = {
-  // Thumbnail pequeño (para carrito, listas) - usa versión _thumb
-  thumbnail: (url) => getThumbUrl(url),
+  // Thumbnail pequeño (para carrito, listas) - 150px
+  thumbnail: (url) => optimizeImageUrl(url, { width: 150, quality: 75, format: 'webp' }),
 
-  // Tarjeta de producto (grid de productos) - usa versión _thumb (400x533px, ~5KB)
-  card: (url) => getThumbUrl(url),
+  // Tarjeta de producto (grid de productos) - 600px
+  card: (url) => optimizeImageUrl(url, { width: 600, quality: 80, format: 'webp' }),
 
-  // Imagen principal de detalle (página de producto) - usa versión _full (1200x1600px, ~150KB)
-  detail: (url) => url, // Ya es _full.webp
+  // Imagen principal de detalle (página de producto) - 1200px
+  detail: (url) => optimizeImageUrl(url, { width: 1200, quality: 85, format: 'webp' }),
 
-  // Imagen grande (full size)
-  full: (url) => url, // Ya es _full.webp
+  // Imagen grande (full size) - 1920px
+  full: (url) => optimizeImageUrl(url, { width: 1920, quality: 85, format: 'webp' }),
 
-  // Thumbnail de galería - usa versión _thumb
-  galleryThumb: (url) => getThumbUrl(url),
+  // Thumbnail de galería - 300px
+  galleryThumb: (url) => optimizeImageUrl(url, { width: 300, quality: 75, format: 'webp' }),
 
   // === SG GALLERY PRESETS ===
-  
+
   // Portada de colección en Home (800px, calidad alta)
-  sgCollectionCover: { width: 800, quality: 85, format: 'webp' },
-  
+  sgCollectionCover: (url) => optimizeImageUrl(url, { width: 800, quality: 85, format: 'webp' }),
+
   // Foto en grid de colección (600px, calidad media-alta)
-  sgPhotoGrid: { width: 600, quality: 80, format: 'webp' },
-  
+  sgPhotoGrid: (url) => optimizeImageUrl(url, { width: 600, quality: 80, format: 'webp' }),
+
   // Foto en modal/detalle (1400px, calidad alta)
-  sgPhotoDetail: { width: 1400, quality: 90, format: 'webp' },
-  
+  sgPhotoDetail: (url) => optimizeImageUrl(url, { width: 1400, quality: 90, format: 'webp' }),
+
   // Portada hero full-screen (1920px, calidad alta)
-  sgCollectionHero: { width: 1920, quality: 85, format: 'webp' },
+  sgCollectionHero: (url) => optimizeImageUrl(url, { width: 1920, quality: 85, format: 'webp' }),
 };
 
 /**
  * Presets de srcset para diferentes contextos
- * Con imágenes pre-optimizadas, no necesitamos srcset dinámico
- * Las imágenes ya están en el tamaño correcto
  */
 export const srcSetPresets = {
-  // Con imágenes pre-optimizadas, srcset no es necesario
-  // Las imágenes _thumb son 400px y _full son 1200px
-  thumbnail: () => null,
-  card: () => null,
-  detail: () => null,
-  galleryThumb: () => null,
-  full: () => null,
+  thumbnail: (url) => generateSrcSetString(url, [150, 300]),
+  card: (url) => generateSrcSetString(url, [400, 600, 800]),
+  detail: (url) => generateSrcSetString(url, [600, 800, 1200, 1600]),
+  galleryThumb: (url) => generateSrcSetString(url, [300, 600]),
+  full: (url) => generateSrcSetString(url, [800, 1200, 1920, 2560]),
 };
 
 /**

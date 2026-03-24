@@ -5,13 +5,13 @@ import OptimizedImage from './OptimizedImage';
  * Componente de imagen con zoom hover
  * Muestra una lupa/ventana de zoom que sigue el cursor cuando se pasa sobre la imagen
  */
-export default function ImageZoom({ 
-  src, 
-  alt, 
+export default function ImageZoom({
+  src,
+  alt,
   className = '',
   zoomScale = 3, // Factor de zoom (3x por defecto)
   zoomSize = 250, // Tamaño de la lupa en píxeles
-  ...props 
+  ...props
 }) {
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0, bgX: 0, bgY: 0 });
@@ -19,17 +19,9 @@ export default function ImageZoom({
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef(null);
 
-  // Extraer URL original sin optimización para el zoom
-  const getOriginalUrl = (url) => {
-    if (!url) return url;
-    // Remover parámetros de optimización de Supabase para obtener imagen original
-    if (url.includes('?')) {
-      return url.split('?')[0];
-    }
-    return url;
-  };
-
-  const originalSrc = getOriginalUrl(src);
+  // Obtener URL optimizada de alta calidad para el zoom
+  // En lugar de la original de 2MB, pedimos una con calidad 90 y formato webp
+  const originalSrc = optimizeImageUrl(src, { quality: 90, format: 'webp' });
 
   // Precargar imagen original para el zoom
   useEffect(() => {
@@ -57,26 +49,26 @@ export default function ImageZoom({
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    
+
     // Posición del mouse relativa al contenedor (en píxeles)
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    
+
     // Porcentaje de posición (0-1) limitado a los bordes
     const percentX = Math.max(0, Math.min(1, mouseX / rect.width));
     const percentY = Math.max(0, Math.min(1, mouseY / rect.height));
-    
+
     // Calcular el tamaño de la imagen ampliada
     const zoomedWidth = rect.width * zoomScale;
     const zoomedHeight = rect.height * zoomScale;
-    
+
     // Calcular la posición del background para centrar el área bajo el cursor
     // El área visible en la lupa es zoomSize x zoomSize
     // Queremos que el centro de la lupa muestre el área bajo el cursor
     const bgX = (percentX * zoomedWidth) - (zoomSize / 2);
     const bgY = (percentY * zoomedHeight) - (zoomSize / 2);
-    
-    setZoomPosition({ 
+
+    setZoomPosition({
       x: e.clientX,
       y: e.clientY,
       bgX: -bgX,

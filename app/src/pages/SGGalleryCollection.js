@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useSGCollection, useSGPhotos } from "../hooks/useSGGallery";
 import GalleryPhotoModal from "../components/GalleryPhotoModal";
 import Footer from "../components/Footer";
+import { optimizeImageUrl } from "../utils/imageOptimizer";
 
 const ArrowLeftIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,19 +37,22 @@ function LazyGridImage({ src, alt, priority = false }) {
     return () => observer.disconnect();
   }, [priority]);
 
+  // Usar optimización para el grid (800px)
+  const imageSrc = optimizeImageUrl(src, { width: 800, quality: 80, format: 'webp' });
+
   return (
     <div ref={imgRef} className="absolute inset-0">
       {/* Placeholder/skeleton mientras carga */}
-      <div 
+      <div
         className={`absolute inset-0 bg-gradient-to-br from-neutral-800/50 to-neutral-900/50 transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
       >
         <div className="absolute inset-0 animate-pulse bg-white/5" />
       </div>
-      
+
       {/* Imagen */}
       {isInView && (
         <img
-          src={src}
+          src={imageSrc}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
@@ -64,7 +68,7 @@ export default function SGGalleryCollection() {
   const { collectionSlug } = useParams();
   const { collection, loading: loadingCollection, error: collectionError } = useSGCollection(collectionSlug);
   const { photos, loading: loadingPhotos } = useSGPhotos(collection?.id);
-  
+
   // Estado para el modal de foto
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
 
@@ -178,10 +182,10 @@ export default function SGGalleryCollection() {
                       alt={`Foto ${index + 1}`}
                       priority={index < 4} // Primeras 4 fotos se cargan inmediatamente
                     />
-                    
+
                     {/* Overlay sutil en hover */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
-                    
+
                     {/* Indicador de zoom */}
                     <div className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">

@@ -1,16 +1,15 @@
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
 
+import { optimizeImageUrl } from "../utils/imageOptimizer";
+
 // Imágenes de About Us desde Supabase Storage
-// Para subir/actualizar fotos: 
-// 1. Pon las fotos en public/images/about/ (taller.jpg, espacios.jpg, javier.jpg)
-// 2. Ejecuta: node scripts/upload-about-images.js
 const SUPABASE_STORAGE_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images";
 
 const aboutImages = {
-  taller: `${SUPABASE_STORAGE_URL}/about/taller.jpg`,
-  espacios: `${SUPABASE_STORAGE_URL}/about/espacios.jpg`,
-  javier: `${SUPABASE_STORAGE_URL}/about/javier.jpg`,
+  taller: optimizeImageUrl(`${SUPABASE_STORAGE_URL}/about/taller.jpg`, { width: 1200, quality: 80 }),
+  espacios: optimizeImageUrl(`${SUPABASE_STORAGE_URL}/about/espacios.jpg`, { width: 1200, quality: 80 }),
+  javier: optimizeImageUrl(`${SUPABASE_STORAGE_URL}/about/javier.jpg`, { width: 800, quality: 85 }),
 };
 
 export default function About() {
@@ -30,11 +29,11 @@ export default function About() {
         </section>
 
         {/* Taller de vaciados Section */}
-        <section 
+        <section
           className="relative min-h-[600px] sm:min-h-[700px] md:min-h-[800px] flex items-center justify-center overflow-hidden"
           style={{
-            backgroundImage: aboutImages.taller 
-              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.taller})` 
+            backgroundImage: aboutImages.taller
+              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.taller})`
               : "none",
             backgroundSize: "120%",
             backgroundPosition: "center",
@@ -63,11 +62,11 @@ export default function About() {
         </section>
 
         {/* Transformación de espacios Section */}
-        <section 
+        <section
           className="relative min-h-[600px] sm:min-h-[700px] md:min-h-[800px] flex items-center justify-center overflow-hidden"
           style={{
-            backgroundImage: aboutImages.espacios 
-              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.espacios})` 
+            backgroundImage: aboutImages.espacios
+              ? `linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), url(${aboutImages.espacios})`
               : "none",
             backgroundSize: "120%",
             backgroundPosition: "center",
@@ -101,7 +100,7 @@ export default function About() {
             <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl mb-10 sm:mb-12">
               Servicios especializados
             </h2>
-            
+
             {/* Tarjetas de servicios */}
             <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 mb-10 sm:mb-12">
               <div className="border border-white/10 bg-black/50 p-6 sm:p-8 hover:border-white/20 transition-all">
@@ -158,7 +157,7 @@ export default function About() {
 
                 {/* Timeline de Formación */}
                 <div className="mt-10">
-                  <Timeline 
+                  <Timeline
                     title="Formación y Trayectoria"
                     items={[
                       {
@@ -196,7 +195,7 @@ export default function About() {
               {/* Columna derecha - Imagen: JAVIER */}
               <div className="relative">
                 <div className="relative aspect-[3/4] overflow-hidden bg-black/50">
-                  <img 
+                  <img
                     src={aboutImages.javier}
                     alt="Javier De Mendoza"
                     className="w-full h-full object-cover"

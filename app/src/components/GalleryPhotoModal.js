@@ -21,13 +21,13 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-export default function GalleryPhotoModal({ 
-  photoId, 
-  onClose, 
-  onNext, 
-  onPrev, 
-  hasNext, 
-  hasPrev 
+export default function GalleryPhotoModal({
+  photoId,
+  onClose,
+  onNext,
+  onPrev,
+  hasNext,
+  hasPrev
 }) {
   const { photo, relatedProducts, loading, error } = useSGPhotoDetail(photoId);
 
@@ -58,7 +58,7 @@ export default function GalleryPhotoModal({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/95 backdrop-blur-md"
         onClick={onClose}
       />
@@ -105,10 +105,10 @@ export default function GalleryPhotoModal({
         ) : photo ? (
           <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
-              {/* Imagen principal - Más pequeña para ver productos relacionados */}
+              {/* Imagen principal optimizada - 1400px para alta calidad en modal */}
               <div className="relative aspect-[4/3] sm:aspect-[16/10] mb-6 bg-black/50 overflow-hidden max-w-3xl mx-auto">
                 <img
-                  src={photo.image_url_full || photo.image_url}
+                  src={optimizeImageUrl(photo.image_url_full || photo.image_url, { width: 1400, quality: 90, format: 'webp' })}
                   alt="Foto de SG Gallery"
                   className="w-full h-full object-contain"
                 />
@@ -118,7 +118,7 @@ export default function GalleryPhotoModal({
               <div className="max-w-3xl mx-auto">
                 {/* Breadcrumb */}
                 {photo.sg_gallery_collections && (
-                  <Link 
+                  <Link
                     to={`/sg-gallery/${photo.sg_gallery_collections.slug}`}
                     className="inline-block text-xs uppercase tracking-[0.2em] text-accent hover:text-accent/80 mb-4 transition-colors"
                   >
