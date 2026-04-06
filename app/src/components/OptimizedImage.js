@@ -70,15 +70,17 @@ export default function OptimizedImage({
       return;
     }
 
+    const imgNode = imgRef.current;
+
     // Pequeño delay para asegurar que el elemento esté en el DOM
     const timeoutId = setTimeout(() => {
       // Verificar que el elemento existe
-      if (!imgRef.current) {
+      if (!imgNode) {
         return;
       }
 
       // Verificar si el elemento ya está en el viewport (para elementos que ya son visibles)
-      const rect = imgRef.current.getBoundingClientRect();
+      const rect = imgNode.getBoundingClientRect();
       const isInViewport =
         rect.top < window.innerHeight + 200 && // Reducido a 200px
         rect.bottom > -200 &&
@@ -97,8 +99,8 @@ export default function OptimizedImage({
             if (entry.isIntersecting) {
               setShouldLoad(true);
               // Desconectar después de activar
-              if (observerRef.current && imgRef.current) {
-                observerRef.current.unobserve(imgRef.current);
+              if (observerRef.current && imgNode) {
+                observerRef.current.unobserve(imgNode);
               }
             }
           });
@@ -112,14 +114,13 @@ export default function OptimizedImage({
       );
 
       // Observar el contenedor
-      observerRef.current.observe(imgRef.current);
+      observerRef.current.observe(imgNode);
     }, 0);
 
     return () => {
       clearTimeout(timeoutId);
-      const currentImg = imgRef.current;
-      if (observerRef.current && currentImg) {
-        observerRef.current.unobserve(currentImg);
+      if (observerRef.current && imgNode) {
+        observerRef.current.unobserve(imgNode);
       }
     };
   }, [priority]);
