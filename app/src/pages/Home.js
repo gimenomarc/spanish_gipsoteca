@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
 import { imagePresets } from "../utils/imageOptimizer";
 
-const HERO_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg";
+const HERO_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.webp";
 const images = {
   hero: imagePresets.heroBackground(HERO_URL),
 };

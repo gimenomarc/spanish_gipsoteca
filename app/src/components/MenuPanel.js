@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCategories } from "../hooks/useCategories";
 
-// Imagen de fondo del menú - puede ser local (public/) o desde Supabase Storage
-// Para usar Supabase, reemplaza con la URL de Supabase Storage
+import { imagePresets } from '../utils/imageOptimizer';
+
 const images = {
-  hero: "/images/hero/hero-bg.jpg", // Imagen local en public/images/hero/hero-bg.jpg
-  // hero: "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg", // URL de Supabase
+  hero: imagePresets.heroBackground("https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg"),
 };
 
 export default function MenuPanel({ open, onClose }) {

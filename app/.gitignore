@@ -134,6 +134,17 @@ temp/
 *.xlsb
 *.csv
 
+# Imágenes locales (se sirven desde Supabase Storage)
+/public/images/
+/public/images-optimized/
+
+# Credenciales y secretos
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
 # Lock files (opcional - algunos prefieren incluirlos)
 # package-lock.json
 # yarn.lock

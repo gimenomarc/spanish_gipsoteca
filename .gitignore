@@ -1,9 +1,23 @@
-﻿# ImÃ¡genes - se cargan desde Supabase
-images/
-**/images/
+# Imágenes locales (se sirven desde Supabase)
+app/public/images/
+app/public/images-optimized/
+
+# Dependencias
+app/node_modules/
+
+# Variables de entorno y credenciales
+app/.env
+app/.env.local
+app/.env.development.local
+app/.env.test.local
+app/.env.production.local
+.env
+.env.local
+
+# Archivos comprimidos
 *.zip
 *.ZIP
-
-node_modules/
-package.json
-package-lock.json
+*.rar
+*.RAR
+*.tar.gz
+*.tar.bz2

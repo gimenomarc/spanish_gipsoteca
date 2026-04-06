@@ -5,9 +5,9 @@ import { imagePresets } from "../utils/imageOptimizer";
 const SUPABASE_STORAGE_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images";
 
 const aboutImages = {
-  taller: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/taller.jpg`),
-  espacios: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/espacios.jpg`),
-  javier: imagePresets.portrait(`${SUPABASE_STORAGE_URL}/about/javier.jpg`),
+  taller: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/taller.webp`),
+  espacios: imagePresets.sectionBackground(`${SUPABASE_STORAGE_URL}/about/espacios.webp`),
+  javier: imagePresets.portrait(`${SUPABASE_STORAGE_URL}/about/javier.webp`),
 };
 
 export default function About() {

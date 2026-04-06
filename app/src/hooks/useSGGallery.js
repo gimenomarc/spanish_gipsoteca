@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { imagePresets } from '../utils/imageOptimizer';
+import { imagePresets, optimizeImageUrls } from '../utils/imageOptimizer';
 
 /**
  * Hook para obtener todas las colecciones de SG Gallery
@@ -215,7 +215,7 @@ export function useSGPhotoDetail(photoId) {
             name: product.name,
             price: product.price || '',
             artist: product.artist || 'Unknown artist',
-            images: product.images || [],
+            images: optimizeImageUrls(product.images || [], imagePresets.card),
             categoryId: product.category_id,
             categoryName: product.categories?.name || '',
           }));

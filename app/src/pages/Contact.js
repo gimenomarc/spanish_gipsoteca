@@ -34,7 +34,7 @@ const ArrowIcon = () => (
 
 export default function Contact() {
   const contactBackground = imagePresets.sectionBackground(
-    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.jpg"
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.webp"
   );
 
   const [formData, setFormData] = useState({
