@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
@@ -14,6 +14,8 @@ const SearchIcon = () => (
   </svg>
 );
 
+const PRODUCTS_PER_PAGE = 12;
+
 export default function Shop() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ export default function Shop() {
   const [searchTerm, setSearchTerm] = useState("");
   const [artistFilter, setArtistFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(categoryId || null);
+  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
   const { products, loading: productsLoading } = useProducts(selectedCategory || null);
   const { categories, loading: categoriesLoading } = useCategories();
 
@@ -37,15 +40,20 @@ export default function Shop() {
     setSelectedCategory(categoryId || null);
   }, [categoryId]);
 
+  // Reset paginación cuando cambian los filtros
+  useEffect(() => {
+    setVisibleCount(PRODUCTS_PER_PAGE);
+  }, [searchTerm, artistFilter, selectedCategory]);
+
   // Manejar cambio de categoría
-  const handleCategoryChange = (catId) => {
+  const handleCategoryChange = useCallback((catId) => {
     setSelectedCategory(catId);
     if (catId) {
       navigate(`/shop/${catId}`);
     } else {
       navigate("/shop");
     }
-  };
+  }, [navigate]);
 
   // Obtener nombre de categoría
   let categoryName = "Tienda";
@@ -55,8 +63,11 @@ export default function Shop() {
     categoryName = "Todos los Productos";
   }
 
-  // Obtener lista única de artistas
-  const artists = [...new Set(products.map(p => p.artist).filter(Boolean))].sort();
+  // Obtener lista única de artistas (memoizado para evitar recálculo)
+  const artists = useMemo(
+    () => [...new Set(products.map(p => p.artist).filter(Boolean))].sort(),
+    [products]
+  );
 
   // Filtrar por búsqueda y artista
   // Busca en: name (nombre de la obra), code (código) y artist (artista)
@@ -80,30 +91,16 @@ export default function Shop() {
     return matchesSearch && matchesArtist;
   });
 
-  // Preload optimizado: solo las primeras 4 imágenes críticas (above the fold)
-  // Eliminado preload duplicado - OptimizedImage ya maneja el preload con priority
-  // Este efecto solo precarga las primeras 4 para mejorar el tiempo inicial de carga
+  // Preload de las primeras 4 imágenes críticas (above the fold)
   useEffect(() => {
     if (filteredProducts.length === 0) return;
-
-    // Reducido a 4 imágenes para evitar sobrecarga
-    const criticalProducts = filteredProducts.slice(0, 4);
-    const preloadImgs = [];
-
-    criticalProducts.forEach((product) => {
-      if (product.images && product.images.length > 0) {
-        const mainImage = product.images[0];
-        const optimizedUrl = imagePresets.card(mainImage);
-        
-        // Solo usar Image() para preload, más eficiente
+    filteredProducts.slice(0, 4).forEach((product) => {
+      if (product.images?.[0]) {
         const img = new Image();
-        img.src = optimizedUrl;
+        img.src = imagePresets.card(product.images[0]);
         img.fetchPriority = 'high';
-        preloadImgs.push(img);
       }
     });
-
-    // No necesitamos cleanup para Image objects, el navegador los maneja
   }, [filteredProducts]);
 
   if (productsLoading) {
@@ -238,16 +235,32 @@ export default function Shop() {
               <p className="text-sm text-white/70 sm:text-base">No se encontraron productos</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredProducts.map((product, index) => (
-                <ProductCard
-                  key={`${product.categoryId || categoryId || "all"}-${product.code}`}
-                  product={product}
-                  categoryId={product.categoryId || categoryId || ""}
-                  index={index}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredProducts.slice(0, visibleCount).map((product, index) => (
+                  <ProductCard
+                    key={`${product.categoryId || categoryId || "all"}-${product.code}`}
+                    product={product}
+                    categoryId={product.categoryId || categoryId || ""}
+                    index={index}
+                  />
+                ))}
+              </div>
+
+              {visibleCount < filteredProducts.length && (
+                <div className="mt-10 sm:mt-14 flex flex-col items-center gap-3">
+                  <button
+                    onClick={() => setVisibleCount(v => v + PRODUCTS_PER_PAGE)}
+                    className="border border-white/30 bg-transparent px-10 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:border-white hover:bg-white hover:text-black sm:text-sm"
+                  >
+                    Ver más
+                  </button>
+                  <p className="text-xs text-white/40">
+                    {Math.min(visibleCount, filteredProducts.length)} de {filteredProducts.length} productos
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
