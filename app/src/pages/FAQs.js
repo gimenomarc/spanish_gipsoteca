@@ -34,7 +34,7 @@ export default function FAQs() {
   };
 
   const faqBackground = imagePresets.sectionBackground(
-    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/faqs/F001_F003.webp"
+    "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/sg-gallery/photos/F001_F003_full.webp"
   );
 
   return (

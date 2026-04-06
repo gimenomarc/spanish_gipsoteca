@@ -5,7 +5,7 @@ import { useCategories } from "../hooks/useCategories";
 import { imagePresets } from '../utils/imageOptimizer';
 
 const images = {
-  hero: imagePresets.heroBackground("https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.jpg"),
+  hero: imagePresets.heroBackground("https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.webp"),
 };
 
 export default function MenuPanel({ open, onClose }) {
