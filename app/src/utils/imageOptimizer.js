@@ -1,6 +1,7 @@
 /**
  * Utilidad para optimizar URLs de imágenes de Supabase Storage
  * usando las transformaciones nativas de Supabase
+ * v1.1 - webp por defecto, presets responsive
  */
 
 /**
