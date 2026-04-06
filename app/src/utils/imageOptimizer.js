@@ -26,8 +26,12 @@ export function cdnUrl(url, options = {}) {
     format = 'webp',
   } = options;
 
+  // Encode spaces as %20 so they survive URLSearchParams (which uses + for spaces)
+  // wsrv.nl must receive %20 to correctly fetch files with spaces from Supabase
+  const safeUrl = url.replace(/ /g, '%20');
+
   const params = new URLSearchParams();
-  params.set('url', url);
+  params.set('url', safeUrl);
   if (width) params.set('w', width.toString());
   if (height) params.set('h', height.toString());
   params.set('q', quality.toString());
