@@ -201,7 +201,7 @@ export default function AdminSGPhotos() {
 
   if (loadingCollection) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando...</p>
       </div>
     );
@@ -209,7 +209,7 @@ export default function AdminSGPhotos() {
 
   if (!collection) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-red-400">Colección no encontrada</p>
         <Link to="/admin-jdm-private/sg-gallery" className="text-accent hover:underline mt-4 block">
           ← Volver a colecciones
@@ -219,7 +219,7 @@ export default function AdminSGPhotos() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="mb-8">
         <Link 

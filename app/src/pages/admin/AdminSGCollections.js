@@ -171,14 +171,14 @@ export default function AdminSGCollections() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando colecciones...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -300,7 +300,7 @@ export default function AdminSGCollections() {
                       ) : collectionPhotos.length === 0 ? (
                         <p className="text-white/50 text-xs text-center py-4">No hay fotos en esta colección</p>
                       ) : (
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                           {collectionPhotos.map((photo) => (
                             <button
                               key={photo.id}

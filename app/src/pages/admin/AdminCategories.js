@@ -114,14 +114,14 @@ export default function AdminCategories() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando categorías...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-4xl">
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -186,8 +186,8 @@ export default function AdminCategories() {
       )}
 
       {/* Categories List */}
-      <div className="bg-black border border-white/10">
-        <table className="w-full">
+      <div className="bg-black border border-white/10 overflow-x-auto">
+        <table className="w-full min-w-[540px]">
           <thead>
             <tr className="border-b border-white/10">
               <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">ID</th>

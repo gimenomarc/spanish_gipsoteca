@@ -40,7 +40,7 @@ export default function AdminLogin() {
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="border border-white/10 bg-black/50 p-8">
+          <div className="border border-white/10 bg-black/50 p-4 sm:p-8">
             {error && (
               <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
                 {error}

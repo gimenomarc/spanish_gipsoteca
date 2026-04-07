@@ -80,14 +80,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando estadísticas...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-display uppercase tracking-[0.15em] text-white">

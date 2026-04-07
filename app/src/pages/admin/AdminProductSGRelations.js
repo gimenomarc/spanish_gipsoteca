@@ -119,7 +119,7 @@ export default function AdminProductSGRelations() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando...</p>
       </div>
     );
@@ -128,7 +128,7 @@ export default function AdminProductSGRelations() {
   const selectedProductData = products.find(p => p.code === selectedProduct);
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-display uppercase tracking-[0.15em] text-white mb-2">
           📷 Relaciones Productos - SG Gallery

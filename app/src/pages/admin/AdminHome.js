@@ -87,14 +87,14 @@ export default function AdminHome() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-display uppercase tracking-[0.15em] text-white mb-2">
           🏠 Gestión de Home
@@ -122,7 +122,7 @@ export default function AdminHome() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mb-4">
               {featuredProducts.slice(0, 8).map((product, index) => (
                 <div
                   key={product.code}
@@ -230,7 +230,7 @@ export default function AdminHome() {
           Haz clic en ⭐ para marcar/desmarcar como destacado
         </p>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {products.map((product) => {
             const isFeatured = featuredProducts.some(p => p.code === product.code);
             return (

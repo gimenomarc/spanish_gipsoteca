@@ -38,7 +38,7 @@ export default function AdminSettings() {
   };
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 md:p-8 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-display uppercase tracking-[0.15em] text-white">

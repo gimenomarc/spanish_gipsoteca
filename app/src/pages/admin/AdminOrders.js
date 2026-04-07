@@ -104,14 +104,14 @@ export default function AdminOrders() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando pedidos...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-display uppercase tracking-[0.15em] text-white mb-2">
           📦 Pedidos y Solicitudes
@@ -128,7 +128,7 @@ export default function AdminOrders() {
           placeholder="Buscar por nombre, email, teléfono..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 min-w-[200px] bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
+          className="flex-1 min-w-[160px] bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
         />
         <select
           value={filterType}
@@ -157,15 +157,15 @@ export default function AdminOrders() {
         <div className="lg:col-span-2">
           <div className="bg-black border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[540px]">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Tipo</th>
-                    <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Cliente</th>
-                    <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Email</th>
-                    <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Fecha</th>
-                    <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Estado</th>
-                    <th className="text-right p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Acciones</th>
+                    <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Tipo</th>
+                    <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Cliente</th>
+                    <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Email</th>
+                    <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Fecha</th>
+                    <th className="text-center p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Estado</th>
+                    <th className="text-right p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -184,16 +184,16 @@ export default function AdminOrders() {
                         }`}
                         onClick={() => setSelectedOrder(order)}
                       >
-                        <td className="p-4">
-                          <span className="text-sm text-white">{getTypeLabel(order.order_type)}</span>
+                        <td className="p-2 md:p-4">
+                          <span className="text-xs md:text-sm text-white">{getTypeLabel(order.order_type)}</span>
                         </td>
-                        <td className="p-4">
-                          <span className="text-sm text-white">{order.customer_name}</span>
+                        <td className="p-2 md:p-4">
+                          <span className="text-xs md:text-sm text-white">{order.customer_name}</span>
                         </td>
-                        <td className="p-4">
-                          <span className="text-sm text-white/70">{order.customer_email}</span>
+                        <td className="p-2 md:p-4">
+                          <span className="text-xs text-white/70">{order.customer_email}</span>
                         </td>
-                        <td className="p-4">
+                        <td className="p-2 md:p-4">
                           <span className="text-xs text-white/50">
                             {new Date(order.created_at).toLocaleDateString('es-ES', {
                               day: '2-digit',
@@ -204,7 +204,7 @@ export default function AdminOrders() {
                             })}
                           </span>
                         </td>
-                        <td className="p-4 text-center">
+                        <td className="p-2 md:p-4 text-center">
                           <span className={`px-2 py-1 text-xs rounded border ${getStatusColor(order.status)}`}>
                             {order.status === 'pending' ? '⏳ Pendiente' :
                              order.status === 'in_progress' ? '🔄 En proceso' :
@@ -212,7 +212,7 @@ export default function AdminOrders() {
                              '❌ Cancelado'}
                           </span>
                         </td>
-                        <td className="p-4 text-right">
+                        <td className="p-2 md:p-4 text-right">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

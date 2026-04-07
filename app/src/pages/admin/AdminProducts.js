@@ -177,14 +177,14 @@ export default function AdminProducts() {
 
   if (loading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-white/70">Cargando productos...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -228,7 +228,7 @@ export default function AdminProducts() {
             </button>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
             {featuredProducts.slice(0, 8).map((product, index) => (
               <div
                 key={product.code}
@@ -301,13 +301,13 @@ export default function AdminProducts() {
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex flex-wrap gap-3 mb-6">
         <input
           type="text"
           placeholder="Buscar por nombre, código o artista..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 min-w-[200px] bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
+          className="flex-1 min-w-[160px] bg-black border border-white/20 px-4 py-2 text-sm text-white focus:border-white focus:outline-none"
         />
         
         <select
@@ -355,34 +355,34 @@ export default function AdminProducts() {
       {/* Products Table */}
       <div className="bg-black border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[700px]">
             <thead>
               <tr className="border-b border-white/10">
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Imagen
                 </th>
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Código
                 </th>
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Nombre
                 </th>
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Artista
                 </th>
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Precio
                 </th>
-                <th className="text-left p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-left p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Categoría
                 </th>
-                <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-center p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Publicado
                 </th>
-                <th className="text-center p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-center p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Destacado
                 </th>
-                <th className="text-right p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
+                <th className="text-right p-2 md:p-4 text-xs uppercase tracking-[0.1em] text-white/50 font-normal">
                   Acciones
                 </th>
               </tr>
@@ -394,8 +394,8 @@ export default function AdminProducts() {
                   className="border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer"
                   onClick={() => navigate(`/admin-jdm-private/products/${product.code}`)}
                 >
-                  <td className="p-4">
-                    <div className="w-12 h-12 bg-white/10 overflow-hidden">
+                  <td className="p-2 md:p-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 overflow-hidden">
                       {product.images && product.images[0] ? (
                         <img
                           src={product.images[0]}
@@ -409,50 +409,50 @@ export default function AdminProducts() {
                       )}
                     </div>
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm font-mono text-white/70">{product.code}</span>
+                  <td className="p-2 md:p-4">
+                    <span className="text-xs md:text-sm font-mono text-white/70">{product.code}</span>
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm text-white">{product.name || '—'}</span>
+                  <td className="p-2 md:p-4">
+                    <span className="text-xs md:text-sm text-white">{product.name || '—'}</span>
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm text-white/70">{product.artist || '—'}</span>
+                  <td className="p-2 md:p-4">
+                    <span className="text-xs md:text-sm text-white/70">{product.artist || '—'}</span>
                   </td>
-                  <td className="p-4">
-                    <span className={`text-sm ${product.price ? 'text-green-400' : 'text-white/30'}`}>
+                  <td className="p-2 md:p-4">
+                    <span className={`text-xs md:text-sm ${product.price ? 'text-green-400' : 'text-white/30'}`}>
                       {product.price || 'Sin precio'}
                     </span>
                   </td>
-                  <td className="p-4">
+                  <td className="p-2 md:p-4">
                     <span className="text-xs px-2 py-1 bg-white/10 text-white/70">
                       {product.categories?.name || '—'}
                     </span>
                   </td>
-                  <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+                  <td className="p-2 md:p-4 text-center" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => togglePublished(product.code, product.published)}
-                      className={`px-3 py-1 text-xs rounded transition-colors ${
-                        product.published 
-                          ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' 
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        product.published
+                          ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
                           : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
                       }`}
                     >
                       {product.published ? '✓ Sí' : '✗ No'}
                     </button>
                   </td>
-                  <td className="p-4 text-center" onClick={(e) => e.stopPropagation()}>
+                  <td className="p-2 md:p-4 text-center" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => toggleFeatured(product.code, product.is_featured)}
-                      className={`px-3 py-1 text-xs rounded transition-colors ${
-                        product.is_featured 
-                          ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        product.is_featured
+                          ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
                           : 'bg-white/10 text-white/50 hover:bg-white/20'
                       }`}
                     >
                       {product.is_featured ? '⭐ Sí' : '☆ No'}
                     </button>
                   </td>
-                  <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="p-2 md:p-4 text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => navigate(`/admin-jdm-private/products/${product.code}`)}
