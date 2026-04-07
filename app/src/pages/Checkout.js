@@ -694,15 +694,20 @@ export default function Checkout() {
 
               {/* ¿Necesitas factura? */}
               <div>
-                <label className="flex cursor-pointer items-center gap-3">
-                  <input
-                    type="checkbox"
-                    checked={requiresInvoice}
-                    onChange={(e) => setRequiresInvoice(e.target.checked)}
-                    className="h-4 w-4 cursor-pointer accent-white"
-                  />
+                <button
+                  type="button"
+                  onClick={() => setRequiresInvoice(!requiresInvoice)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <span className={`flex h-5 w-5 flex-shrink-0 items-center justify-center border transition-colors ${requiresInvoice ? 'border-white bg-white' : 'border-white/40 bg-transparent'}`}>
+                    {requiresInvoice && (
+                      <svg className="h-3 w-3 text-black" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </span>
                   <span className="text-sm text-white/80">Necesito factura</span>
-                </label>
+                </button>
               </div>
 
               {/* DNI y dirección de facturación - Solo si requiere factura */}
@@ -729,15 +734,20 @@ export default function Checkout() {
                       Dirección de Facturación
                     </h3>
                     {deliveryType === 'shipping' && (
-                      <label className="flex cursor-pointer items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={sameAsBilling}
-                          onChange={(e) => setSameAsBilling(e.target.checked)}
-                          className="h-4 w-4 cursor-pointer accent-white"
-                        />
+                      <button
+                        type="button"
+                        onClick={() => setSameAsBilling(!sameAsBilling)}
+                        className="flex items-center gap-3 cursor-pointer"
+                      >
+                        <span className={`flex h-5 w-5 flex-shrink-0 items-center justify-center border transition-colors ${sameAsBilling ? 'border-white bg-white' : 'border-white/40 bg-transparent'}`}>
+                          {sameAsBilling && (
+                            <svg className="h-3 w-3 text-black" viewBox="0 0 12 12" fill="none">
+                              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                        </span>
                         <span className="text-sm text-white/80">La misma que la dirección de envío</span>
-                      </label>
+                      </button>
                     )}
                     {(!sameAsBilling || deliveryType === 'pickup') && (
                       <div className="mt-4 space-y-4">
