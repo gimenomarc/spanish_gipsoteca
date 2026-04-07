@@ -16,6 +16,8 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { cart, clearCart, getTotalPrice } = useCart();
   const [deliveryType, setDeliveryType] = useState('pickup'); // 'pickup' o 'shipping'
+  const [requiresInvoice, setRequiresInvoice] = useState(false);
+  const [sameAsBilling, setSameAsBilling] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,6 +26,11 @@ export default function Checkout() {
     city: '',
     postalCode: '',
     country: '',
+    dni: '',
+    billingAddress: '',
+    billingCity: '',
+    billingPostalCode: '',
+    billingCountry: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,6 +105,16 @@ export default function Checkout() {
           ? `${formData.address || ''}, ${formData.city || ''}, ${formData.postalCode || ''}, ${formData.country || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'No proporcionado'
           : 'RECOGIDA EN TALLER - Barcelona',
         message: formData.message || 'Sin mensaje adicional',
+        // Factura y DNI
+        requires_invoice: requiresInvoice ? 'Sí' : 'No',
+        dni: requiresInvoice ? (formData.dni || 'No proporcionado') : 'N/A',
+        billing_address: (() => {
+          if (!requiresInvoice) return 'N/A';
+          if (sameAsBilling && deliveryType === 'shipping') {
+            return `${formData.address || ''}, ${formData.city || ''}, ${formData.postalCode || ''}, ${formData.country || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'Misma que envío';
+          }
+          return `${formData.billingAddress || ''}, ${formData.billingCity || ''}, ${formData.billingPostalCode || ''}, ${formData.billingCountry || ''}`.replace(/^,\s*|,\s*$/g, '').trim() || 'No proporcionada';
+        })(),
         // Productos detallados
         products_list: productsList || 'No hay productos',
         products_summary: cart.map(item => 
@@ -185,7 +202,29 @@ export default function Checkout() {
         order_items: orderItems,
         total_amount: totalAmount,
         shipping_cost: null,
-        message: formData.message || null
+        message: formData.message || null,
+        requires_invoice: requiresInvoice,
+        customer_dni: requiresInvoice ? (formData.dni || null) : null,
+        billing_address: (() => {
+          if (!requiresInvoice) return null;
+          if (sameAsBilling && deliveryType === 'shipping') return formData.address || null;
+          return formData.billingAddress || null;
+        })(),
+        billing_city: (() => {
+          if (!requiresInvoice) return null;
+          if (sameAsBilling && deliveryType === 'shipping') return formData.city || null;
+          return formData.billingCity || null;
+        })(),
+        billing_postal_code: (() => {
+          if (!requiresInvoice) return null;
+          if (sameAsBilling && deliveryType === 'shipping') return formData.postalCode || null;
+          return formData.billingPostalCode || null;
+        })(),
+        billing_country: (() => {
+          if (!requiresInvoice) return null;
+          if (sameAsBilling && deliveryType === 'shipping') return formData.country || null;
+          return formData.billingCountry || null;
+        })()
       };
 
       console.log('📦 Datos a insertar en BD:', JSON.stringify(orderDataToInsert, null, 2));
@@ -257,8 +296,15 @@ export default function Checkout() {
         city: '',
         postalCode: '',
         country: '',
+        dni: '',
+        billingAddress: '',
+        billingCity: '',
+        billingPostalCode: '',
+        billingCountry: '',
         message: '',
       });
+      setRequiresInvoice(false);
+      setSameAsBilling(true);
 
       // NO redirigir automáticamente, mostrar mensaje de agradecimiento
     } catch (error) {
@@ -557,6 +603,124 @@ export default function Checkout() {
                   placeholder="+34 123 456 789"
                 />
               </div>
+
+              {/* ¿Necesitas factura? */}
+              <div>
+                <label className="flex cursor-pointer items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={requiresInvoice}
+                    onChange={(e) => setRequiresInvoice(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer accent-white"
+                  />
+                  <span className="text-sm text-white/80">Necesito factura</span>
+                </label>
+              </div>
+
+              {/* DNI - Solo si requiere factura */}
+              {requiresInvoice && (
+                <div>
+                  <label htmlFor="dni" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                    DNI / NIF *
+                  </label>
+                  <input
+                    type="text"
+                    id="dni"
+                    name="dni"
+                    value={formData.dni}
+                    onChange={handleChange}
+                    required
+                    className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                    placeholder="12345678A"
+                  />
+                </div>
+              )}
+
+              {/* Dirección de facturación - Solo si requiere factura */}
+              {requiresInvoice && (
+                <div className="rounded-sm border border-white/10 bg-white/5 p-4 sm:p-6">
+                  <h3 className="mb-4 font-display text-sm uppercase tracking-[0.1em] text-white">
+                    Dirección de Facturación
+                  </h3>
+                  {deliveryType === 'shipping' && (
+                    <label className="mb-4 flex cursor-pointer items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={sameAsBilling}
+                        onChange={(e) => setSameAsBilling(e.target.checked)}
+                        className="h-4 w-4 cursor-pointer accent-white"
+                      />
+                      <span className="text-sm text-white/80">Usar la misma dirección que la de envío</span>
+                    </label>
+                  )}
+                  {(!sameAsBilling || deliveryType === 'pickup') && (
+                    <div className="mt-4 space-y-4">
+                      <div>
+                        <label htmlFor="billingAddress" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                          Dirección *
+                        </label>
+                        <input
+                          type="text"
+                          id="billingAddress"
+                          name="billingAddress"
+                          value={formData.billingAddress}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                          placeholder="Calle y número"
+                        />
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label htmlFor="billingCity" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                            Ciudad *
+                          </label>
+                          <input
+                            type="text"
+                            id="billingCity"
+                            name="billingCity"
+                            value={formData.billingCity}
+                            onChange={handleChange}
+                            required
+                            className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                            placeholder="Ciudad"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="billingPostalCode" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                            Código Postal *
+                          </label>
+                          <input
+                            type="text"
+                            id="billingPostalCode"
+                            name="billingPostalCode"
+                            value={formData.billingPostalCode}
+                            onChange={handleChange}
+                            required
+                            className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                            placeholder="28001"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="billingCountry" className="mb-2 block text-xs uppercase tracking-[0.1em] text-white/70 sm:text-sm">
+                          País *
+                        </label>
+                        <input
+                          type="text"
+                          id="billingCountry"
+                          name="billingCountry"
+                          value={formData.billingCountry}
+                          onChange={handleChange}
+                          required
+                          className="w-full rounded-sm border border-white/20 bg-black/50 px-4 py-3.5 text-sm text-white placeholder-white/30 transition-all focus:border-white focus:bg-black/70 focus:outline-none sm:text-base"
+                          placeholder="España"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Campos de dirección - Solo si es envío */}
               {deliveryType === 'shipping' && (

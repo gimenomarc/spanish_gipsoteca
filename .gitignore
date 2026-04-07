@@ -21,3 +21,4 @@ app/.env.production.local
 *.RAR
 *.tar.gz
 *.tar.bz2
+.vercel
