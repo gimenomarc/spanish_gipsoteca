@@ -36,7 +36,7 @@ const ArrowIcon = () => (
 export default function Contact() {
   useSEO({
     title: 'Contacto',
-    description: 'Contacta con The Spanish Gipsoteca para consultas sobre esculturas, pedidos personalizados o información sobre nuestro taller artesanal.',
+    description: 'Contacta con The Spanish Gipsoteca — taller de vaciados de escayola y moldes en Barcelona. Consultas sobre pedidos, reproducciones personalizadas y servicios especializados.',
     canonical: '/contact',
   });
 

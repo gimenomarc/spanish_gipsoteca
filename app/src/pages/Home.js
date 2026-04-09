@@ -82,7 +82,62 @@ function CollectionCard({ collection, index }) {
 export default function Home() {
   useSEO({
     canonical: '/',
-    description: 'The Spanish Gipsoteca — Reproducciones artesanales de esculturas clásicas en escayola. Explora más de 100 piezas icónicas de la historia del arte.',
+    description: 'The Spanish Gipsoteca — Taller de vaciados de escayola y moldes en Barcelona. Más de 100 reproducciones artesanales de esculturas clásicas: bustos, figuras y piezas arquitectónicas.',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': 'https://thespanishgipsoteca.com/#organization',
+          name: 'The Spanish Gipsoteca',
+          url: 'https://thespanishgipsoteca.com',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://thespanishgipsoteca.com/favicon.svg',
+          },
+          sameAs: ['https://www.instagram.com/thespanishgipsoteca/'],
+          contactPoint: {
+            '@type': 'ContactPoint',
+            telephone: '+34-654-371-774',
+            email: 'thespanishgipsoteca@gmail.com',
+            contactType: 'customer service',
+            availableLanguage: ['Spanish'],
+          },
+        },
+        {
+          '@type': 'LocalBusiness',
+          '@id': 'https://thespanishgipsoteca.com/#localbusiness',
+          name: 'The Spanish Gipsoteca',
+          description: 'Taller artesanal especializado en vaciados de escayola, moldes y reproducciones escultóricas clásicas en Barcelona.',
+          url: 'https://thespanishgipsoteca.com',
+          telephone: '+34654371774',
+          email: 'thespanishgipsoteca@gmail.com',
+          image: 'https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.webp',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Barcelona',
+            addressRegion: 'Cataluña',
+            addressCountry: 'ES',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: '41.3851',
+            longitude: '2.1734',
+          },
+          openingHoursSpecification: [
+            {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+              opens: '09:00',
+              closes: '18:00',
+            },
+          ],
+          priceRange: '€€',
+          currenciesAccepted: 'EUR',
+          sameAs: ['https://www.instagram.com/thespanishgipsoteca/'],
+        },
+      ],
+    },
   });
 
   const { products: featuredProducts, loading: loadingProducts } = useFeaturedProducts(8);

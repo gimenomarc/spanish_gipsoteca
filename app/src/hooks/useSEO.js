@@ -61,7 +61,7 @@ export default function useSEO({ title, description, canonical, ogImage, jsonLd 
       link.href = canonicalUrl;
     }
 
-    // JSON-LD
+    // JSON-LD — soporta objeto simple o array de schemas (via @graph)
     let ldScript = document.getElementById('json-ld-structured');
     if (jsonLd) {
       if (!ldScript) {
@@ -70,7 +70,12 @@ export default function useSEO({ title, description, canonical, ogImage, jsonLd 
         ldScript.type = 'application/ld+json';
         document.head.appendChild(ldScript);
       }
-      ldScript.textContent = JSON.stringify(jsonLd);
+      // Si jsonLd ya tiene @graph o @context propio, usarlo tal cual
+      // Si es un array, envolverlo en @graph
+      const payload = Array.isArray(jsonLd)
+        ? { '@context': 'https://schema.org', '@graph': jsonLd }
+        : jsonLd;
+      ldScript.textContent = JSON.stringify(payload);
     } else if (ldScript) {
       ldScript.remove();
     }

@@ -47,7 +47,7 @@ export default function Shop() {
     title: activeCategory ? activeCategory.name : 'Tienda',
     description: activeCategory
       ? `Explora nuestra colección de ${activeCategory.name.toLowerCase()} — reproducciones artesanales en escayola.`
-      : 'Explora toda la colección de reproducciones escultóricas artesanales en escayola de The Spanish Gipsoteca.',
+      : 'Compra vaciados de escayola y moldes artesanales en Barcelona. The Spanish Gipsoteca — más de 100 reproducciones escultóricas clásicas: bustos, figuras y piezas arquitectónicas.',
     canonical: selectedCategory ? `/shop/${selectedCategory}` : '/shop',
   });
 

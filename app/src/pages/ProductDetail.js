@@ -85,24 +85,51 @@ export default function ProductDetail() {
 
   useSEO(product ? {
     title: `${product.name} — ${product.artist}`,
-    description: `${product.name} de ${product.artist}. ${product.dimensions ? product.dimensions + '. ' : ''}Reproducción artesanal en escayola. ${product.price}.`,
+    description: `${product.name} de ${product.artist}. ${product.dimensions ? product.dimensions + '. ' : ''}Reproducción artesanal en escayola en Barcelona. ${product.price}.`,
     canonical: `/product/${categoryId}/${productCode}`,
     ogImage: productImages[0] || undefined,
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.name,
-      description: extendedDescription,
-      image: productImages,
-      brand: { '@type': 'Brand', name: 'The Spanish Gipsoteca' },
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'EUR',
-        price: priceValue,
-        availability: 'https://schema.org/InStock',
-        url: `https://thespanishgipsoteca.com/product/${categoryId}/${productCode}`,
-        seller: { '@type': 'Organization', name: 'The Spanish Gipsoteca' },
-      },
+      '@graph': [
+        {
+          '@type': 'Product',
+          name: product.name,
+          description: extendedDescription,
+          image: productImages,
+          brand: { '@type': 'Brand', name: 'The Spanish Gipsoteca' },
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: 'EUR',
+            price: priceValue,
+            availability: 'https://schema.org/InStock',
+            url: `https://thespanishgipsoteca.com/product/${categoryId}/${productCode}`,
+            seller: { '@type': 'Organization', name: 'The Spanish Gipsoteca' },
+          },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Inicio',
+              item: 'https://thespanishgipsoteca.com',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Tienda',
+              item: 'https://thespanishgipsoteca.com/shop',
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: product.name,
+              item: `https://thespanishgipsoteca.com/product/${categoryId}/${productCode}`,
+            },
+          ],
+        },
+      ],
     },
   } : {});
 

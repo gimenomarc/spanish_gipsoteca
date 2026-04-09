@@ -14,7 +14,7 @@ const aboutImages = {
 export default function About() {
   useSEO({
     title: 'Sobre Nosotros',
-    description: 'Conoce el proyecto artesanal detrás de The Spanish Gipsoteca — taller especializado en la reproducción de esculturas clásicas mediante técnicas tradicionales.',
+    description: 'The Spanish Gipsoteca — taller de vaciados de escayola y moldes en Barcelona, dirigido por Javier De Mendoza. Más de 10 años de experiencia en reproducción escultórica clásica.',
     canonical: '/about',
   });
 

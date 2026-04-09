@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 
 const faqs = [
@@ -28,6 +29,24 @@ const faqs = [
 
 export default function FAQs() {
   const [openIndex, setOpenIndex] = useState(null);
+
+  useSEO({
+    title: 'Preguntas Frecuentes',
+    description: 'Resuelve tus dudas sobre pedidos, plazos de entrega y envíos de vaciados de escayola y moldes en Barcelona. The Spanish Gipsoteca.',
+    canonical: '/faqs',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    },
+  });
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
