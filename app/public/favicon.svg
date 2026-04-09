@@ -1,8 +1,33 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Escultura clásica estilizada en marrón -->
-  <rect width="32" height="32" rx="4" fill="#8B4513"/>
-  <path d="M16 6C12.6863 6 10 8.68629 10 12C10 13.5 10.5 14.9 11.3 16L8 26H24L20.7 16C21.5 14.9 22 13.5 22 12C22 8.68629 19.3137 6 16 6Z" fill="#D4A574" stroke="#654321" stroke-width="1.5"/>
-  <circle cx="16" cy="12" r="3" fill="#654321"/>
-  <path d="M14 18L16 20L18 18" stroke="#654321" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M12 22L16 24L20 22" stroke="#654321" stroke-width="1.5" stroke-linecap="round"/>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo negro -->
+  <rect width="512" height="512" fill="#0a0a0a"/>
+
+  <!-- Marco fino dorado -->
+  <rect x="18" y="18" width="476" height="476" stroke="#d0b06a" stroke-width="3" fill="none"/>
+
+  <!-- Columna clásica dórica en dorado -->
+
+  <!-- Ábaco: placa superior plana -->
+  <rect x="134" y="106" width="244" height="22" fill="#d0b06a"/>
+
+  <!-- Équino: capital troncocónico (más ancho arriba) -->
+  <path d="M 134 128 L 158 166 L 354 166 L 378 128 Z" fill="#d0b06a"/>
+
+  <!-- Anillo del cuello -->
+  <rect x="166" y="166" width="180" height="9" fill="#c9a45e"/>
+
+  <!-- Fuste: columna ligeramente ahusada -->
+  <path d="M 174 175 L 338 175 L 327 362 L 185 362 Z" fill="#d0b06a"/>
+
+  <!-- Anillo de la base -->
+  <rect x="166" y="362" width="180" height="9" fill="#c9a45e"/>
+
+  <!-- Base: troncocónico (más ancho abajo) -->
+  <path d="M 158 371 L 134 409 L 378 409 L 354 371 Z" fill="#d0b06a"/>
+
+  <!-- Estilóbata: placa inferior plana -->
+  <rect x="134" y="409" width="244" height="22" fill="#d0b06a"/>
+
+  <!-- Línea de suelo decorativa -->
+  <rect x="80" y="431" width="352" height="3" fill="#d0b06a" opacity="0.4"/>
 </svg>
