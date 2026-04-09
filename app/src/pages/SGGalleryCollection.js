@@ -184,7 +184,7 @@ export default function SGGalleryCollection() {
                     className="group relative aspect-[4/3] overflow-hidden bg-neutral-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-black rounded-sm"
                   >
                     <LazyGridImage
-                      src={photo.image_url}
+                      src={photo.image_url_full || photo.image_url}
                       alt={`Foto ${index + 1}`}
                       priority={index < 4} // Primeras 4 fotos se cargan inmediatamente
                     />
