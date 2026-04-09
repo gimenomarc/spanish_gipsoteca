@@ -1,6 +1,5 @@
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
-import FadeIn from "../components/FadeIn";
 import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 
