@@ -81,7 +81,7 @@ function ImageCropModal({ imageUrl, productCode, categoryId, imageIndex, onClose
 
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMove = (e) => {
     if (!isDragging) return;
     const pos = getPos(e);
     const dx = pos.x - dragStart.x;
@@ -127,7 +127,7 @@ function ImageCropModal({ imageUrl, productCode, categoryId, imageIndex, onClose
       r.h = Math.min(dh - r.y, r.h);
       setCropRect(r);
     }
-  }, [isDragging, dragStart, dragMode, cropStart, displaySize, aspectLocked, ASPECT]);
+  };
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -183,7 +183,7 @@ function ImageCropModal({ imageUrl, productCode, categoryId, imageIndex, onClose
   };
 
   // Cursor según posición
-  const getCursor = useCallback((e) => {
+  const getCursor = (e) => {
     if (!imgRef.current) return;
     const pos = getPos(e);
     const corner = hitCorner(pos);
@@ -194,7 +194,7 @@ function ImageCropModal({ imageUrl, productCode, categoryId, imageIndex, onClose
     } else {
       imgRef.current.style.cursor = 'crosshair';
     }
-  }, [cropRect]);
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
