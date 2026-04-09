@@ -302,10 +302,11 @@ export default function ProductDetail() {
                     <OptimizedImage
                       src={relatedProduct.images[0] || ''}
                       alt={relatedProduct.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="transition-transform duration-500 group-hover:scale-105"
                       priority={index < 2}
                       aspectRatio="3/4"
                       size="card"
+                      objectFit="contain"
                     />
                     <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
                   </div>

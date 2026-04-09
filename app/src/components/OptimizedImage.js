@@ -8,6 +8,8 @@ export default function OptimizedImage({
   priority = false,
   aspectRatio = '3/4',
   size = 'card',
+  objectFit = 'cover',
+  objectPosition = 'center',
   onLoad,
   onError,
   ...props
@@ -160,9 +162,10 @@ export default function OptimizedImage({
           srcSet={srcSet || undefined}
           sizes={sizes || undefined}
           alt={alt}
-          className={`h-full w-full object-cover transition-opacity duration-300 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          } ${hasError ? 'hidden' : ''}`}
+          className={`h-full w-full transition-opacity duration-300 ${
+            objectFit === 'contain' ? 'object-contain' : 'object-cover'
+          } ${hasError ? 'hidden' : ''} ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          style={{ objectPosition }}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           fetchPriority={priority ? 'high' : 'auto'}

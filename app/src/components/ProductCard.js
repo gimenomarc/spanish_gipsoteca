@@ -48,6 +48,7 @@ export default function ProductCard({ product, categoryId, index = 0 }) {
             className="transition-transform duration-300 group-hover:scale-105"
             priority={isPriority}
             aspectRatio="3/4"
+            objectFit="contain"
             onError={handleImageError}
           />
         </div>
