@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSGCollections } from "../hooks/useSGGallery";
 import Footer from "../components/Footer";
+import useSEO from "../hooks/useSEO";
 
 // Componente para lazy loading de imágenes hero
 function LazyHeroImage({ src, srcHero, alt, priority = false }) {
@@ -55,6 +56,12 @@ function LazyHeroImage({ src, srcHero, alt, priority = false }) {
 }
 
 export default function SGGallery() {
+  useSEO({
+    title: 'The SG Gallery',
+    description: 'Colecciones exclusivas de fotografía artística de The Spanish Gipsoteca — esculturas clásicas en escenarios reales.',
+    canonical: '/sg-gallery',
+  });
+
   const { collections, loading } = useSGCollections();
 
   if (loading) {

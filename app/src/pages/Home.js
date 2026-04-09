@@ -4,6 +4,8 @@ import { useSGCollections } from "../hooks/useSGGallery";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
+import FadeIn from "../components/FadeIn";
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 
 const HERO_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/hero/hero-bg.webp";
@@ -78,11 +80,12 @@ function CollectionCard({ collection, index }) {
 }
 
 export default function Home() {
-  // Obtener productos destacados (8 piezas para completar dos filas)
-  // Usa el campo is_featured de la base de datos, o los primeros 8 si no hay destacados
+  useSEO({
+    canonical: '/',
+    description: 'The Spanish Gipsoteca — Reproducciones artesanales de esculturas clásicas en escayola. Explora más de 100 piezas icónicas de la historia del arte.',
+  });
+
   const { products: featuredProducts, loading: loadingProducts } = useFeaturedProducts(8);
-  
-  // Obtener colecciones de SG Gallery
   const { collections, loading: loadingCollections } = useSGCollections();
 
   return (
@@ -132,7 +135,7 @@ export default function Home() {
         {/* Artesanía Clásica Section */}
         <section className="bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-10">
-            <div className="text-center mb-10 sm:mb-14">
+            <FadeIn className="text-center mb-10 sm:mb-14">
               <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
                 Artesanía Clásica
               </h2>
@@ -150,14 +153,14 @@ export default function Home() {
               <p className="mx-auto mt-6 max-w-2xl text-sm text-white/70 sm:text-base leading-relaxed">
                 Nuestra colección dispone de una amplia variedad de reproducciones escultóricas en escayola, elaboradas de forma artesanal mediante técnicas tradicionales. Cada pieza está fielmente reproducida para capturar la esencia de las obras originales.
               </p>
-            </div>
+            </FadeIn>
           </div>
         </section>
 
         {/* Featured Products Section - Piezas Seleccionadas */}
         <section className="bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-            <div className="mb-8 text-center sm:mb-12">
+            <FadeIn className="mb-8 text-center sm:mb-12">
               <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Destacados</p>
               <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl lg:text-5xl">
                 Piezas Seleccionadas
@@ -165,7 +168,7 @@ export default function Home() {
               <p className="mx-auto mt-3 max-w-2xl text-sm text-white/70 sm:mt-4 sm:text-base">
                 Una cuidadosa selección de nuestras esculturas más icónicas
               </p>
-            </div>
+            </FadeIn>
 
             {loadingProducts ? (
               <div className="text-center py-10">
@@ -174,12 +177,13 @@ export default function Home() {
             ) : (
               <div className="grid gap-6 sm:gap-8 grid-cols-2 lg:grid-cols-4">
                 {featuredProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.code}
-                    product={product}
-                    categoryId={product.categoryId}
-                    index={index}
-                  />
+                  <FadeIn key={product.code} delay={index * 70}>
+                    <ProductCard
+                      product={product}
+                      categoryId={product.categoryId}
+                      index={index}
+                    />
+                  </FadeIn>
                 ))}
               </div>
             )}
@@ -211,7 +215,7 @@ export default function Home() {
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black to-transparent" />
           
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-            <div className="mb-10 text-center sm:mb-14">
+            <FadeIn className="mb-10 text-center sm:mb-14">
               <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">Galería</p>
               <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl lg:text-5xl">
                 The SG Gallery
@@ -219,7 +223,7 @@ export default function Home() {
               <p className="mx-auto mt-3 max-w-2xl text-sm text-white/70 sm:mt-4 sm:text-base">
                 Descubre nuestras colecciones exclusivas de fotografía artística
               </p>
-            </div>
+            </FadeIn>
 
             {loadingCollections ? (
               <div className="text-center py-10">
@@ -228,11 +232,9 @@ export default function Home() {
             ) : collections.length > 0 ? (
               <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {collections.map((collection, index) => (
-                  <CollectionCard 
-                    key={collection.id} 
-                    collection={collection}
-                    index={index}
-                  />
+                  <FadeIn key={collection.id} delay={index * 100}>
+                    <CollectionCard collection={collection} index={index} />
+                  </FadeIn>
                 ))}
               </div>
             ) : (

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useSGCollection, useSGPhotos } from "../hooks/useSGGallery";
 import GalleryPhotoModal from "../components/GalleryPhotoModal";
 import Footer from "../components/Footer";
+import useSEO from "../hooks/useSEO";
 
 const ArrowLeftIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,6 +90,15 @@ export default function SGGalleryCollection() {
   };
 
   const selectedPhoto = selectedPhotoIndex !== null ? photos[selectedPhotoIndex] : null;
+
+  useSEO({
+    title: collection ? collection.name : 'Colección',
+    description: collection?.description
+      ? collection.description
+      : `Colección fotográfica "${collection?.name}" de The Spanish Gipsoteca — esculturas clásicas en escenarios reales.`,
+    canonical: `/sg-gallery/${collectionSlug}`,
+    ogImage: collection?.cover_image || undefined,
+  });
 
   if (loadingCollection) {
     return (

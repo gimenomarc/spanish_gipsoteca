@@ -6,6 +6,8 @@ import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 import OptimizedImage from "../components/OptimizedImage";
 import ImageZoom from "../components/ImageZoom";
+import FadeIn from "../components/FadeIn";
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 
 const SearchIcon = () => (
@@ -88,8 +90,37 @@ export default function ProductDetail() {
   const allImages = productImages;
 
   // Descripción extendida
-  const extendedDescription = product.description || 
+  const extendedDescription = product.description ||
     "This piece is probably one of the most iconic sculptures of all times. Sign of beauty and perfection, this sculpture was made by an unknown artist around 130-100 a.e.c. in Greece. After centuries of disappearance, it was found by a french archeologist, who later sold the sculpture to the french monarchy under the power of Luis XIV. This sculpture has been one of the most used casts in classic academies and it's still an essential figure for nowadays art academies.";
+
+  // Precio numérico para JSON-LD (extrae número de "95,00 €")
+  const priceValue = product.price
+    ? product.price.replace(/[^0-9,]/g, '').replace(',', '.')
+    : '';
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useSEO({
+    title: `${product.name} — ${product.artist}`,
+    description: `${product.name} de ${product.artist}. ${product.dimensions ? product.dimensions + '. ' : ''}Reproducción artesanal en escayola. ${product.price}.`,
+    canonical: `/product/${categoryId}/${productCode}`,
+    ogImage: productImages[0] || undefined,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      description: extendedDescription,
+      image: productImages,
+      brand: { '@type': 'Brand', name: 'The Spanish Gipsoteca' },
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'EUR',
+        price: priceValue,
+        availability: 'https://schema.org/InStock',
+        url: `https://thespanishgipsoteca.com/product/${categoryId}/${productCode}`,
+        seller: { '@type': 'Organization', name: 'The Spanish Gipsoteca' },
+      },
+    },
+  });
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
@@ -163,7 +194,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Columna derecha - Información del producto */}
-            <div className="lg:col-span-1">
+            <FadeIn className="lg:col-span-1" direction="left" delay={100}>
                 <h2 className="mb-2 font-display text-xl uppercase tracking-[0.1em] text-white sm:text-2xl sm:tracking-[0.15em] md:text-3xl lg:text-4xl">
                   {product.name.toUpperCase()}
                 </h2>
@@ -216,18 +247,18 @@ export default function ProductDetail() {
                     {isAddingToCart ? 'Añadiendo...' : 'Añadir al carrito'}
                   </button>
                 </div>
-              </div>
-            </div>
+            </FadeIn>
           </div>
+        </div>
         </section>
 
       </div>
-      
+
       {/* SG Gallery - Fotos en la vida real - Solo mostrar si hay fotos relacionadas */}
       {sgPhotos && sgPhotos.length > 0 && (
         <section className="border-t border-white/10 bg-black py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-            <div className="mb-8 sm:mb-10 flex items-center justify-between">
+            <FadeIn className="mb-8 sm:mb-10 flex items-center justify-between">
               <div>
                 <p className="mb-2 text-xs uppercase tracking-[0.3em] text-accent sm:text-sm">SG Gallery</p>
                 <h3 className="font-display text-lg uppercase tracking-[0.15em] text-white sm:text-xl sm:tracking-[0.2em] md:text-2xl">
@@ -237,13 +268,13 @@ export default function ProductDetail() {
                   Descubre cómo se ve este producto en espacios reales
                 </p>
               </div>
-              <Link 
-                to="/sg-gallery" 
+              <Link
+                to="/sg-gallery"
                 className="text-xs uppercase tracking-[0.15em] text-white/50 transition-colors hover:text-white sm:text-sm"
               >
                 Ver galería →
               </Link>
-            </div>
+            </FadeIn>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {sgPhotos.map((photo, index) => (

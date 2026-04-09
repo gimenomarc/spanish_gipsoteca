@@ -2,6 +2,7 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from '../utils/imageOptimizer';
 
 // Icono de Instagram moderno y minimalista
@@ -33,6 +34,12 @@ const ArrowIcon = () => (
 );
 
 export default function Contact() {
+  useSEO({
+    title: 'Contacto',
+    description: 'Contacta con The Spanish Gipsoteca para consultas sobre esculturas, pedidos personalizados o información sobre nuestro taller artesanal.',
+    canonical: '/contact',
+  });
+
   const contactBackground = imagePresets.sectionBackground(
     "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images/contacto/contacto.webp"
   );

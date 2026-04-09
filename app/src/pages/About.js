@@ -1,5 +1,7 @@
 import Footer from "../components/Footer";
 import Timeline from "../components/Timeline";
+import FadeIn from "../components/FadeIn";
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 
 const SUPABASE_STORAGE_URL = "https://vnefocljtdvkabfxwoqg.supabase.co/storage/v1/object/public/product-images";
@@ -11,6 +13,12 @@ const aboutImages = {
 };
 
 export default function About() {
+  useSEO({
+    title: 'Sobre Nosotros',
+    description: 'Conoce el proyecto artesanal detrás de The Spanish Gipsoteca — taller especializado en la reproducción de esculturas clásicas mediante técnicas tradicionales.',
+    canonical: '/about',
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
       <div className="flex-1">

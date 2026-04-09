@@ -4,6 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../hooks/useCategories";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
+import useSEO from "../hooks/useSEO";
 import { imagePresets } from "../utils/imageOptimizer";
 import { searchInFields } from "../utils/textNormalizer";
 
@@ -39,6 +40,16 @@ export default function Shop() {
   useEffect(() => {
     setSelectedCategory(categoryId || null);
   }, [categoryId]);
+
+  // SEO dinámico según categoría activa
+  const activeCategory = categories.find(c => c.id === selectedCategory);
+  useSEO({
+    title: activeCategory ? activeCategory.name : 'Tienda',
+    description: activeCategory
+      ? `Explora nuestra colección de ${activeCategory.name.toLowerCase()} — reproducciones artesanales en escayola.`
+      : 'Explora toda la colección de reproducciones escultóricas artesanales en escayola de The Spanish Gipsoteca.',
+    canonical: selectedCategory ? `/shop/${selectedCategory}` : '/shop',
+  });
 
   // Reset paginación cuando cambian los filtros
   useEffect(() => {
