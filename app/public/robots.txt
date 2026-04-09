@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /admin-jdm-private/
+Disallow: /checkout
+Disallow: /terms
+Disallow: /privacy
+Disallow: /cookies
+
+Sitemap: https://thespanishgipsoteca.com/sitemap.xml

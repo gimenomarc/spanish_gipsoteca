@@ -42,7 +42,7 @@ export default function Shop() {
   }, [categoryId]);
 
   // SEO dinámico según categoría activa
-  const activeCategory = categories.find(c => c.id === selectedCategory);
+  const activeCategory = selectedCategory ? categories[selectedCategory] : null;
   useSEO({
     title: activeCategory ? activeCategory.name : 'Tienda',
     description: activeCategory
