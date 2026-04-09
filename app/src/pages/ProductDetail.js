@@ -75,31 +75,15 @@ export default function ProductDetail() {
     setSelectedImage(index);
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white pt-20 flex items-center justify-center">
-        <p className="text-white/70">Cargando producto...</p>
-      </div>
-    );
-  }
-
-  if (!product || error) {
-    return null;
-  }
-
-  const allImages = productImages;
-
-  // Descripción extendida
-  const extendedDescription = product.description ||
+  // ── useSEO SIEMPRE antes de cualquier return condicional (Reglas de Hooks) ──
+  const extendedDescription = product?.description ||
     "This piece is probably one of the most iconic sculptures of all times. Sign of beauty and perfection, this sculpture was made by an unknown artist around 130-100 a.e.c. in Greece. After centuries of disappearance, it was found by a french archeologist, who later sold the sculpture to the french monarchy under the power of Luis XIV. This sculpture has been one of the most used casts in classic academies and it's still an essential figure for nowadays art academies.";
 
-  // Precio numérico para JSON-LD (extrae número de "95,00 €")
-  const priceValue = product.price
+  const priceValue = product?.price
     ? product.price.replace(/[^0-9,]/g, '').replace(',', '.')
     : '';
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useSEO({
+  useSEO(product ? {
     title: `${product.name} — ${product.artist}`,
     description: `${product.name} de ${product.artist}. ${product.dimensions ? product.dimensions + '. ' : ''}Reproducción artesanal en escayola. ${product.price}.`,
     canonical: `/product/${categoryId}/${productCode}`,
@@ -120,7 +104,21 @@ export default function ProductDetail() {
         seller: { '@type': 'Organization', name: 'The Spanish Gipsoteca' },
       },
     },
-  });
+  } : {});
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white pt-20 flex items-center justify-center">
+        <p className="text-white/70">Cargando producto...</p>
+      </div>
+    );
+  }
+
+  if (!product || error) {
+    return null;
+  }
+
+  const allImages = productImages;
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white pt-16 sm:pt-20">
