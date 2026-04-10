@@ -17,6 +17,7 @@ export default function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [shouldLoad, setShouldLoad] = useState(priority);
+  const [usedFallback, setUsedFallback] = useState(false);
   const imgRef = useRef(null);
   const observerRef = useRef(null);
   const preloadLinkRef = useRef(null);
@@ -29,6 +30,10 @@ export default function OptimizedImage({
         : cdnUrl(src)
   ) : src;
 
+  // Fallback: si optimizedSrc falla (ej: _thumb.webp no existe), usar la URL original con solo encode de espacios
+  const fallbackSrc = src ? cdnUrl(src) : src;
+  const currentSrc = usedFallback ? fallbackSrc : optimizedSrc;
+
   const srcSet = src && typeof size === 'string' && srcSetPresets[size]
     ? srcSetPresets[size](src)
     : null;
@@ -38,21 +43,17 @@ export default function OptimizedImage({
 
   // Preloading solo para imágenes con prioridad alta (eliminado preload duplicado)
   useEffect(() => {
-    if (priority && optimizedSrc && !preloadLinkRef.current) {
-      // Solo usar Image() para preload, más eficiente que link + Image
-      // El navegador maneja mejor la prioridad con fetchPriority
+    if (priority && currentSrc && !preloadLinkRef.current) {
       const preloadImg = new Image();
-      preloadImg.src = optimizedSrc;
+      preloadImg.src = currentSrc;
       preloadImg.fetchPriority = 'high';
-      
-      // Guardar referencia para limpieza si es necesario
       preloadLinkRef.current = preloadImg;
     }
 
     return () => {
       preloadLinkRef.current = null;
     };
-  }, [priority, optimizedSrc]);
+  }, [priority, currentSrc]);
 
   // Intersection Observer para lazy loading inteligente
   useEffect(() => {
@@ -124,6 +125,13 @@ export default function OptimizedImage({
   };
 
   const handleError = () => {
+    // Si el optimizedSrc falla y aún no hemos probado el fallback, intentarlo
+    if (!usedFallback && fallbackSrc && fallbackSrc !== optimizedSrc) {
+      setUsedFallback(true);
+      setIsLoading(true);
+      return;
+    }
+    // Si el fallback también falla, mostrar error
     setIsLoading(false);
     setHasError(true);
     if (onError) onError();
@@ -158,8 +166,8 @@ export default function OptimizedImage({
       {/* Imagen */}
       {shouldLoad && (
         <img
-          src={optimizedSrc}
-          srcSet={srcSet || undefined}
+          src={currentSrc}
+          srcSet={usedFallback ? undefined : (srcSet || undefined)}
           sizes={sizes || undefined}
           alt={alt}
           className={`h-full w-full transition-opacity duration-300 ${
