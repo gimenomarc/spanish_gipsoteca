@@ -9,7 +9,7 @@ import { imagePresets } from "../utils/imageOptimizer";
 import { searchInFields } from "../utils/textNormalizer";
 
 const SearchIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
     <path d="M16 16L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
@@ -136,16 +136,29 @@ export default function Shop() {
       <div className="flex-1">
       <section className="bg-black py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-10">
-          {/* Filtros de categorías */}
-          {!categoriesLoading && Object.keys(categories).length > 0 && (
-            <div className="mb-8 sm:mb-12">
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+
+          {/* Cabecera: título + contador */}
+          <div className="mb-6 sm:mb-8">
+            <h2 className="font-display text-2xl uppercase tracking-[0.2em] text-white sm:text-3xl md:text-4xl">
+              {categoryName}
+            </h2>
+            <p className="mt-1.5 text-xs tracking-widest text-white/40 uppercase">
+              {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
+            </p>
+          </div>
+
+          {/* Barra de herramientas: filtros de categoría + búsqueda + artista + catálogo */}
+          <div className="mb-8 sm:mb-12 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+
+            {/* Filtros de categorías */}
+            {!categoriesLoading && Object.keys(categories).length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => handleCategoryChange(null)}
-                  className={`px-4 py-2 text-xs uppercase tracking-[0.15em] transition-all sm:px-6 sm:py-2.5 sm:text-sm sm:tracking-[0.2em] ${
+                  className={`h-9 px-4 text-xs uppercase tracking-[0.15em] transition-all ${
                     !selectedCategory
                       ? "border border-white bg-white text-black"
-                      : "border border-white/20 bg-black/50 text-white hover:border-white/40"
+                      : "border border-white/20 bg-transparent text-white/70 hover:border-white/40 hover:text-white"
                   }`}
                 >
                   Todos
@@ -154,91 +167,89 @@ export default function Shop() {
                   <button
                     key={category.id}
                     onClick={() => handleCategoryChange(category.id)}
-                    className={`px-4 py-2 text-xs uppercase tracking-[0.15em] transition-all sm:px-6 sm:py-2.5 sm:text-sm sm:tracking-[0.2em] ${
+                    className={`h-9 px-4 text-xs uppercase tracking-[0.15em] transition-all ${
                       selectedCategory === category.id
                         ? "border border-white bg-white text-black"
-                        : "border border-white/20 bg-black/50 text-white hover:border-white/40"
+                        : "border border-white/20 bg-transparent text-white/70 hover:border-white/40 hover:text-white"
                     }`}
                   >
                     {category.name}
                   </button>
                 ))}
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="mb-8 flex flex-col gap-6 sm:mb-12 md:flex-row md:items-start md:justify-between">
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 md:gap-6">
-                <h2 className="font-display text-2xl uppercase tracking-[0.15em] text-white sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
-                  {categoryName}
-                </h2>
-                <a
-                  href="/catalogo.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 sm:mt-0 whitespace-nowrap inline-flex items-center gap-2 border border-white/20 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.15em] text-white/80 transition-all hover:border-white/40 hover:bg-white/10 hover:text-white sm:px-5 sm:py-2.5 sm:text-sm"
-                >
-                  <svg 
-                    className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" 
-                    />
-                  </svg>
-                  <span className="whitespace-nowrap">Ver Catálogo PDF</span>
-                </a>
-              </div>
-              <p className="mt-1 text-xs text-white/70 sm:mt-2 sm:text-sm">
-                {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
-              </p>
-            </div>
-            
-            {/* Búsqueda y filtros */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-              {/* Búsqueda general */}
-              <div className="relative w-full sm:w-64">
+            {/* Controles: búsqueda + artista + catálogo */}
+            <div className="flex items-center gap-2">
+              {/* Búsqueda */}
+              <div className="relative flex-1 lg:flex-none lg:w-60">
+                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40">
+                  <SearchIcon />
+                </div>
                 <input
                   type="text"
-                  placeholder="Buscar por nombre, código o artista..."
+                  placeholder="Buscar..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full rounded-sm border border-white/20 bg-black/50 px-10 py-2.5 text-sm text-white placeholder-white/50 focus:border-white focus:outline-none sm:px-12 sm:py-2.5 sm:text-sm"
+                  className="h-9 w-full border border-white/20 bg-transparent pl-9 pr-3 text-xs text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors"
                 />
-                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
-                  <SearchIcon className="h-4 w-4 text-white/50 sm:h-4 sm:w-4" />
-                </div>
               </div>
-              
+
               {/* Filtro por artista */}
               {artists.length > 0 && (
-                <div className="relative w-full sm:w-56">
+                <div className="relative flex-1 lg:flex-none lg:w-48">
                   <select
                     value={artistFilter}
                     onChange={(e) => setArtistFilter(e.target.value)}
-                    className="w-full appearance-none rounded-sm border border-white/20 bg-black/50 px-4 py-2.5 pr-10 text-sm text-white focus:border-white focus:outline-none sm:px-4 sm:py-2.5 sm:pr-10 sm:text-sm"
+                    className="h-9 w-full appearance-none border border-white/20 bg-black pr-8 pl-3 text-xs text-white focus:border-white/60 focus:outline-none transition-colors"
+                    style={{ color: artistFilter ? 'white' : 'rgba(255,255,255,0.4)' }}
                   >
-                    <option value="">Todos los artistas</option>
+                    <option value="" className="bg-black text-white/40">Artista</option>
                     {artists.map((artist) => (
-                      <option key={artist} value={artist} className="bg-black">
+                      <option key={artist} value={artist} className="bg-black text-white">
                         {artist}
                       </option>
                     ))}
                   </select>
-                  <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                    <svg className="h-4 w-4 text-white/50 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
               )}
+
+              {/* Separador */}
+              <div className="hidden sm:block h-5 w-px bg-white/15" />
+
+              {/* Ver Catálogo PDF */}
+              <a
+                href="/catalogo.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex h-9 items-center gap-1.5 border border-white/20 bg-transparent px-3.5 text-xs uppercase tracking-[0.12em] text-white/60 transition-all hover:border-white/50 hover:text-white whitespace-nowrap"
+              >
+                <svg className="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Catálogo PDF
+              </a>
             </div>
+          </div>
+
+          {/* Catálogo PDF — sólo móvil */}
+          <div className="mb-6 sm:hidden">
+            <a
+              href="/catalogo.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-1.5 border border-white/20 bg-transparent px-3.5 text-xs uppercase tracking-[0.12em] text-white/60 transition-all hover:border-white/50 hover:text-white"
+            >
+              <svg className="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Ver Catálogo PDF
+            </a>
           </div>
 
           {filteredProducts.length === 0 ? (
